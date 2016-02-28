@@ -1,4 +1,4 @@
-[Popcorn Time for Android](https://github.com/popcorn-official/popcorn-desktop)
+[Popcorn Time for Android](https://github.com/popcorn-official/popcorn-android)
 ----
 
 Allow any Android user to watch movies easily streaming from torrents, without any particular knowledge.
