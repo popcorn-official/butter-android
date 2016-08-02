@@ -46,6 +46,7 @@ import butter.droid.base.providers.media.AnimeProvider;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.TVProvider;
+import butter.droid.base.providers.media.YtsMoviesProvider;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.vpn.VPNHTChecker;
 import butter.droid.base.vpn.VPNManager;
@@ -150,7 +151,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
         //todo: make list items dynamic
         List<NavDrawerItem> navItems = new ArrayList<>();
         navItems.add(new NavDrawerItem(true));
-        navItems.add(new NavDrawerItem(getString(R.string.title_movies), R.drawable.ic_nav_movies, new MoviesProvider()));
+        navItems.add(new NavDrawerItem(getString(R.string.title_movies), R.drawable.ic_nav_movies, new YtsMoviesProvider()));
         navItems.add(new NavDrawerItem(getString(R.string.title_shows), R.drawable.ic_nav_tv, new TVProvider()));
         navItems.add(new NavDrawerItem(getString(R.string.title_anime), R.drawable.ic_nav_anime, new AnimeProvider()));
         navItems.add(new NavDrawerItem(getString(R.string.preferences), R.drawable.ic_nav_settings, mOnSettingsClickListener));

@@ -25,6 +25,13 @@
     <drawable name="movie_filter_year">@drawable/filter_release_date</drawable>
     <drawable name="movie_filter_a_to_z">@drawable/filter_a_to_z</drawable>
 
+    <drawable name="yts_filter_trending">@drawable/filter_trending</drawable>
+    <drawable name="yts_filter_popular_now">@drawable/filter_popular_now</drawable>
+    <drawable name="yts_filter_top_rated">@drawable/filter_top_rated</drawable>
+    <drawable name="yts_filter_year">@drawable/filter_updated</drawable>
+    <drawable name="yts_filter_release_date">@drawable/filter_release_date</drawable>
+    <drawable name="yts_filter_a_to_z">@drawable/filter_a_to_z</drawable>
+
     <drawable name="tvshow_filter_trending">@drawable/filter_trending</drawable>
     <drawable name="tvshow_filter_popular_now">@drawable/filter_popular_now</drawable>
     <drawable name="tvshow_filter_top_rated">@drawable/filter_top_rated</drawable>

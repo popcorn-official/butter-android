@@ -37,6 +37,7 @@ import java.util.List;
 
 import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.TVProvider;
+import butter.droid.base.providers.media.YtsMoviesProvider;
 import hugo.weaving.DebugLog;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.models.Media;
@@ -95,7 +96,7 @@ public class TVMediaGridFragment extends VerticalGridFragment implements OnItemV
 
         switch (mCallback.getType()) {
             case MOVIE:
-                mProvider = new MoviesProvider();
+                mProvider = new YtsMoviesProvider();
                 break;
             case SHOW:
                 mProvider = new TVProvider();

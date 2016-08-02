@@ -36,6 +36,7 @@ import java.util.List;
 
 import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.TVProvider;
+import butter.droid.base.providers.media.YtsMoviesProvider;
 import hugo.weaving.DebugLog;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.models.Media;
@@ -49,7 +50,7 @@ public class TVSearchFragment extends android.support.v17.leanback.app.SearchFra
 	private static final int SEARCH_DELAY_MS = 300;
 
 	private MediaProvider mShowsProvider = new TVProvider();
-	private MediaProvider mMovieProvider = new MoviesProvider();
+	private MediaProvider mMovieProvider = new YtsMoviesProvider();
 	private MediaProvider.Filters mSearchFilter = new MediaProvider.Filters();
 
 	private ArrayObjectAdapter mRowsAdapter;

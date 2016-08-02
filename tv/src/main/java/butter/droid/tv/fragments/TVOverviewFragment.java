@@ -47,6 +47,7 @@ import java.util.List;
 
 import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.TVProvider;
+import butter.droid.base.providers.media.YtsMoviesProvider;
 import hugo.weaving.DebugLog;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.models.Media;
@@ -77,7 +78,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
     private ArrayObjectAdapter mShowAdapter;
     private ArrayObjectAdapter mMoviesAdapter;
 
-    private MediaProvider mMoviesProvider = new MoviesProvider();
+    private MediaProvider mMoviesProvider = new YtsMoviesProvider();
     private MediaProvider mShowsProvider = new TVProvider();
 
     private BackgroundUpdater mBackgroundUpdater;
@@ -354,7 +355,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
                             .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                                    Movie media = new Movie(new YtsMoviesProvider(), new YSubsProvider());
 
                                     media.videoId = "dialogtestvideo";
                                     media.title = "User input test video";
@@ -365,7 +366,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
                     builder.show();
                 }
 
-                final Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                final Movie media = new Movie(new YtsMoviesProvider(), new YSubsProvider());
                 media.videoId = "bigbucksbunny";
                 media.title = file_types[index];
                 media.subtitles = new HashMap<>();
