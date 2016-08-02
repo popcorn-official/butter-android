@@ -97,12 +97,11 @@ public class MediaCardPresenter extends Presenter {
 	}
 
 	public void onBindMediaViewHolder(Presenter.ViewHolder viewHolder, MediaCardItem overview) {
-
 		Media item = overview.getMedia();
 		final CustomImageCardView cardView = (CustomImageCardView) viewHolder.view;
 
         cardView.setTitleText(item.title);
-        cardView.setContentText(!TextUtils.isEmpty(item.genre) ? item.genre : item.year);
+        cardView.setContentText(!TextUtils.isEmpty(item.genre) ? String.format("%s - %s", item.year, item.genre) : item.year);
         cardView.getMainImageView().setAlpha(1f);
         cardView.getMainImageView().setPadding(0,0,0,0);
         cardView.setMainImageDimensions(mCardWidth, mCardHeight);
@@ -161,11 +160,8 @@ public class MediaCardPresenter extends Presenter {
 		}
 	}
 
-
 	public static class CustomImageCardView extends ImageCardView {
-
 		private Palette.Swatch mCustomSelectedSwatch;
-
 		private Target mTarget;
 
 		public CustomImageCardView(Context context) {
