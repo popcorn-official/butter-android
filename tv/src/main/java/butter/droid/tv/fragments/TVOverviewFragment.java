@@ -45,7 +45,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.TVProvider;
 import butter.droid.base.providers.media.YtsMoviesProvider;
 import hugo.weaving.DebugLog;
@@ -141,6 +140,48 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
     }
 
     private void loadData() {
+        loadMoviesData();
+    }
+
+    private void loadMoviesData() {
+        final MediaProvider.Filters movieFilters = new MediaProvider.Filters();
+        movieFilters.sort = MediaProvider.Filters.Sort.YEAR;
+        movieFilters.order = MediaProvider.Filters.Order.DESC;
+
+        mMoviesProvider.getList(null, movieFilters, new MediaProvider.Callback() {
+            @DebugLog
+            @Override
+            public void onSuccess(MediaProvider.Filters filters, final ArrayList<Media> items, boolean changed) {
+                ThreadUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
+                        mMoviesAdapter.clear();
+                        mMoviesAdapter.addAll(0, list);
+
+                        if(mSelectedRow == 0)
+                            mBackgroundUpdater.updateBackgroundAsync(items.get(0).headerImage);
+                        loadTvShows();
+                    }
+                });
+            }
+
+            @DebugLog
+            @Override
+            public void onFailure(final Exception e) {
+                ThreadUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                        loadTvShows();
+                    }
+                });
+            }
+        });
+    }
+
+    private void loadTvShows() {
         final MediaProvider.Filters showsFilter = new MediaProvider.Filters();
         showsFilter.sort = MediaProvider.Filters.Sort.DATE;
         showsFilter.order = MediaProvider.Filters.Order.DESC;
@@ -148,52 +189,28 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
         mShowsProvider.getList(null, showsFilter, new MediaProvider.Callback() {
             @DebugLog
             @Override
-            public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
-                List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
-                mShowAdapter.clear();
-                mShowAdapter.addAll(0, list);
-
-                if(mSelectedRow == 1)
-                    mBackgroundUpdater.updateBackgroundAsync(items.get(0).headerImage);
-            }
-
-            @DebugLog
-            @Override
-            public void onFailure(Exception e) {
-                e.printStackTrace();
+            public void onSuccess(MediaProvider.Filters filters, final ArrayList<Media> items, boolean changed) {
                 ThreadUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), R.string.encountered_error, Toast.LENGTH_SHORT).show();
+                        List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
+                        mShowAdapter.clear();
+                        mShowAdapter.addAll(0, list);
+
+                        if(mSelectedRow == 1)
+                            mBackgroundUpdater.updateBackgroundAsync(items.get(0).headerImage);
                     }
                 });
             }
-        });
-
-        final MediaProvider.Filters movieFilters = new MediaProvider.Filters();
-        movieFilters.sort = MediaProvider.Filters.Sort.POPULARITY;
-        movieFilters.order = MediaProvider.Filters.Order.DESC;
-
-        mMoviesProvider.getList(null, movieFilters, new MediaProvider.Callback() {
-            @DebugLog
-            @Override
-            public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
-                List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
-                mMoviesAdapter.clear();
-                mMoviesAdapter.addAll(0, list);
-
-                if(mSelectedRow == 0)
-                    mBackgroundUpdater.updateBackgroundAsync(items.get(0).headerImage);
-            }
 
             @DebugLog
             @Override
-            public void onFailure(Exception e) {
-                e.printStackTrace();
+            public void onFailure(final Exception e) {
                 ThreadUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), R.string.movies_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
                     }
                 });
             }
