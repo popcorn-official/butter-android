@@ -29,7 +29,7 @@ public class MovieDetailsDescriptionPresenter extends AbstractDetailsDescription
 		Media itemWrapper = (Media) item;
 		if (itemWrapper != null) {
 			viewHolder.getTitle().setText(itemWrapper.title);
-			viewHolder.getSubtitle().setText(itemWrapper.genre);
+			viewHolder.getSubtitle().setText(String.format("%s - %s", itemWrapper.rating, itemWrapper.genre));
 
 			if (itemWrapper instanceof Movie) {
 				Movie movieItem = (Movie) itemWrapper;

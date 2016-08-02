@@ -101,7 +101,11 @@ public class MediaCardPresenter extends Presenter {
 		final CustomImageCardView cardView = (CustomImageCardView) viewHolder.view;
 
         cardView.setTitleText(item.title);
-        cardView.setContentText(!TextUtils.isEmpty(item.genre) ? String.format("%s - %s", item.year, item.genre) : item.year);
+        cardView.setContentText(!TextUtils.isEmpty(item.genre) ?
+            String.format("%s (%s) %s", item.year, item.rating, item.genre.toLowerCase()) :
+                item.rating != null && !TextUtils.isEmpty(item.rating) ?
+					String.format("%s (%s)", item.year, item.rating) :
+					item.year);
         cardView.getMainImageView().setAlpha(1f);
         cardView.getMainImageView().setPadding(0,0,0,0);
         cardView.setMainImageDimensions(mCardWidth, mCardHeight);
