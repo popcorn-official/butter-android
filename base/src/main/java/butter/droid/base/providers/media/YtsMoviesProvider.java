@@ -66,20 +66,23 @@ public class YtsMoviesProvider extends MediaProvider {
         String sort;
         switch (filters.sort) {
             default:
-            case YEAR:
-                sort = "year";
+            case TRENDING:
+                sort = "seeds";
                 break;
-            case DATE:
-                sort = "date_added";
+            case POPULARITY:
+                sort = "like_count";
                 break;
             case RATING:
                 sort = "rating";
                 break;
+            case DATE:
+                sort = "date_added";
+                break;
+            case YEAR:
+                sort = "year";
+                break;
             case ALPHABET:
                 sort = "title";
-                break;
-            case TRENDING:
-                sort = "like_count";
                 break;
         }
 
@@ -104,6 +107,7 @@ public class YtsMoviesProvider extends MediaProvider {
         }
 
         params.add(new AbstractMap.SimpleEntry<>("limit", "20"));
+        params.add(new AbstractMap.SimpleEntry<>("with_rt_ratings", "true"));
 
         Request.Builder requestBuilder = new Request.Builder();
         String query = buildQuery(params);
@@ -146,7 +150,6 @@ public class YtsMoviesProvider extends MediaProvider {
                             callback.onFailure(new NetworkErrorException("Empty response"));
                         } else {
                             ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, YtsMoviesProvider.this, new YSubsProvider());
-
                             callback.onSuccess(filters, formattedData, list.size() > 0);
                             return;
                         }
