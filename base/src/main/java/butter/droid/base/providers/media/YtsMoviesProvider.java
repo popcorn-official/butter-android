@@ -103,6 +103,8 @@ public class YtsMoviesProvider extends MediaProvider {
             params.add(new AbstractMap.SimpleEntry<>("page", filters.page.toString()));
         }
 
+        params.add(new AbstractMap.SimpleEntry<>("limit", "20"));
+
         Request.Builder requestBuilder = new Request.Builder();
         String query = buildQuery(params);
         String moviesUrl = "https://yts.ag/api/v2/list_movies.json";
