@@ -220,6 +220,5 @@ public class YtsMoviesProvider extends MediaProvider {
     @Override
     public String getMediaCallTag() {
         return "yts_movies_http_call";
-    }
-
+   }
 }
