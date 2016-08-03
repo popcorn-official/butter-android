@@ -141,18 +141,13 @@ public class YtsMoviesProvider extends MediaProvider {
                             if (!status.equals("ok")) throw new Exception("API status is not OK");
                             if (!responseObject.containsKey("data")) throw new Exception("API content doesn't have 'data' element");
                             LinkedTreeMap<String, Object> data = (LinkedTreeMap<String, Object>) responseObject.get("data");
-                            if (!data.containsKey("movies")) throw new Exception("API data content doesn't have 'movies' element");
-                            list = (ArrayList<LinkedTreeMap<String, Object>>) data.get("movies");
+                            if (data.containsKey("movies")) list = (ArrayList<LinkedTreeMap<String, Object>>) data.get("movies");
+                            else list = new ArrayList<>();
                         }
 
                         YtsMovieResponse result = new YtsMovieResponse(list);
-                        if (list == null) {
-                            callback.onFailure(new NetworkErrorException("Empty response"));
-                        } else {
-                            ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, YtsMoviesProvider.this, new YSubsProvider());
-                            callback.onSuccess(filters, formattedData, list.size() > 0);
-                            return;
-                        }
+                        ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, YtsMoviesProvider.this, new YSubsProvider());
+                        callback.onSuccess(filters, formattedData, list.size() > 0);
                     }
                 } catch (Exception e) {
                     callback.onFailure(e);
@@ -223,5 +218,5 @@ public class YtsMoviesProvider extends MediaProvider {
     @Override
     public String getMediaCallTag() {
         return "yts_movies_http_call";
-   }
+    }
 }
