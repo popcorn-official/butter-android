@@ -30,6 +30,7 @@ import android.support.v17.leanback.widget.Presenter;
 import android.support.v17.leanback.widget.Row;
 import android.support.v17.leanback.widget.RowPresenter;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,6 +38,7 @@ import java.util.List;
 import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.TVProvider;
 import butter.droid.base.providers.media.YtsMoviesProvider;
+import butter.droid.base.utils.ThreadUtils;
 import hugo.weaving.DebugLog;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.models.Media;
@@ -112,40 +114,69 @@ public class TVSearchFragment extends android.support.v17.leanback.app.SearchFra
 	@DebugLog
 	private void loadRows(String query) {
 		mMovieProvider.cancel();
-		//mShowsProvider.cancel();
 		mRowsAdapter.clear();
 		addLoadingRow();
 
 		mSearchFilter.keywords = query;
 		mSearchFilter.page = 1;
-		mShowsProvider.getList(mSearchFilter, new MediaProvider.Callback() {
-			@Override public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
-				List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
-				addRow(getString(R.string.show_results), list);
+
+        searchMovies();
+    }
+
+    private void searchMovies() {
+        mMovieProvider.getList(mSearchFilter, new MediaProvider.Callback() {
+			@Override
+			public void onSuccess(MediaProvider.Filters filters, final ArrayList<Media> items, boolean changed) {
+				ThreadUtils.runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+                        List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
+                        addRow(getString(R.string.movie_results), list);
+                        searchTvShows();
+					}
+				});
 			}
 
-			@Override public void onFailure(Exception e) {
+            @Override public void onFailure(final Exception e) {
+                ThreadUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                        searchTvShows();
+                    }
+                });
+            }
+        });
+    }
 
-			}
-		});
+    private void searchTvShows() {
+        mShowsProvider.getList(mSearchFilter, new MediaProvider.Callback() {
+            @Override
+            public void onSuccess(MediaProvider.Filters filters, final ArrayList<Media> items, boolean changed) {
+                ThreadUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
+                        addRow(getString(R.string.show_results), list);
+                    }
+                });
+            }
 
+            @Override
+            public void onFailure(final Exception e) {
+                ThreadUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                    }
+                });
+            }
+        });
+    }
 
-		mMovieProvider.getList(mSearchFilter, new MediaProvider.Callback() {
-			@Override public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
-						List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
-						addRow(getString(R.string.movie_results), list);
-					}
-
-					@Override public void onFailure(Exception e) {
-
-					}
-				}
-
-		);
-
-	}
-
-	private void addRow(String title, List<MediaCardPresenter.MediaCardItem> items) {
+    private void addRow(String title, List<MediaCardPresenter.MediaCardItem> items) {
 		mRowsAdapter.remove(mLoadingRow);
 
 		HeaderItem header = new HeaderItem(0, title);
