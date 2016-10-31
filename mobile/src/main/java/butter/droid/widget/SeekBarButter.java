@@ -23,24 +23,24 @@ import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.util.AttributeSet;
 
-public class SeekBar extends android.widget.SeekBar {
+public class SeekBarButter extends android.widget.SeekBar {
 
     private Drawable mThumb;
 
-    public SeekBar(Context context) {
+    public SeekBarButter(Context context) {
         super(context);
     }
 
-    public SeekBar(Context context, AttributeSet attrs) {
+    public SeekBarButter(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
-    public SeekBar(Context context, AttributeSet attrs, int defStyleAttr) {
+    public SeekBarButter(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
-    public SeekBar(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
+    public SeekBarButter(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
     }
 

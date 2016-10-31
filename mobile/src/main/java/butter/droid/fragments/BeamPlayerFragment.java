@@ -68,7 +68,7 @@ import butter.droid.base.utils.PixelUtils;
 import butter.droid.base.utils.VersionUtils;
 import butter.droid.fragments.dialog.LoadingBeamingDialogFragment;
 import butter.droid.fragments.dialog.OptionDialogFragment;
-import butter.droid.widget.SeekBar;
+import butter.droid.widget.SeekBarButter;
 import timber.log.Timber;
 
 public class BeamPlayerFragment extends Fragment implements TorrentListener {
@@ -99,9 +99,9 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
     @Bind(R.id.cover_image)
     ImageView mCoverImage;
     @Bind(R.id.seekbar)
-    SeekBar mSeekBar;
+    SeekBarButter mSeekBarButter;
     @Bind(R.id.volumebar)
-    SeekBar mVolumeBar;
+    SeekBarButter mVolumeBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -115,7 +115,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
 
         mToolbar.getBackground().setAlpha(0);
         mToolbar.setNavigationIcon(R.drawable.abc_ic_clear_mtrl_alpha);
-        mSeekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
+        mSeekBarButter.setOnSeekBarChangeListener(mSeekBarChangeListener);
         mVolumeBar.setOnSeekBarChangeListener(mVolumeBarChangeListener);
     }
 
@@ -172,8 +172,8 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
         volumeDrawable.findDrawableByLayerId(android.R.id.progress).setColorFilter(paletteColor, PorterDuff.Mode.SRC_IN);
         volumeDrawable.findDrawableByLayerId(android.R.id.secondaryProgress).setColorFilter(paletteColor, PorterDuff.Mode.SRC_IN);
 
-        mSeekBar.setProgressDrawable(progressDrawable);
-        mSeekBar.getThumbDrawable().setColorFilter(paletteColor, PorterDuff.Mode.SRC_IN);
+        mSeekBarButter.setProgressDrawable(progressDrawable);
+        mSeekBarButter.getThumbDrawable().setColorFilter(paletteColor, PorterDuff.Mode.SRC_IN);
 
         mVolumeBar.setProgressDrawable(volumeDrawable);
         mVolumeBar.getThumbDrawable().setColorFilter(paletteColor, PorterDuff.Mode.SRC_IN);
@@ -204,7 +204,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
         try {
             if (!mBeamManager.getConnectedDevice().hasCapability(MediaControl.Position) || !mBeamManager.getConnectedDevice().hasCapability(MediaControl.Seek) || !mBeamManager.getConnectedDevice().hasCapability(MediaControl.Duration)) {
                 mHasSeekControl = false;
-                mSeekBar.setVisibility(View.INVISIBLE);
+                mSeekBarButter.setVisibility(View.INVISIBLE);
             }
 
             if (!mBeamManager.getConnectedDevice().hasCapability(VolumeControl.Volume_Get) || !mBeamManager.getConnectedDevice().hasCapability(VolumeControl.Volume_Set) || !mBeamManager.getConnectedDevice().hasCapability(VolumeControl.Volume_Subscribe)) {
@@ -336,14 +336,14 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
 
     @OnClick(R.id.forward_button)
     public void forwardClick(View v) {
-        int newProgress = mSeekBar.getProgress() + 10000;
+        int newProgress = mSeekBarButter.getProgress() + 10000;
         if (newProgress > mTotalTimeDuration) newProgress = (int) mTotalTimeDuration;
         mMediaControl.seek(newProgress, null);
     }
 
     @OnClick(R.id.backward_button)
     public void backwardClick(View v) {
-        int newProgress = mSeekBar.getProgress() - 10000;
+        int newProgress = mSeekBarButter.getProgress() - 10000;
         if (newProgress < 0) newProgress = 0;
         mMediaControl.seek(newProgress, null);
     }
@@ -424,7 +424,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
         public void onSuccess(Long duration) {
             if(mTotalTimeDuration != duration) {
                 mTotalTimeDuration = duration;
-                mSeekBar.setMax(duration.intValue());
+                mSeekBarButter.setMax(duration.intValue());
             }
             //durationTextView.setText(formatTime(duration.intValue()));
         }
@@ -448,9 +448,9 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
                 @Override
                 public void onSuccess(Long position) {
                     if (!mIsUserSeeking) {
-                        mSeekBar.setProgress(position.intValue());
-                        mSeekBar.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
-                        mSeekBar.setSecondaryProgress(mDownloadProgress.intValue());
+                        mSeekBarButter.setProgress(position.intValue());
+                        mSeekBarButter.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
+                        mSeekBarButter.setSecondaryProgress(mDownloadProgress.intValue());
                     }
 
                     if (mLoadingDialog.isVisible() && !getActivity().isFinishing() && position > 0) {
@@ -466,17 +466,17 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
         }
     };
 
-    private SeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    private SeekBarButter.OnSeekBarChangeListener mSeekBarChangeListener = new SeekBarButter.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
             if(fromUser && !mProcessingSeeking && mIsUserSeeking) {
                 if (progress <= mDownloadProgress) {
-                    mSeekBar.setProgress(progress);
-                    mSeekBar.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
-                    mSeekBar.setSecondaryProgress(mDownloadProgress.intValue());
+                    mSeekBarButter.setProgress(progress);
+                    mSeekBarButter.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
+                    mSeekBarButter.setSecondaryProgress(mDownloadProgress.intValue());
 
                     mProcessingSeeking = true;
-                    mMediaControl.seek(mSeekBar.getProgress(), new ResponseListener<Object>() {
+                    mMediaControl.seek(mSeekBarButter.getProgress(), new ResponseListener<Object>() {
                         @Override
                         public void onSuccess(Object response) {
                             mProcessingSeeking = false;
@@ -490,9 +490,9 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
                         }
                     });
                 } else {
-                    mSeekBar.setProgress(mDownloadProgress.intValue());
-                    mSeekBar.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
-                    mSeekBar.setSecondaryProgress(mDownloadProgress.intValue());
+                    mSeekBarButter.setProgress(mDownloadProgress.intValue());
+                    mSeekBarButter.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
+                    mSeekBarButter.setSecondaryProgress(mDownloadProgress.intValue());
                 }
             }
         }
@@ -509,7 +509,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
         }
     };
 
-    public SeekBar.OnSeekBarChangeListener mVolumeBarChangeListener = new SeekBar.OnSeekBarChangeListener() {
+    public SeekBarButter.OnSeekBarChangeListener mVolumeBarChangeListener = new SeekBarButter.OnSeekBarChangeListener() {
         @Override
         public void onStopTrackingTouch(android.widget.SeekBar seekBar) {
         }
@@ -537,8 +537,8 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
     @Override
     public void onStreamProgress(Torrent torrent, StreamStatus status) {
         mDownloadProgress = mTotalTimeDuration / 100 * status.progress;
-        mSeekBar.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
-        mSeekBar.setSecondaryProgress(mDownloadProgress.intValue());
+        mSeekBarButter.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
+        mSeekBarButter.setSecondaryProgress(mDownloadProgress.intValue());
     }
 
     @Override
@@ -549,7 +549,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
         @Override
         public void onDeviceDisconnected(ConnectableDevice device) {
             super.onDeviceDisconnected(device);
-            VideoPlayerActivity.startActivity(getActivity(), mStreamInfo, mSeekBar.getProgress());
+            VideoPlayerActivity.startActivity(getActivity(), mStreamInfo, mSeekBarButter.getProgress());
             getActivity().finish();
         }
 
