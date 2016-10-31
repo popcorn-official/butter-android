@@ -95,9 +95,9 @@ public class Episode extends Media implements Parcelable {
         dest.writeString(mMetaProvider != null ? mMetaProvider.getClass().getCanonicalName() : "");
         if (torrents != null) {
             dest.writeInt(torrents.size());
-            for (String s : torrents.keySet()) {
-                dest.writeString(s);
-                dest.writeParcelable(torrents.get(s), flags);
+            for (Map.Entry<String, Torrent> entry : torrents.entrySet()){
+                dest.writeString(entry.getKey());
+                dest.writeParcelable(entry.getValue(), flags);
             }
         } else {
             dest.writeInt(0);

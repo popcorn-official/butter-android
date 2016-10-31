@@ -78,9 +78,9 @@ public class Movie extends Media implements Parcelable {
                 Map<String, Torrent> torrentMap = entry.getValue();
                 if (torrentMap != null) {
                     dest.writeInt(torrentMap.size());
-                    for (String s : torrentMap.keySet()) {
-                        dest.writeString(s);
-                        dest.writeParcelable(torrentMap.get(s), flags);
+                    for (Map.Entry<String, Torrent> tmapEntry : torrentMap.entrySet()){
+                        dest.writeString(tmapEntry.getKey());
+                        dest.writeParcelable(tmapEntry.getValue(), flags);
                     }
                 } else {
                     dest.writeInt(0);

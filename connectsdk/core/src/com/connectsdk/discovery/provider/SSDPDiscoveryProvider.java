@@ -41,6 +41,7 @@ import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
@@ -133,10 +134,9 @@ public class SSDPDiscoveryProvider implements DiscoveryProvider {
 
         long killPoint = new Date().getTime() - TIMEOUT;
 
-        for (String key : foundServices.keySet()) {
-            ServiceDescription service = foundServices.get(key);
-            if (service == null || service.getLastDetection() < killPoint) {
-                killKeys.add(key);
+        for (Map.Entry<String, ServiceDescription> entry : foundServices.entrySet()){
+            if (entry.getValue() == null || entry.getValue().getLastDetection() < killPoint) {
+                killKeys.add(entry.getKey());
             }
         }
 

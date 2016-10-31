@@ -58,6 +58,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -177,10 +178,9 @@ public class BeamManager implements ConnectableDeviceListener, DiscoveryManagerL
 
     public Map<String, ConnectableDevice> getDevices() {
         Map<String, ConnectableDevice> devices = mDiscoveryManager.getCompatibleDevices();
-        for (String key : devices.keySet()) {
-            ConnectableDevice device = devices.get(key);
-            if (device.getServices().size() <= 0) {
-                devices.remove(key);
+        for (Map.Entry<String, ConnectableDevice> entry : devices.entrySet()){
+            if (entry.getValue().getServices().isEmpty()) {
+                devices.remove(entry.getKey());
             }
         }
         return devices;

@@ -115,9 +115,9 @@ public class Media implements Parcelable {
         dest.writeString(mMediaProvider != null ? mMediaProvider.getClass().getCanonicalName() : "");
         if (subtitles != null) {
             dest.writeInt(subtitles.size());
-            for (String key : subtitles.keySet()) {
-                dest.writeString(key);
-                dest.writeString(subtitles.get(key));
+            for (Map.Entry<String, String> entry : subtitles.entrySet()){
+                dest.writeString(entry.getKey());
+                dest.writeString(entry.getValue());
             }
         } else {
             dest.writeInt(0);
