@@ -33,13 +33,13 @@ public class NetcastApplicationsParser extends DefaultHandler {
 
     public String value;
 
-    public final String DATA = "data";
-    public final String AUID = "auid";
-    public final String NAME = "name";
-    public final String TYPE = "type";
-    public final String CPID = "cpid";
-    public final String ADULT = "adult";
-    public final String ICON_NAME = "icon_name";
+    public static final String DATA = "data";
+    public static final String AUID = "auid";
+    public static final String NAME = "name";
+    public static final String TYPE = "type";
+    public static final String CPID = "cpid";
+    public static final String ADULT = "adult";
+    public static final String ICON_NAME = "icon_name";
 
     public NetcastApplicationsParser() {
         applicationList = new JSONArray();

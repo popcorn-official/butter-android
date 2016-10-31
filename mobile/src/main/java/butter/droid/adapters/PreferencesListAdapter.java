@@ -37,7 +37,7 @@ import butter.droid.base.content.preferences.PrefItem;
 public class PreferencesListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<PrefItem> mItems;
-    final int NORMAL = 0, HEADER = 1;
+    static final int NORMAL = 0, HEADER = 1;
 
     public PreferencesListAdapter(List<PrefItem> items) {
         mItems = items;

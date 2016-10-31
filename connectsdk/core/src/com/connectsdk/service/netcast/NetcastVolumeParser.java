@@ -30,10 +30,10 @@ public class NetcastVolumeParser extends DefaultHandler {
 
     public String value;
 
-    public final String MUTE = "mute";
-    public final String MIN_LEVEL = "minLevel";
-    public final String MAX_LEVEL = "maxLevel";
-    public final String LEVEL = "level";
+    public static final String MUTE = "mute";
+    public static final String MIN_LEVEL = "minLevel";
+    public static final String MAX_LEVEL = "maxLevel";
+    public static final String LEVEL = "level";
 
     public NetcastVolumeParser() {
         volumeStatus = new JSONObject();

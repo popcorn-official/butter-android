@@ -41,7 +41,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private OnItemClickListener mItemClickListener;
     private List<NavigationDrawerFragment.NavDrawerItem> mItems;
-    final int HEADER = 0, ITEM = 1;
+    static final int HEADER = 0, ITEM = 1;
     final int mNormalColor, mCheckedColor, mCheckedBackgroundRes, mNormalBackgroundRes;
     private Callback mCallback;
 

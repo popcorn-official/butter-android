@@ -32,8 +32,8 @@ import com.connectsdk.core.AppInfo;
 public class RokuApplicationListParser extends DefaultHandler {
     public String value;
 
-    public final String APP = "app";
-    public final String ID = "id";
+    public static final String APP = "app";
+    public static final String ID = "id";
 
     public List<AppInfo> appList;
     public AppInfo appInfo;

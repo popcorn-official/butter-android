@@ -35,20 +35,20 @@ public class NetcastChannelParser extends DefaultHandler {
 
     public String value;
 
-    public final String CHANNEL_TYPE = "chtype";
-    public final String MAJOR = "major";
-    public final String MINOR = "minor";
-    public final String DISPLAY_MAJOR = "displayMajor";
-    public final String DISPLAY_MINOR = "displayMinor";
-    public final String SOURCE_INDEX = "sourceIndex";
-    public final String PHYSICAL_NUM = "physicalNum";
-    public final String CHANNEL_NAME = "chname";
-    public final String PROGRAM_NAME = "progName";
-    public final String AUDIO_CHANNEL = "audioCh";
-    public final String INPUT_SOURCE_NAME = "inputSourceName";
-    public final String INPUT_SOURCE_TYPE = "inputSourceType";
-    public final String LABEL_NAME = "labelName";
-    public final String INPUT_SOURCE_INDEX = "inputSourceIdx";
+    public static final String CHANNEL_TYPE = "chtype";
+    public static final String MAJOR = "major";
+    public static final String MINOR = "minor";
+    public static final String DISPLAY_MAJOR = "displayMajor";
+    public static final String DISPLAY_MINOR = "displayMinor";
+    public static final String SOURCE_INDEX = "sourceIndex";
+    public static final String PHYSICAL_NUM = "physicalNum";
+    public static final String CHANNEL_NAME = "chname";
+    public static final String PROGRAM_NAME = "progName";
+    public static final String AUDIO_CHANNEL = "audioCh";
+    public static final String INPUT_SOURCE_NAME = "inputSourceName";
+    public static final String INPUT_SOURCE_TYPE = "inputSourceType";
+    public static final String LABEL_NAME = "labelName";
+    public static final String INPUT_SOURCE_INDEX = "inputSourceIdx";
 
     public NetcastChannelParser() {
         channelArray = new JSONArray();

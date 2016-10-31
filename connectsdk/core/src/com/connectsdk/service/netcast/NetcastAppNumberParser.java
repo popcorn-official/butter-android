@@ -26,8 +26,8 @@ import org.xml.sax.helpers.DefaultHandler;
 public class NetcastAppNumberParser extends DefaultHandler {
     public String value;
 
-    public final String TYPE = "type";
-    public final String NUMBER = "number";
+    public static final String TYPE = "type";
+    public static final String NUMBER = "number";
 
     int count;
 
