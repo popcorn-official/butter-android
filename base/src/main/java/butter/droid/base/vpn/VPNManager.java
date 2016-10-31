@@ -127,17 +127,17 @@ public class VPNManager {
             InputStream conf = mActivity.getAssets().open("vpnht.conf");
             InputStreamReader isr = new InputStreamReader(conf);
             BufferedReader br = new BufferedReader(isr);
-            String config="";
+            StringBuilder config = new StringBuilder();
             String line;
             while(true) {
                 line = br.readLine();
                 if(line == null)
                     break;
-                config += line + "\n";
+                config.append(line).append("\n");
             }
             br.readLine();
 
-            mService.startVPN("Popcorn Time", config);
+            mService.startVPN("Popcorn Time", config.toString());
         } catch (IOException | RemoteException e) {
             e.printStackTrace();
         }

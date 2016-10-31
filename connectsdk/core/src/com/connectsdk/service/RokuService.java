@@ -208,7 +208,7 @@ public class RokuService extends DeviceService implements Launcher, MediaPlayer,
         }
 
         String baseTargetURL = requestURL("launch", appInfo.getId());
-        String queryParams = "";
+        StringBuilder queryParams = new StringBuilder();
 
         if (params != null && params instanceof JSONObject) {
             JSONObject jsonParams = (JSONObject) params;
@@ -243,7 +243,7 @@ public class RokuService extends DeviceService implements Launcher, MediaPlayer,
                     continue;
 
                 String appendString = prefix + urlSafeKey + "=" + urlSafeValue;
-                queryParams = queryParams + appendString;
+                queryParams.append(appendString);
 
                 count++;
             }

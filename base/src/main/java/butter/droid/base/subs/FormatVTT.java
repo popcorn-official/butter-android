@@ -81,13 +81,13 @@ public class FormatVTT extends TimedTextFileFormat {
                         //we go to next line where the caption text starts
                         lineCounter++;
                         line = getLine(inputString, stringIndex++).trim();
-                        String text = "";
+                        StringBuilder text = new StringBuilder();
                         while (!line.isEmpty() && stringIndex < inputString.length) {
-                            text += line + "<br />";
+                            text.append(line).append("<br />");
                             line = getLine(inputString, stringIndex++).trim();
                             lineCounter++;
                         }
-                        caption.content = text;
+                        caption.content = text.toString();
                         int key = caption.start.mseconds;
                         //in case the key is already there, we increase it by a millisecond, since no duplicates are allowed
                         while (tto.captions.containsKey(key)) key++;

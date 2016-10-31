@@ -111,13 +111,13 @@ public class StorageUtils {
             File root = new File(mount);
             if (root.exists() && root.isDirectory() && root.canWrite()) {
                 File[] list = root.listFiles();
-                String hash = "[";
+                StringBuilder hash = new StringBuilder("[");
                 if (list != null) {
                     for (File f : list) {
-                        hash += f.getName().hashCode() + ":" + f.length() + ", ";
+                        hash.append(f.getName().hashCode()).append(":").append(f.length()).append(", ");
                     }
                 }
-                hash += "]";
+                hash.append("]");
                 if (!mountHash.contains(hash)) {
                     String key = SD_CARD + "_" + map.size();
                     if (map.size() == 0) {
@@ -125,7 +125,7 @@ public class StorageUtils {
                     } else if (map.size() == 1) {
                         key = EXTERNAL_SD_CARD;
                     }
-                    mountHash.add(hash);
+                    mountHash.add(hash.toString());
                     map.put(key, root);
                 }
             }
