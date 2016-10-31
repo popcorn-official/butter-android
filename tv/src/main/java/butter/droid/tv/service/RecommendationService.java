@@ -77,9 +77,12 @@ public class RecommendationService extends IntentService {
         movieFilter.order = MediaProvider.Filters.Order.DESC;
         movieFilter.sort = MediaProvider.Filters.Sort.POPULARITY;
 
+        /*
+        Disabled, since no shows provider
         MediaProvider.Filters showsFilter = new MediaProvider.Filters();
         showsFilter.order = MediaProvider.Filters.Order.DESC;
         showsFilter.sort = MediaProvider.Filters.Sort.DATE;
+        */
 
         final AtomicBoolean mMoviesCallFinished = new AtomicBoolean(false);
         final AtomicBoolean mShowsCallFinished = new AtomicBoolean(false);
