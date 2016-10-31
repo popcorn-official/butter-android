@@ -27,7 +27,7 @@ public class MovieDetailsDescriptionPresenter extends AbstractDetailsDescription
 	@Override
 	protected void onBindDescription(ViewHolder viewHolder, Object item) {
 		Media itemWrapper = (Media) item;
-		if (itemWrapper != null && itemWrapper != null) {
+		if (itemWrapper != null) {
 			viewHolder.getTitle().setText(itemWrapper.title);
 			viewHolder.getSubtitle().setText(itemWrapper.genre);
 
