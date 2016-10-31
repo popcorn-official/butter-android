@@ -1073,8 +1073,8 @@ public class NetcastTVService extends DeviceService implements Launcher, MediaCo
                         String sourceIndex = (String) rawData.get("sourceIndex");
                         int physicalNum = (Integer) rawData.get("physicalNumber");
 
-                        if (Integer.valueOf(major) == majorNumber
-                                && Integer.valueOf(minor) == minorNumber) {
+                        if (Integer.parseInt(major) == majorNumber
+                                && Integer.parseInt(minor) == minorNumber) {
                             params.put("name", "HandleChannelChange");
                             params.put("major", major);
                             params.put("minor", minor);

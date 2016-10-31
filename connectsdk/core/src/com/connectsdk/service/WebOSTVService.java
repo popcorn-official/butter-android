@@ -3027,7 +3027,7 @@ public class WebOSTVService extends DeviceService implements Launcher, MediaCont
     private int parseMinorNumber(String channelNumber) {
         if (channelNumber != null) {
             String tokens[] = channelNumber.split("-");
-            return Integer.valueOf(tokens[tokens.length-1]);
+            return Integer.parseInt(tokens[tokens.length-1]);
         }
         else 
             return 0;
@@ -3036,7 +3036,7 @@ public class WebOSTVService extends DeviceService implements Launcher, MediaCont
     private int parseMajorNumber(String channelNumber) {
         if (channelNumber != null) {
             String tokens[] = channelNumber.split("-");
-            return Integer.valueOf(tokens[0]);
+            return Integer.parseInt(tokens[0]);
         }
         else 
             return 0;

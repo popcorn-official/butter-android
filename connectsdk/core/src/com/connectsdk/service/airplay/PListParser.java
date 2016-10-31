@@ -157,7 +157,7 @@ public class PListParser {
 
     private int readInteger(XmlPullParser parser) throws IOException, XmlPullParserException {
         parser.require(XmlPullParser.START_TAG, ns, "integer");
-        int value = Integer.valueOf(readText(parser));
+        int value = Integer.parseInt(readText(parser));
         parser.require(XmlPullParser.END_TAG, ns, "integer");
         return value;
     }
