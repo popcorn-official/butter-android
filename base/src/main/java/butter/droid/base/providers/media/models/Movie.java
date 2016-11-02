@@ -27,7 +27,6 @@ import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.subs.SubsProvider;
 
 public class Movie extends Media implements Parcelable {
-    public String type = "movie";
     public String trailer = "";
     public String runtime = "";
     public String synopsis = "No synopsis available";
