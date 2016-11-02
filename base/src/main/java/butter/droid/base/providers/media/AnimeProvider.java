@@ -300,16 +300,13 @@ public class AnimeProvider extends MediaProvider {
             try {
                 List<LinkedTreeMap<String, Object>> episodes = (List<LinkedTreeMap<String, Object>>) detailData.get("episodes");
 
-                Media media = null;
-                if (detailData.get("type").toString().equalsIgnoreCase("movie")) {
-                    Movie movie = new Movie(null, null);
-                    media = movie;
-                    /*
-                     * Chris Alderson:
-                     * As of version 2.2.0 of the Anime API there are no movies in the database.
-                     * And movies won't be added to the database, so there is no need to check for it.
-                     */
-                } else if (detailData.get("type").toString().equalsIgnoreCase("show")) {
+                Media media = new Movie(null, null);
+                /*
+                 * Chris Alderson:
+                 * As of version 2.2.0 of the Anime API there are no movies in the database.
+                 * And movies won't be added to the database, so there is no need to check for it.
+                 */
+                if (detailData.get("type").toString().equalsIgnoreCase("show")) {
                     Show show = new Show(sMediaProvider, null);
 
                     show.seasons = ((Double) detailData.get("num_seasons")).intValue();
