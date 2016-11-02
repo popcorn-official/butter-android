@@ -64,7 +64,9 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.google.code.gson:gson:2.5'
     compile 'com.jakewharton:butterknife:7.0.1'
-    compile 'com.uwetrottmann:trakt-java:4.5.2'
+    compile ('com.uwetrottmann:trakt-java:4.5.2'){
+        exclude group: 'org.json', module: 'json'
+    }
     compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
 
     compile 'com.koushikdutta.async:androidasync:2.1.6'
