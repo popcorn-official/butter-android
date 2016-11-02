@@ -322,9 +322,9 @@ public class ButterUpdater extends Observable {
         final int BUFFER_SIZE = 8192;
         byte[] buf = new byte[BUFFER_SIZE];
         int length;
+        BufferedInputStream bis = null;
         try {
-            FileInputStream fis = new FileInputStream(filename);
-            BufferedInputStream bis = new BufferedInputStream(fis);
+            bis = new BufferedInputStream(new FileInputStream(filename));
             MessageDigest md = MessageDigest.getInstance("SHA1");
             while ((length = bis.read(buf)) != -1) {
                 md.update(buf, 0, length);
@@ -338,6 +338,12 @@ public class ButterUpdater extends Observable {
             return sb.toString();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            if (bis != null) try {
+                bis.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         return "sha1bad";
