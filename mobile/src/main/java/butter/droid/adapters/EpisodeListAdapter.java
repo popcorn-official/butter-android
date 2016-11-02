@@ -20,7 +20,7 @@ public class EpisodeListAdapter extends BaseAdapter {
     private LayoutInflater mInflater;
     private int mColor = 0x0;
 
-    class ViewHolder {
+    static class ViewHolder {
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
         }

@@ -639,7 +639,7 @@ public class TVPlaybackOverlayFragment extends PlaybackOverlaySupportFragment
     /**
      * Detail presenter to allow showing movie or TV show details properly.
      */
-    class DescriptionPresenter extends AbstractDetailsDescriptionPresenter {
+    static class DescriptionPresenter extends AbstractDetailsDescriptionPresenter {
         @Override
         protected void onBindDescription(ViewHolder viewHolder, Object item) {
             if (!(item instanceof StreamInfo)) return;
@@ -654,7 +654,7 @@ public class TVPlaybackOverlayFragment extends PlaybackOverlaySupportFragment
         }
     }
 
-    class ScaleVideoAction extends Action {
+    static class ScaleVideoAction extends Action {
         public ScaleVideoAction(Context context) {
             super(R.id.control_scale);
             setIcon(ResourcesCompat.getDrawable(

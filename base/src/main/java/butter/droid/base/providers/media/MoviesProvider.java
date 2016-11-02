@@ -244,7 +244,7 @@ public class MoviesProvider extends MediaProvider {
         return returnList;
     }
 
-    private class MovieResponse {
+    static private class MovieResponse {
         LinkedTreeMap<String, Object> movieData;
         ArrayList<LinkedTreeMap<String, Object>> moviesList;
 

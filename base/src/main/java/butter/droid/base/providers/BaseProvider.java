@@ -115,7 +115,7 @@ public abstract class BaseProvider {
         return stringBuilder.toString();
     }
 
-    public class NameValuePair {
+    static public class NameValuePair {
         private String mName;
         private String mValue;
 

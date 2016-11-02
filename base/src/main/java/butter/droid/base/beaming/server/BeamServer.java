@@ -223,7 +223,7 @@ public class BeamServer {
         }
     }
 
-    class VideoFileReponse implements HttpServerRequestCallback {
+    static class VideoFileReponse implements HttpServerRequestCallback {
         FileType mFileType;
 
         public VideoFileReponse(FileType fileType) {
@@ -243,7 +243,7 @@ public class BeamServer {
         }
     }
 
-    class SubtitleFileResponse implements HttpServerRequestCallback {
+    static class SubtitleFileResponse implements HttpServerRequestCallback {
         FileType mFileType;
 
         public SubtitleFileResponse(FileType fileType) {

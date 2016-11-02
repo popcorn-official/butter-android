@@ -111,7 +111,7 @@ public class SubtitleDownloader {
         listener.onSubtitleDownloadCompleted(false, null);
     }
 
-    private class SubtitleParseTask extends AsyncTask<File, TimedTextObject, TimedTextObject> {
+    static private class SubtitleParseTask extends AsyncTask<File, TimedTextObject, TimedTextObject> {
         String subtitleLanguage;
         WeakReference<ISubtitleDownloaderListener> listenerReference;
 

@@ -276,7 +276,7 @@ public class TVProvider extends MediaProvider {
         return returnList;
     }
 
-    private class TVReponse {
+    static private class TVReponse {
         LinkedTreeMap<String, Object> showData;
         ArrayList<LinkedTreeMap<String, Object>> showsList;
 

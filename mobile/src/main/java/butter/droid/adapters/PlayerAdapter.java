@@ -36,7 +36,7 @@ public class PlayerAdapter extends BaseAdapter {
     private ArrayList<LinkedTreeMap<String, String>> mData;
     private LayoutInflater mInflater;
 
-    class ViewHolder {
+    static class ViewHolder {
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
         }

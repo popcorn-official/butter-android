@@ -32,7 +32,7 @@ public class DialogStringArrayAdapter extends BaseAdapter {
     private String[] mData;
     private LayoutInflater mInflater;
 
-    class ViewHolder {
+    static class ViewHolder {
         public ViewHolder(View v) {
             ButterKnife.bind(this, v);
         }

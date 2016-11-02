@@ -67,7 +67,7 @@ public class FileArrayAdapter extends ArrayAdapter<Option> {
         return convertView;
     }
 
-    class ViewHolder {
+    static class ViewHolder {
         @Bind(android.R.id.text1)
         TextView text1;
         @Bind(android.R.id.text2)

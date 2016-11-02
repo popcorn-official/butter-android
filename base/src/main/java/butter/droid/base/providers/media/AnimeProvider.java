@@ -285,7 +285,7 @@ public class AnimeProvider extends MediaProvider {
         return returnList;
     }
 
-    private class AnimeResponse {
+    static private class AnimeResponse {
         LinkedTreeMap<String, Object> detailData;
         ArrayList<LinkedTreeMap<String, Object>> showsList;
 

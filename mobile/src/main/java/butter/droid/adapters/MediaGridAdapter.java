@@ -246,7 +246,7 @@ public class MediaGridAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
 
     }
 
-    class OverviewItem {
+    static class OverviewItem {
         Media media;
         boolean isLoadingItem = false;
 

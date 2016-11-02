@@ -53,7 +53,7 @@ public class BeamDeviceAdapter extends BaseAdapter {
     private Map<String, ConnectableDevice> mDevices = new HashMap<>();
     private ArrayList<String> mKeys = new ArrayList<>();
 
-    class ViewHolder {
+    static class ViewHolder {
         @Bind(android.R.id.icon)
         ImageView icon;
         @Bind(android.R.id.text1)
