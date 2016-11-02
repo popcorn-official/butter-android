@@ -123,10 +123,10 @@ public class VPNManager {
 
     private void startEmbeddedProfile()
     {
+        BufferedReader br = null;
         try {
             InputStream conf = mActivity.getAssets().open("vpnht.conf");
-            InputStreamReader isr = new InputStreamReader(conf);
-            BufferedReader br = new BufferedReader(isr);
+            br = new BufferedReader(new InputStreamReader(conf));
             StringBuilder config = new StringBuilder();
             String line;
             while(true) {
@@ -140,6 +140,12 @@ public class VPNManager {
             mService.startVPN("Popcorn Time", config.toString());
         } catch (IOException | RemoteException e) {
             e.printStackTrace();
+        }finally {
+            if (br != null) try {
+                br.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
