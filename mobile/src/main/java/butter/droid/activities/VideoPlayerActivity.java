@@ -119,8 +119,8 @@ public class VideoPlayerActivity extends ButterBaseActivity implements VideoPlay
                         return;
                     } finally {
                         try {
-                            is.close();
-                            os.close();
+                            if(is != null) is.close();
+                            if(os != null) os.close();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
