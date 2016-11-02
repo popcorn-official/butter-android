@@ -214,7 +214,7 @@ public class AutoResizeRobotoTextView extends RobotoTextView {
         if (!mEnableSizeCache)
             return binarySearch(start, end, sizeTester, availableSpace);
         final String text = getText().toString();
-        final int key = text == null ? 0 : text.length();
+        final int key = text.equalsIgnoreCase("") ? 0 : text.length();
         int size = mTextCachedSizes.get(key);
         if (size != 0)
             return size;
