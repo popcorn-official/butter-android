@@ -35,8 +35,6 @@ import butter.droid.tv.R;
 
 public class MoreCardView extends BaseCardView implements View.OnFocusChangeListener {
 
-    private Target mTarget;
-
     @Bind(R.id.main_image)
     ImageView imageView;
 
