@@ -39,8 +39,8 @@ import butter.droid.base.ButterApplication;
 
 public class RecommendationContentProvider extends ContentProvider {
 
-	public static String AUTHORITY = "pct.droid.tv.RecommendationContentProvider";
-	public static String CONTENT_URI = "content://" + AUTHORITY + "/";
+	public static final String AUTHORITY = "pct.droid.tv.RecommendationContentProvider";
+	public static final String CONTENT_URI = "content://" + AUTHORITY + "/";
 
 	@Override
 	public boolean onCreate() {

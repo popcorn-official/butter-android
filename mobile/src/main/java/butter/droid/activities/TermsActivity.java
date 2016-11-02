@@ -30,7 +30,7 @@ import butter.droid.utils.ToolbarUtils;
 
 public class TermsActivity extends ButterBaseActivity {
 
-    public static String TERMS_ACCEPTED = "terms_accepted";
+    public static final String TERMS_ACCEPTED = "terms_accepted";
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
