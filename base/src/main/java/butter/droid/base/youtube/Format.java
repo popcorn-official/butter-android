@@ -53,9 +53,14 @@ public class Format {
         return mId;
     }
 
+    @Override
+    public int hashCode() {
+        return mId;
+    }
+
     /* (non-Javadoc)
-     * @see java.lang.Object#equals(java.lang.Object)
-     */
+         * @see java.lang.Object#equals(java.lang.Object)
+         */
     @Override
     public boolean equals(Object object) {
         if (!(object instanceof Format)) {

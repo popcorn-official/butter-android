@@ -43,6 +43,27 @@ public class Option implements Comparable<Option> {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Option option = (Option) o;
+
+        if (name != null ? !name.equals(option.name) : option.name != null) return false;
+        if (data != null ? !data.equals(option.data) : option.data != null) return false;
+        return path != null ? path.equals(option.path) : option.path == null;
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = name != null ? name.hashCode() : 0;
+        result = 31 * result + (data != null ? data.hashCode() : 0);
+        result = 31 * result + (path != null ? path.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public int compareTo(Option o) {
         if (this.name != null)
             return this.name.toLowerCase(LocaleUtils.getCurrent()).compareTo(o.getName().toLowerCase(LocaleUtils.getCurrent()));
