@@ -29,7 +29,6 @@ public class Show extends Media implements Parcelable {
     public enum Status {CONTINUING, ENDED, CANCELED, NOT_AIRED_YET, UNKNOWN}
 
     public String type = "show";
-    public String imdbId = "";
     public String airDay = "";
     public String airTime = "";
     public Status status = Status.UNKNOWN;
