@@ -89,7 +89,7 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
     @Bind(R.id.player_info)
     TextView mPlayerInfo;
     @Bind(R.id.control_bar)
-    butter.droid.widget.SeekBarButter mControlBar;
+    butter.droid.widget.ButterSeekBar mControlBar;
     @Bind(R.id.play_button)
     ImageButton mPlayButton;
     @Bind(R.id.forward_button)

@@ -109,7 +109,7 @@
                     android:gravity="start"
                     tools:text="0:00" />
 
-                <butter.droid.widget.SeekBarButter
+                <butter.droid.widget.ButterSeekBar
                     android:id="@+id/control_bar"
                     android:layout_toRightOf="@id/current_time"
                     android:layout_toEndOf="@id/current_time"
