@@ -93,7 +93,7 @@ public class OptionSelector extends LinearLayout {
     }
 
     public void setData(String[] data) {
-        mData = data;
+        mData = data.clone();
     }
 
     public void setDefault(int defaultOption) {
