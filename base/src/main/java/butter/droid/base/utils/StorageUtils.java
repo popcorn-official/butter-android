@@ -118,7 +118,7 @@ public class StorageUtils {
                     }
                 }
                 hash.append("]");
-                if (!mountHash.contains(hash)) {
+                if (!mountHash.contains(hash.toString())) {
                     String key = SD_CARD + "_" + map.size();
                     if (map.size() == 0) {
                         key = SD_CARD;
