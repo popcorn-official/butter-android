@@ -97,7 +97,9 @@ public class SubtitleDownloader {
             task.execute(subtitleFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            listener.onSubtitleDownloadCompleted(false, null);
+            if (listener != null){
+                listener.onSubtitleDownloadCompleted(false, null);
+            }
         }
     }
 
@@ -106,9 +108,10 @@ public class SubtitleDownloader {
      */
     private void onSubtitleDownloadFailed() {
         subtitleLanguage = SubsProvider.SUBTITLE_LANGUAGE_NONE;
-        if (listenerReference.get() == null) return;
         ISubtitleDownloaderListener listener = listenerReference.get();
-        listener.onSubtitleDownloadCompleted(false, null);
+        if (listener != null){
+            listener.onSubtitleDownloadCompleted(false, null);
+        }
     }
 
     static private class SubtitleParseTask extends AsyncTask<File, TimedTextObject, TimedTextObject> {

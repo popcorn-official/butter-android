@@ -83,11 +83,13 @@ public class FileSelectorDialogFragment extends DialogFragment {
         List<Option> files = new ArrayList<>();
 
         try {
-            for (File file : dirs) {
-                if (file.isDirectory()) {
-                    dir.add(new Option(file.getName(), "Folder", file.getAbsolutePath()));
-                } else {
-                    files.add(new Option(file.getName(), "File Size: " + file.length(), file.getAbsolutePath()));
+            if (dirs != null){
+                for (File file : dirs) {
+                    if (file.isDirectory()) {
+                        dir.add(new Option(file.getName(), "Folder", file.getAbsolutePath()));
+                    } else {
+                        files.add(new Option(file.getName(), "File Size: " + file.length(), file.getAbsolutePath()));
+                    }
                 }
             }
         } catch (Exception e) {
