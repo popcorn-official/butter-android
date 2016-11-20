@@ -17,7 +17,6 @@ public class Images {
     /**
      * @return The poster
      */
-    @JsonProperty("poster")
     public String getPoster() {
         return poster;
     }
@@ -25,7 +24,6 @@ public class Images {
     /**
      * @param poster The poster
      */
-    @JsonProperty("poster")
     public void setPoster(String poster) {
         this.poster = poster;
     }
@@ -33,7 +31,6 @@ public class Images {
     /**
      * @return The fanart
      */
-    @JsonProperty("fanart")
     public String getFanart() {
         return fanart;
     }
@@ -41,7 +38,6 @@ public class Images {
     /**
      * @param fanart The fanart
      */
-    @JsonProperty("fanart")
     public void setFanart(String fanart) {
         this.fanart = fanart;
     }
@@ -49,7 +45,6 @@ public class Images {
     /**
      * @return The banner
      */
-    @JsonProperty("banner")
     public String getBanner() {
         return banner;
     }
@@ -57,7 +52,6 @@ public class Images {
     /**
      * @param banner The banner
      */
-    @JsonProperty("banner")
     public void setBanner(String banner) {
         this.banner = banner;
     }
