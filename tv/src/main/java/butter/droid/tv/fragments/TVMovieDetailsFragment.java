@@ -117,7 +117,7 @@ public class TVMovieDetailsFragment extends TVBaseDetailsFragment implements Med
                 String subtitleLanguage = PrefUtils.get(getActivity(), Prefs.SUBTITLE_DEFAULT, SubsProvider.SUBTITLE_LANGUAGE_NONE);
                 StreamInfo info = new StreamInfo(
                         getMovieItem(),
-                        torrent.url,
+                        torrent.getUrl(),
                         subtitleLanguage,
                         action.getLabel2().toString());
 

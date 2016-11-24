@@ -620,7 +620,7 @@ public class TVPlaybackOverlayFragment extends PlaybackOverlaySupportFragment
         StreamInfo info = new StreamInfo(
             episode,
             mShow,
-            torrent.url,
+            torrent.getUrl(),
             subtitleLanguage,
             torrentKey);
 
