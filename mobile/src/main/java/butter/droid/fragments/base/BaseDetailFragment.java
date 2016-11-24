@@ -1,6 +1,5 @@
 package butter.droid.fragments.base;
 
-import android.app.Activity;
 import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.view.View;
@@ -22,7 +21,7 @@ public abstract class BaseDetailFragment extends Fragment {
     }
 
     public interface FragmentListener {
-        public void playStream(StreamInfo streamInfo);
+        void playStream(StreamInfo streamInfo);
     }
 
 }

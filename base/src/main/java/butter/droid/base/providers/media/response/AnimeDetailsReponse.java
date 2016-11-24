@@ -26,14 +26,14 @@ public class AnimeDetailsReponse extends DetailsResponse<AnimeDetails> {
         ArrayList<Media> list = new ArrayList<>();
         try {
 
-            Media media = new Movie(null, null);
+            Media media = new Movie();
                 /*
                  * Chris Alderson:
                  * As of version 2.2.0 of the Anime API there are no movies in the database.
                  * And movies won't be added to the database, so there is no need to check for it.
                  */
             if (item.getType().equalsIgnoreCase("show")) {
-                Show show = new Show(mediaProvider, null);
+                Show show = new Show();
                 show.seasons = item.getNumSeasons();
                 show.runtime = item.getRuntime();
                 show.synopsis = item.getSynopsis();
@@ -51,7 +51,7 @@ public class AnimeDetailsReponse extends DetailsResponse<AnimeDetails> {
                 SparseArray<butter.droid.base.providers.media.models.Episode> episodeMap = new SparseArray<>();
                 for (Episode episode : item.getEpisodes()) {
                     try {
-                        butter.droid.base.providers.media.models.Episode episodeObject = new butter.droid.base.providers.media.models.Episode(mediaProvider, null, null);
+                        butter.droid.base.providers.media.models.Episode episodeObject = new butter.droid.base.providers.media.models.Episode(metaProvider);
 
                         if (episode.getTorrents() != null) {
                             for (Map.Entry<String, Quality> entry : episode.getTorrents().getQualities().entrySet()) {

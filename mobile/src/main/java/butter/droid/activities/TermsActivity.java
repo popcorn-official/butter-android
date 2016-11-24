@@ -22,6 +22,7 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.base.ButterBaseActivity;
 import butter.droid.base.utils.PrefUtils;
@@ -37,6 +38,10 @@ public class TermsActivity extends ButterBaseActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
         super.onCreate(savedInstanceState, R.layout.activity_terms);
         setSupportActionBar(toolbar);
 

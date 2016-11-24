@@ -27,6 +27,7 @@ import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Movie;
 import butter.droid.base.utils.VersionUtils;
 import butter.droid.tv.R;
+import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.base.TVBaseActivity;
 import butter.droid.tv.fragments.TVMovieDetailsFragment;
 import butter.droid.tv.fragments.TVShowDetailsFragment;
@@ -62,6 +63,10 @@ public class TVMediaDetailActivity extends TVBaseActivity implements TVMovieDeta
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        TVButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
         super.onCreate(savedInstanceState, R.layout.activity_media_details);
 
         mBackgroundUpdater.initialise(this, R.color.black);

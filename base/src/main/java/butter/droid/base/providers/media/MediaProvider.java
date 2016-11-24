@@ -18,11 +18,12 @@
 package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.support.annotation.DrawableRes;
+import android.support.annotation.Nullable;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
@@ -35,6 +36,7 @@ import butter.droid.base.R;
 import butter.droid.base.providers.BaseProvider;
 import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
+import butter.droid.base.providers.subs.SubsProvider;
 import timber.log.Timber;
 
 /**
@@ -42,36 +44,22 @@ import timber.log.Timber;
  * <p/>
  * Base class for all media providers. Any media providers has to extend this class and use the callback defined here.
  */
-public abstract class MediaProvider extends BaseProvider implements Parcelable {
+public abstract class MediaProvider extends BaseProvider {
 
     public static final String MEDIA_CALL_TAG = "media_http_call";
-    @SuppressWarnings("unused")
-    public static final Parcelable.Creator<MediaProvider> CREATOR = new Parcelable.Creator<MediaProvider>() {
-        @Override
-        public MediaProvider createFromParcel(Parcel in) {
-            String className = in.readString();
-            MediaProvider provider = null;
-            try {
-                Class<?> clazz = Class.forName(className);
-                provider = (MediaProvider) clazz.newInstance();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return provider;
-        }
 
-        @Override
-        public MediaProvider[] newArray(int size) {
-            return null;
-        }
-    };
+    @Nullable
+    private final SubsProvider subsProvider;
+
     private static final int DEFAULT_NAVIGATION_INDEX = 1;
     private String[] apiUrls = new String[0];
     private String itemsPath = "";
     private String itemDetailsPath = "";
     private Integer currentApi = 0;
 
-    public MediaProvider(String[] apiUrls, String itemsPath, String itemDetailsPath, Integer currentApi) {
+    public MediaProvider(OkHttpClient client, ObjectMapper mapper, @Nullable SubsProvider subsProvider, String[] apiUrls, String itemsPath, String itemDetailsPath, Integer currentApi) {
+        super(client, mapper);
+        this.subsProvider = subsProvider;
         this.apiUrls = apiUrls;
         this.itemsPath = itemsPath;
         this.itemDetailsPath = itemDetailsPath;
@@ -294,17 +282,14 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
 
     public abstract String getMediaCallTag();
 
-
-    @Override
-    public int describeContents() {
-        return 0;
+    public SubsProvider getSubsProvider() {
+        return subsProvider;
     }
 
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        String className = getClass().getCanonicalName();
-        dest.writeString(className);
+    public boolean hasSubsProvider() {
+        return subsProvider != null;
     }
+
 
     public interface Callback {
         void onSuccess(Filters filters, ArrayList<Media> items, boolean changed);
@@ -344,7 +329,7 @@ public abstract class MediaProvider extends BaseProvider implements Parcelable {
         private Filters.Order mDefOrder;
         private String mLabel;
 
-        NavInfo(int id, Filters.Sort sort, Filters.Order defOrder, String label, @DrawableRes int icon) {
+        NavInfo(int id, Filters.Sort sort, Filters.Order defOrder, String label, @Nullable @DrawableRes Integer icon) {
             mId = id;
             mSort = sort;
             mDefOrder = defOrder;

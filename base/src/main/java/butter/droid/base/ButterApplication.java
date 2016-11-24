@@ -31,16 +31,16 @@ import android.support.v4.app.NotificationCompat;
 import com.sjl.foreground.Foreground;
 import com.squareup.leakcanary.LeakCanary;
 import com.squareup.okhttp.OkHttpClient;
-import com.squareup.picasso.OkHttpDownloader;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
 
 import butter.droid.base.beaming.BeamManager;
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.manager.updater.ButterUpdateManager;
 import butter.droid.base.torrent.TorrentService;
-import butter.droid.base.updater.ButterUpdater;
 import butter.droid.base.utils.FileUtils;
 import butter.droid.base.utils.LocaleUtils;
 import butter.droid.base.utils.PrefUtils;
@@ -48,17 +48,49 @@ import butter.droid.base.utils.StorageUtils;
 import butter.droid.base.utils.VersionUtils;
 import timber.log.Timber;
 
-public class ButterApplication extends Application implements ButterUpdater.Listener {
+public class ButterApplication extends Application implements ButterUpdateManager.Listener {
 
     private static OkHttpClient sHttpClient;
     private static String sDefSystemLanguage;
-    private static Application sThis;
+    private static ButterApplication sThis;
     private static boolean debugable;
+
+    @Inject
+    Picasso picasso;
+    @Inject
+    ButterUpdateManager updateManager;
 
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);
         MultiDex.install(this);
+    }
+
+    public static ButterApplication getAppContext() {
+        return sThis;
+    }
+
+    public static String getSystemLanguage() {
+        return sDefSystemLanguage;
+    }
+
+    public static String getStreamDir() {
+        File path = new File(PrefUtils.get(getAppContext(), Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(getAppContext()).toString()));
+        File directory = new File(path, "/torrents/");
+        return directory.toString();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        sDefSystemLanguage = LocaleUtils.getCurrentAsString();
+    }
+
+    @Override
+    public void onTerminate() {
+        // Just, so that it exists. Cause it is not executed in production, the whole application is closed anyways on OS level.
+        BeamManager.getInstance(getAppContext()).onDestroy();
+        super.onTerminate();
     }
 
     @Override
@@ -81,7 +113,8 @@ public class ButterApplication extends Application implements ButterUpdater.List
             Timber.plant(new Timber.DebugTree());
         }
 
-        ButterUpdater.getInstance(this, this).checkUpdates(false);
+        updateManager.setListener(this);
+        updateManager.checkUpdates(false);
 
         if(VersionUtils.isUsingCorrectBuild()) {
             TorrentService.start(this);
@@ -102,55 +135,7 @@ public class ButterApplication extends Application implements ButterUpdater.List
         Timber.d("StorageLocations: " + StorageUtils.getAllStorageLocations());
         Timber.i("Chosen cache location: " + directory);
 
-        Picasso.setSingletonInstance(new Picasso.Builder(getAppContext()).build());
-        Picasso.with(getAppContext()).setIndicatorsEnabled(debugable || BuildConfig.DEBUG);
-        Picasso.with(getAppContext()).setLoggingEnabled(debugable || BuildConfig.DEBUG);
-    }
-
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        sDefSystemLanguage = LocaleUtils.getCurrentAsString();
-    }
-
-    @Override
-    public void onTerminate() {
-        // Just, so that it exists. Cause it is not executed in production, the whole application is closed anyways on OS level.
-        BeamManager.getInstance(getAppContext()).onDestroy();
-        super.onTerminate();
-    }
-
-    public static String getSystemLanguage() {
-        return sDefSystemLanguage;
-    }
-
-    public static OkHttpClient getHttpClient() {
-        if (sHttpClient == null) {
-            sHttpClient = new OkHttpClient();
-            sHttpClient.setConnectTimeout(30, TimeUnit.SECONDS);
-            sHttpClient.setReadTimeout(60, TimeUnit.SECONDS);
-            sHttpClient.setRetryOnConnectionFailure(true);
-
-            long cacheSize = 10 * 1024 * 1024;
-            File cacheLocation = new File(PrefUtils.get(ButterApplication.getAppContext(), Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(ButterApplication.getAppContext()).toString()));
-            if (!cacheLocation.mkdirs()){
-                Timber.w("Could not create directory: " + cacheLocation.getAbsolutePath());
-            }
-            com.squareup.okhttp.Cache cache = null;
-            try {
-                cache = new com.squareup.okhttp.Cache(cacheLocation, cacheSize);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            sHttpClient.setCache(cache);
-        }
-        return sHttpClient;
-    }
-
-    public static String getStreamDir() {
-        File path = new File(PrefUtils.get(getAppContext(), Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(getAppContext()).toString()));
-        File directory = new File(path, "/torrents/");
-        return directory.toString();
+        Picasso.setSingletonInstance(picasso);
     }
 
     @Override
@@ -166,16 +151,12 @@ public class ButterApplication extends Application implements ButterUpdater.List
                     .setDefaults(NotificationCompat.DEFAULT_ALL);
 
             Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
-            notificationIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdater.ANDROID_PACKAGE);
+            notificationIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE);
 
             notificationBuilder.setContentIntent(PendingIntent.getActivity(this, 0, notificationIntent, 0));
 
-            nm.notify(ButterUpdater.NOTIFICATION_ID, notificationBuilder.build());
+            nm.notify(ButterUpdateManager.NOTIFICATION_ID, notificationBuilder.build());
         }
-    }
-
-    public static Context getAppContext() {
-        return sThis;
     }
 
     public static boolean isDebugable() {

@@ -1,3 +1,4 @@
+
 /*
  * This file is part of Butter.
  *
@@ -21,11 +22,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import butter.droid.base.updater.ButterUpdater;
+import javax.inject.Inject;
+
+import butter.droid.base.manager.updater.ButterUpdateManager;
 import butter.droid.tv.R;
+import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.base.TVBaseActivity;
 
 public class TVMainActivity extends TVBaseActivity {
+
+    @Inject
+    ButterUpdateManager butterUpdateManager;
 
     public static Intent startActivity(Activity activity) {
         Intent intent = new Intent(activity, TVMainActivity.class);
@@ -35,6 +42,9 @@ public class TVMainActivity extends TVBaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        TVButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
         super.onCreate(savedInstanceState, R.layout.activity_main);
     }
 
@@ -42,11 +52,13 @@ public class TVMainActivity extends TVBaseActivity {
     protected void onResume() {
         super.onResume();
 
-        ButterUpdater.getInstance(this, new ButterUpdater.Listener() {
+        butterUpdateManager.setListener(new ButterUpdateManager.Listener() {
             @Override
             public void updateAvailable(String filePath) {
                 TVUpdateActivity.startActivity(TVMainActivity.this);
             }
-        }).checkUpdates(false);
+        });
+
+        butterUpdateManager.checkUpdates(false);
     }
 }

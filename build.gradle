@@ -18,11 +18,16 @@ buildscript {
 }
 
 ext {
-    appCompatVersion = "23.4.0"
-    buildToolsVersion = "24.0.3"
-    targetSdk = 24
-    compileSdk = 24
+    appCompatVersion = "25.0.0"
+    buildToolsVersion = "25.0.0"
+    targetSdk = 25
+    compileSdk = 25
     minSdk = 15
+    butterknifeVersion = "8.4.0"
+    okHttpVersion = "2.7.5"
+    picassoVersion = "2.5.2"
+    daggerVersion = "2.7"
+    javaxAnnotationVersion = "1.2"
 }
 
 allprojects {
@@ -54,9 +59,12 @@ allprojects {
                     renameOutputFiles(project, variant)
                 }
 
+                adbOptions {
+                    timeOutInMs 10 * 60 * 1000  // 10 minutes
+                }
+
                 dexOptions {
-                    jumboMode = true
-                    javaMaxHeapSize "2048M"
+                    javaMaxHeapSize "512M"
                 }
             }
         }

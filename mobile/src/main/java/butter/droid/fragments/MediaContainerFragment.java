@@ -8,9 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import javax.inject.Inject;
+
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.MainActivity;
 import butter.droid.adapters.MediaPagerAdapter;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.media.MediaProvider;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,19 +24,16 @@ import butterknife.ButterKnife;
  */
 public class MediaContainerFragment extends Fragment {
 
-    public static final String EXTRA_PROVIDER = "provider";
+    @Inject
+    ProviderManager providerManager;
 
     private Integer mSelection = 0;
 
     @BindView(R.id.pager)
     ViewPager mViewPager;
 
-    public static MediaContainerFragment newInstance(MediaProvider provider) {
-        MediaContainerFragment frag = new MediaContainerFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_PROVIDER, provider);
-        frag.setArguments(args);
-        return frag;
+    public static MediaContainerFragment newInstance() {
+        return new MediaContainerFragment();
     }
 
     @Override
@@ -45,7 +46,11 @@ public class MediaContainerFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.bind(this, view);
 
-        MediaProvider mProvider = getArguments().getParcelable(EXTRA_PROVIDER);
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
+
+        MediaProvider mProvider = providerManager.getCurrentMediaProvider();
         MediaPagerAdapter mAdapter = new MediaPagerAdapter(mProvider, getChildFragmentManager(), mProvider.getNavigation());
         mViewPager.setAdapter(mAdapter);
         mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {

@@ -1,7 +1,6 @@
 package butter.droid.fragments;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,11 +23,16 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.TrailerPlayerActivity;
 import butter.droid.activities.VideoPlayerActivity;
 import butter.droid.base.content.preferences.DefaultQuality;
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.manager.provider.ProviderManager;
+import butter.droid.base.manager.youtube.YouTubeManager;
 import butter.droid.base.providers.media.models.Movie;
 import butter.droid.base.providers.subs.SubsProvider;
 import butter.droid.base.torrent.Magnet;
@@ -41,7 +45,6 @@ import butter.droid.base.utils.SortUtils;
 import butter.droid.base.utils.StringUtils;
 import butter.droid.base.utils.ThreadUtils;
 import butter.droid.base.utils.VersionUtils;
-import butter.droid.base.youtube.YouTubeData;
 import butter.droid.fragments.base.BaseDetailFragment;
 import butter.droid.fragments.dialog.SynopsisDialogFragment;
 import butter.droid.widget.OptionSelector;
@@ -50,6 +53,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class MovieDetailFragment extends BaseDetailFragment {
+
+    @Inject
+    ProviderManager providerManager;
+    @Inject
+    YouTubeManager youTubeManager;
 
     private static Movie sMovie;
     private String mSelectedSubtitleLanguage, mSelectedQuality;
@@ -90,6 +98,9 @@ public class MovieDetailFragment extends BaseDetailFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
     }
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
@@ -165,8 +176,8 @@ public class MovieDetailFragment extends BaseDetailFragment {
             mSubtitles.setText(R.string.loading_subs);
             mSubtitles.setClickable(false);
 
-            if (sMovie.getSubsProvider() != null) {
-                sMovie.getSubsProvider().getList(sMovie, new SubsProvider.Callback() {
+            if (providerManager.hasCurrentSubsProvider()) {
+                providerManager.getCurrentSubsProvider().getList(sMovie, new SubsProvider.Callback() {
                     @Override
                     public void onSuccess(Map<String, String> subtitles) {
                         if (!mAttached) return;
@@ -320,7 +331,7 @@ public class MovieDetailFragment extends BaseDetailFragment {
 
     @OnClick(R.id.watch_trailer)
     public void openTrailer(View v) {
-        if (!YouTubeData.isYouTubeUrl(sMovie.trailer)) {
+        if (!youTubeManager.isYouTubeUrl(sMovie.trailer)) {
             VideoPlayerActivity.startActivity(mActivity, new StreamInfo(sMovie, null, null, null, null, sMovie.trailer));
         } else {
             TrailerPlayerActivity.startActivity(mActivity, sMovie.trailer, sMovie);

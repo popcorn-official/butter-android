@@ -23,9 +23,8 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-import butter.droid.base.providers.media.MediaProvider;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.meta.MetaProvider;
-import butter.droid.base.providers.subs.SubsProvider;
 
 public class Episode extends Media implements Parcelable {
     @SuppressWarnings("unused")
@@ -50,11 +49,15 @@ public class Episode extends Media implements Parcelable {
     private String tvdbId;
     private MetaProvider mMetaProvider;
 
-    public Episode(MediaProvider mediaProvider, SubsProvider subsProvider, MetaProvider metaProvider) {
-        super(mediaProvider, subsProvider);
+    public Episode(MetaProvider metaProvider) {
+        super();
         mMetaProvider = metaProvider;
     }
 
+    @Override
+    public int getProviderType() {
+        return ProviderManager.PROVIDER_TYPE_SHOW;
+    }
     private Episode(Parcel in) {
         super(in);
         aired = in.readInt();

@@ -17,7 +17,7 @@ public class TVResponse extends Response<Show> {
 
     public ArrayList<Media> formatListForPopcorn(ArrayList<Media> existingList, MediaProvider mediaProvider, SubsProvider subsProvider) {
         for (Show item : responseItems) {
-            butter.droid.base.providers.media.models.Show show = new butter.droid.base.providers.media.models.Show(mediaProvider, subsProvider);
+            butter.droid.base.providers.media.models.Show show = new butter.droid.base.providers.media.models.Show();
 
             show.title = item.getTitle();
             show.videoId = item.getImdbId();

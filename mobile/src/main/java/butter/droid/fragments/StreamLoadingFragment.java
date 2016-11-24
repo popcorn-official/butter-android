@@ -39,6 +39,7 @@ import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
 
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.BeamPlayerActivity;
 import butter.droid.activities.VideoPlayerActivity;
@@ -74,6 +75,15 @@ public class StreamLoadingFragment extends BaseStreamLoadingFragment {
     ImageView mBackgroundImageView;
     @BindView(R.id.startexternal_button)
     Button mStartExternalButton;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
+    }
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override

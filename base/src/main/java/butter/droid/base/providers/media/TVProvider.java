@@ -17,6 +17,11 @@
 
 package butter.droid.base.providers.media;
 
+import android.support.annotation.Nullable;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.OkHttpClient;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,16 +36,16 @@ import butter.droid.base.providers.media.response.TVResponse;
 import butter.droid.base.providers.media.response.models.shows.ShowDetails;
 import butter.droid.base.providers.meta.MetaProvider;
 import butter.droid.base.providers.meta.TraktProvider;
-import butter.droid.base.providers.subs.OpenSubsProvider;
 import butter.droid.base.providers.subs.SubsProvider;
 
 public class TVProvider extends MediaProvider {
 
-    private SubsProvider subsProvider = new OpenSubsProvider();
-    private MetaProvider metaProvider = new TraktProvider();
+    private MetaProvider metaProvider;
 
-    public TVProvider() {
-        super(BuildConfig.TV_URLS, "shows/", "show/", 0);
+
+    public TVProvider(OkHttpClient client, ObjectMapper mapper, @Nullable SubsProvider subsProvider) {
+        super(client, mapper, subsProvider, BuildConfig.TV_URLS, "shows/", "show/", 0);
+        metaProvider = new TraktProvider(client, mapper);
     }
 
     @Override
@@ -53,7 +58,7 @@ public class TVProvider extends MediaProvider {
         ArrayList<Media> formattedData = currentList;
         List<butter.droid.base.providers.media.response.models.shows.Show> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, butter.droid.base.providers.media.response.models.shows.Show.class));
         if (!list.isEmpty()) {
-            formattedData = new TVResponse(list).formatListForPopcorn(currentList, this, subsProvider);
+            formattedData = new TVResponse(list).formatListForPopcorn(currentList, this, getSubsProvider());
         }
         return formattedData;
     }
@@ -61,7 +66,7 @@ public class TVProvider extends MediaProvider {
     @Override
     public ArrayList<Media> getResponseDetailsFormattedList(String responseStr) throws IOException {
         ShowDetails detail = mapper.readValue(responseStr, ShowDetails.class);
-        return new TVDetailsReponse().formatDetailForPopcorn(detail, this, subsProvider, metaProvider);
+        return new TVDetailsReponse().formatDetailForPopcorn(detail, this, getSubsProvider(), metaProvider);
     }
 
     @Override

@@ -17,7 +17,11 @@
 
 package butter.droid.base.providers.media;
 
+import android.support.annotation.Nullable;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -30,12 +34,12 @@ import butter.droid.base.providers.media.models.Genre;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.response.MovieResponse;
 import butter.droid.base.providers.media.response.models.movies.Movie;
-import butter.droid.base.providers.subs.YSubsProvider;
+import butter.droid.base.providers.subs.SubsProvider;
 
 public class MoviesProvider extends MediaProvider {
 
-    public MoviesProvider() {
-        super(BuildConfig.MOVIE_URLS, "movies/", "", 0);
+    public MoviesProvider(OkHttpClient client, ObjectMapper mapper, @Nullable SubsProvider subsProvider) {
+        super(client, mapper, subsProvider, BuildConfig.MOVIE_URLS, "movies/", "", 0);
     }
 
     @Override
@@ -48,7 +52,7 @@ public class MoviesProvider extends MediaProvider {
         ArrayList<Media> formattedData = currentList;
         List<Movie> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, Movie.class));
         if (!list.isEmpty()) {
-            formattedData = new MovieResponse(list).formatListForPopcorn(currentList, this, new YSubsProvider());
+            formattedData = new MovieResponse(list).formatListForPopcorn(currentList, this, getSubsProvider());
         }
         return formattedData;
     }

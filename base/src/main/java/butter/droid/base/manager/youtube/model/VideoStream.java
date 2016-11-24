@@ -15,7 +15,7 @@
  * along with Butter. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package butter.droid.base.youtube;
+package butter.droid.base.manager.youtube.model;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,9 +23,9 @@ import java.util.Map;
 /**
  * Represents a video stream
  */
-class VideoStream {
+public class VideoStream {
 
-    private String mUrl;
+    protected String mUrl;
 
     /**
      * Construct a video stream from one of the strings obtained
@@ -35,11 +35,13 @@ class VideoStream {
      */
     public VideoStream(String streamStr) {
         String[] args = streamStr.split("&");
-        Map<String, String> argMap = new HashMap<>();
+        Map<String, String> argMap = new HashMap<String, String>();
         for (String arg : args) {
             String[] argsValues = arg.split("=");
-            if (argsValues.length >= 2) {
-                argMap.put(argsValues[0], argsValues[1]);
+            if (argsValues != null) {
+                if (argsValues.length >= 2) {
+                    argMap.put(argsValues[0], argsValues[1]);
+                }
             }
         }
         mUrl = argMap.get("url");

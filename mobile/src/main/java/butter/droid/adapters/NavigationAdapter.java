@@ -33,19 +33,23 @@ import java.util.List;
 
 import butter.droid.R;
 import butter.droid.fragments.NavigationDrawerFragment;
+import butter.droid.fragments.NavigationDrawerFragment.AbsNavDrawerItem;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
+    private static final int VIEW_TYPE_HEADER = 0;
+    private static final int VIEW_TYPE_ITEM = 1;
+
     private OnItemClickListener mItemClickListener;
-    private List<NavigationDrawerFragment.NavDrawerItem> mItems;
-    static final int HEADER = 0, ITEM = 1;
+    private List<NavigationDrawerFragment.AbsNavDrawerItem> mItems;
     final int mNormalColor, mCheckedColor, mCheckedBackgroundRes, mNormalBackgroundRes;
     private Callback mCallback;
 
-    public NavigationAdapter(@NonNull Context context, @NonNull Callback callback, List<NavigationDrawerFragment.NavDrawerItem> items) {
+    public NavigationAdapter(@NonNull Context context, @NonNull Callback callback,
+                             List<NavigationDrawerFragment.AbsNavDrawerItem> items) {
         mItems = items;
         mCallback = callback;
         mNormalColor = context.getResources().getColor(R.color.nav_drawer_deselected);
@@ -54,7 +58,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         mCheckedBackgroundRes = R.color.nav_drawer_selected_bg;
     }
 
-    public void setItems(List<NavigationDrawerFragment.NavDrawerItem> items) {
+    public void setItems(List<NavigationDrawerFragment.AbsNavDrawerItem> items) {
         mItems = items;
         notifyDataSetChanged();
     }
@@ -63,31 +67,32 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View v;
         switch (viewType) {
-            case HEADER:
+            case VIEW_TYPE_HEADER:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.nav_drawer_header, parent, false);
                 return new HeaderHolder(v);
-            case ITEM:
+            case VIEW_TYPE_ITEM:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.nav_drawer_list_item, parent, false);
                 return new ItemRowHolder(v);
+            default:
+                throw new IllegalStateException("Unknown view type");
         }
-        return null;
     }
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         int type = getItemViewType(position);
         switch (type) {
-            case HEADER:
-                onBindHeaderViewHolder((HeaderHolder) holder, position);
+            case VIEW_TYPE_HEADER:
+                onBindHeaderViewHolder((HeaderHolder) holder);
                 break;
-            case ITEM:
+            case VIEW_TYPE_ITEM:
                 onBindItemViewHolder((ItemRowHolder) holder, position);
                 break;
         }
 
     }
 
-    private void onBindHeaderViewHolder(HeaderHolder holder, int position) {
+    private void onBindHeaderViewHolder(HeaderHolder holder) {
         //do nothing for now
         holder.mBackgroundImageView.setBackgroundResource(R.color.primary_dark);
         holder.mProfileImageView.setVisibility(View.VISIBLE);
@@ -95,10 +100,10 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     }
 
     private void onBindItemViewHolder(ItemRowHolder viewHolder, int position) {
-        NavigationDrawerFragment.NavDrawerItem item = getItem(position);
-        item.setRowHolder(viewHolder);
 
-        if(item.isSwitch()) {
+        AbsNavDrawerItem item = getItem(position);
+
+        /*if(item.isSwitch()) {
             if(item.showProgress()) {
                 viewHolder.checkbox.setVisibility(View.INVISIBLE);
                 viewHolder.progressBar.setVisibility(View.VISIBLE);
@@ -110,7 +115,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         } else {
             viewHolder.checkbox.setVisibility(View.INVISIBLE);
             viewHolder.progressBar.setVisibility(View.INVISIBLE);
-        }
+        }*/
 
 
         viewHolder.title.setText(item.getTitle());
@@ -140,20 +145,19 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public int getItemViewType(int position) {
-        if (getItem(position).isHeader()) {
-            return HEADER;
+        if (getItem(position).getType() == AbsNavDrawerItem.TYPE_HEADER) {
+            return VIEW_TYPE_HEADER;
         }
-        return ITEM;
+        return VIEW_TYPE_ITEM;
     }
 
-
-    public interface OnItemClickListener {
-        public void onItemClick(View v, ItemRowHolder vh,  NavigationDrawerFragment.NavDrawerItem item, int position);
-    }
-
-    public NavigationDrawerFragment.NavDrawerItem getItem(int position) {
+    public NavigationDrawerFragment.AbsNavDrawerItem getItem(int position) {
         if (position < 0 || mItems.size() <= position) return null;
         return mItems.get(position);
+    }
+
+    public interface OnItemClickListener {
+        void onItemClick(View v, ItemRowHolder vh, NavigationDrawerFragment.AbsNavDrawerItem item, int position);
     }
 
     /**
@@ -186,7 +190,7 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         public void onClick(View view) {
             if (mItemClickListener != null) {
                 int position = getAdapterPosition();
-                NavigationDrawerFragment.NavDrawerItem item = getItem(position);
+                NavigationDrawerFragment.AbsNavDrawerItem item = getItem(position);
                 mItemClickListener.onItemClick(view, this, item, position);
             }
         }

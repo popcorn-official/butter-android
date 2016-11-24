@@ -68,14 +68,14 @@ public class MediaPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         if (mHasGenreTabs > 0 && position == 0) {
-            if (mGenreFragment != null)
-                return mGenreFragment;
-            mGenreFragment = MediaGenreSelectionFragment.newInstance(mProvider, mMediaGenreSelectionFragment);
+            if (mGenreFragment == null) {
+                mGenreFragment = MediaGenreSelectionFragment.newInstance(mMediaGenreSelectionFragment);
+            }
             return mGenreFragment;
         }
 
         position -= mHasGenreTabs;
-        return MediaListFragment.newInstance(MediaListFragment.Mode.NORMAL, mProvider, mTabs.get(position).getFilter(), mTabs.get(position).getOrder(), mGenre);
+        return MediaListFragment.newInstance(MediaListFragment.Mode.NORMAL, mTabs.get(position).getFilter(), mTabs.get(position).getOrder(), mGenre);
     }
 
     @Override

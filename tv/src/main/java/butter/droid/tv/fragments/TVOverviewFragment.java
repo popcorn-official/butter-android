@@ -45,18 +45,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butter.droid.base.providers.media.MoviesProvider;
-import butter.droid.base.providers.media.TVProvider;
-import hugo.weaving.DebugLog;
+import javax.inject.Inject;
+
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Movie;
-import butter.droid.base.providers.subs.SubsProvider;
-import butter.droid.base.providers.subs.YSubsProvider;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.utils.ThreadUtils;
 import butter.droid.tv.BuildConfig;
 import butter.droid.tv.R;
+import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.TVMediaDetailActivity;
 import butter.droid.tv.activities.TVMediaGridActivity;
 import butter.droid.tv.activities.TVPreferencesActivity;
@@ -65,11 +64,15 @@ import butter.droid.tv.activities.TVVideoPlayerActivity;
 import butter.droid.tv.presenters.MediaCardPresenter;
 import butter.droid.tv.presenters.MorePresenter;
 import butter.droid.tv.utils.BackgroundUpdater;
+import hugo.weaving.DebugLog;
 
 /*
  * Main class to show BrowseFragment with header and rows of videos
  */
 public class TVOverviewFragment extends BrowseFragment implements OnItemViewClickedListener, OnItemViewSelectedListener {
+
+    @Inject
+    ProviderManager providerManager;
 
     private Integer mSelectedRow = 0;
 
@@ -77,10 +80,17 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
     private ArrayObjectAdapter mShowAdapter;
     private ArrayObjectAdapter mMoviesAdapter;
 
-    private MediaProvider mMoviesProvider = new MoviesProvider();
-    private MediaProvider mShowsProvider = new TVProvider();
 
     private BackgroundUpdater mBackgroundUpdater;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        TVButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
+    }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
@@ -144,7 +154,8 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
         showsFilter.sort = MediaProvider.Filters.Sort.DATE;
         showsFilter.order = MediaProvider.Filters.Order.DESC;
 
-        mShowsProvider.getList(null, showsFilter, new MediaProvider.Callback() {
+        providerManager.getMediaProvider(ProviderManager.PROVIDER_TYPE_SHOW)
+                .getList(null, showsFilter, new MediaProvider.Callback() {
             @DebugLog
             @Override
             public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
@@ -173,7 +184,8 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
         movieFilters.sort = MediaProvider.Filters.Sort.POPULARITY;
         movieFilters.order = MediaProvider.Filters.Order.DESC;
 
-        mMoviesProvider.getList(null, movieFilters, new MediaProvider.Callback() {
+        providerManager.getMediaProvider(ProviderManager.PROVIDER_TYPE_MOVIE)
+                .getList(null, movieFilters, new MediaProvider.Callback() {
             @DebugLog
             @Override
             public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
@@ -233,7 +245,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
         ArrayObjectAdapter moreRowAdapter = new ArrayObjectAdapter(morePresenter);
 
         // add items
-        List<MediaProvider.NavInfo> navigation = mMoviesProvider.getNavigation();
+        List<MediaProvider.NavInfo> navigation = providerManager.getMediaProvider(ProviderManager.PROVIDER_TYPE_MOVIE).getNavigation();
         for (MediaProvider.NavInfo info : navigation) {
             moreRowAdapter.add(new MorePresenter.MoreItem(
                     info.getId(),
@@ -259,7 +271,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
         ArrayObjectAdapter moreRowAdapter = new ArrayObjectAdapter(morePresenter);
 
         // add items
-        List<MediaProvider.NavInfo> navigation = mShowsProvider.getNavigation();
+        List<MediaProvider.NavInfo> navigation = providerManager.getMediaProvider(ProviderManager.PROVIDER_TYPE_SHOW).getNavigation();
         for (MediaProvider.NavInfo info : navigation) {
             moreRowAdapter.add(new MorePresenter.MoreItem(
                     info.getId(),
@@ -314,7 +326,9 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
             case R.id.movie_filter_popular_now:
             case R.id.movie_filter_year:
             case R.id.movie_filter_top_rated:
-                TVMediaGridActivity.startActivity(getActivity(), moreItem.getNavInfo().getLabel(), TVMediaGridActivity.ProviderType.MOVIE, moreItem.getNavInfo().getFilter(), moreItem.getNavInfo().getOrder(), null);
+                providerManager.setCurrentProviderType(ProviderManager.PROVIDER_TYPE_MOVIE);
+                TVMediaGridActivity.startActivity(getActivity(), moreItem.getNavInfo().getLabel(),
+                        moreItem.getNavInfo().getFilter(), moreItem.getNavInfo().getOrder(), null);
                 break;
             case R.id.tvshow_filter_a_to_z:
             case R.id.tvshow_filter_trending:
@@ -322,7 +336,9 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
             case R.id.tvshow_filter_popular_now:
             case R.id.tvshow_filter_year:
             case R.id.tvshow_filter_top_rated:
-                TVMediaGridActivity.startActivity(getActivity(), moreItem.getNavInfo().getLabel(), TVMediaGridActivity.ProviderType.SHOW, moreItem.getNavInfo().getFilter(), moreItem.getNavInfo().getOrder(), null);
+                providerManager.setCurrentProviderType(ProviderManager.PROVIDER_TYPE_SHOW);
+                TVMediaGridActivity.startActivity(getActivity(), moreItem.getNavInfo().getLabel(),
+                        moreItem.getNavInfo().getFilter(), moreItem.getNavInfo().getOrder(), null);
                 break;
             case R.id.movie_filter_genres:
                 Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_LONG).show();
@@ -354,7 +370,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
                             .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                                    Movie media = new Movie();
 
                                     media.videoId = "dialogtestvideo";
                                     media.title = "User input test video";
@@ -365,13 +381,13 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
                     builder.show();
                 }
 
-                final Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                final Movie media = new Movie();
                 media.videoId = "bigbucksbunny";
                 media.title = file_types[index];
                 media.subtitles = new HashMap<>();
                 media.subtitles.put("en", "http://sv244.cf/bbb-subs.srt");
 
-                SubsProvider.download(getActivity(), media, "en", new Callback() {
+                providerManager.getCurrentSubsProvider().download(media, "en", new Callback() {
                     @Override
                     public void onFailure(Request request, IOException e) {
                         TVVideoPlayerActivity.startActivity(getActivity(), new StreamInfo(media, null, null, null, null, location));

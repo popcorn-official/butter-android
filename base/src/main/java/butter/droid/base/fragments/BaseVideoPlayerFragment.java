@@ -54,6 +54,8 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Locale;
 
+import javax.inject.Inject;
+
 import butter.droid.base.ButterApplication;
 import butter.droid.base.R;
 import butter.droid.base.beaming.BeamDeviceListener;
@@ -62,6 +64,7 @@ import butter.droid.base.content.preferences.Prefs;
 import butter.droid.base.fragments.dialog.FileSelectorDialogFragment;
 import butter.droid.base.fragments.dialog.NumberPickerDialogFragment;
 import butter.droid.base.fragments.dialog.StringArraySelectorDialogFragment;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.subs.SubsProvider;
 import butter.droid.base.subs.Caption;
@@ -83,6 +86,9 @@ public abstract class BaseVideoPlayerFragment
     MediaPlayer.EventListener,
     LibVLC.HardwareAccelerationError,
     SubtitleDownloader.ISubtitleDownloaderListener {
+
+    @Inject
+    ProviderManager providerManager;
 
     public static final String RESUME_POSITION = "resume_position";
     private static final int SUBTITLE_MINIMUM_SIZE = 10;
@@ -606,9 +612,8 @@ public abstract class BaseVideoPlayerFragment
         if (mCurrentSubsLang.equals(SubsProvider.SUBTITLE_LANGUAGE_NONE)) return;
 
         SubtitleDownloader subtitleDownloader = new SubtitleDownloader(
-                getActivity(),
-                mCallback.getInfo(),
-                mCurrentSubsLang);
+                providerManager.getCurrentSubsProvider(),
+                getActivity(), mCallback.getInfo(), mCurrentSubsLang);
         subtitleDownloader.setSubtitleDownloaderListener(this);
 
         try {

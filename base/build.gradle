@@ -38,6 +38,7 @@ android {
     packagingOptions {
         exclude 'META-INF/beans.xml'
         exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
     }
 
     lintOptions {
@@ -58,18 +59,16 @@ dependencies {
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
-    compile 'com.jakewharton.timber:timber:3.1.0'
-    compile 'com.squareup.okhttp:okhttp:2.6.0'
-    compile 'com.squareup.okhttp:okhttp-urlconnection:2.6.0'
-    compile 'com.squareup.picasso:picasso:2.5.2'
-    compile 'com.jakewharton:butterknife:8.4.0'
-    compile 'com.jakewharton:butterknife-compiler:8.4.0'
-    annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+    compile 'com.jakewharton.timber:timber:4.1.2'
+    compile "com.squareup.okhttp:okhttp:${rootProject.ext.okHttpVersion}"
+    compile "com.squareup.okhttp:okhttp-urlconnection:${rootProject.ext.okHttpVersion}"
+    compile "com.squareup.picasso:picasso:${rootProject.ext.picassoVersion}"
+    compile "com.jakewharton:butterknife:${rootProject.ext.butterknifeVersion}"
 
     compile ('com.uwetrottmann:trakt-java:4.5.2'){
         exclude group: 'org.json', module: 'json'
     }
-    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.0.0'
+    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
     compile 'com.koushikdutta.async:androidasync:2.1.9'
 
@@ -77,10 +76,19 @@ dependencies {
 
     compile 'de.timroes:aXMLRPC:1.8.1'
 
+    compile "com.google.dagger:dagger:${rootProject.ext.daggerVersion}"
+
     compile 'com.fasterxml.jackson.core:jackson-core:2.7.2'
     compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.2'
     compile 'com.fasterxml.jackson.core:jackson-databind:2.7.2'
 
+    annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.ext.daggerVersion}"
+    annotationProcessor "com.jakewharton:butterknife-compiler:${rootProject.ext.butterknifeVersion}"
+
+    provided "javax.annotation:javax.annotation-api:${rootProject.ext.javaxAnnotationVersion}"
+
     compile project(':vlc')
     compile project(':connectsdk')
+
+
 }

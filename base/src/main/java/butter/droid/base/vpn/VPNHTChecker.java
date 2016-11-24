@@ -20,41 +20,55 @@ package butter.droid.base.vpn;
 import android.content.Context;
 
 import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
 import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
-import butter.droid.base.ButterApplication;
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import butter.droid.base.utils.PackageUtils;
 import butter.droid.base.utils.PrefUtils;
 
+@Singleton
 public class VPNHTChecker {
+
+    @Inject
+    OkHttpClient client;
 
     private static final String VPN_AVAILABLE = "vpn_available";
     private static Request sCheckingRequest;
 
-    public static boolean isDownloadAvailable(final Context context) {
-        if(PackageUtils.isInstalled(context, VPNManager.PACKAGE_VPNHT) || PrefUtils.get(context, VPN_AVAILABLE, false)) {
+    private Context mContext;
+
+    public VPNHTChecker(final Context context) {
+        this.mContext = context;
+
+    }
+
+    public boolean isDownloadAvailable() {
+        if (PackageUtils.isInstalled(mContext, VPNManager.PACKAGE_VPNHT) || PrefUtils.get(mContext, VPN_AVAILABLE, false)) {
             return true;
         }
 
         if(sCheckingRequest == null) {
             sCheckingRequest = new Request.Builder().head().url("https://play.google.com/store/apps/details?id=ht.vpn.android").build();
-            ButterApplication.getHttpClient().newCall(sCheckingRequest).enqueue(new Callback() {
+            client.newCall(sCheckingRequest).enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
                     sCheckingRequest = null;
-                    PrefUtils.save(context, VPN_AVAILABLE, false);
+                    PrefUtils.save(mContext, VPN_AVAILABLE, false);
                 }
 
                 @Override
                 public void onResponse(Response response) throws IOException {
                     sCheckingRequest = null;
                     if (response.isSuccessful()) {
-                        PrefUtils.save(context, VPN_AVAILABLE, true);
+                        PrefUtils.save(mContext, VPN_AVAILABLE, true);
                     } else {
-                        PrefUtils.save(context, VPN_AVAILABLE, false);
+                        PrefUtils.save(mContext, VPN_AVAILABLE, false);
                     }
                 }
             });

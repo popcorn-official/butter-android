@@ -24,11 +24,16 @@ import android.os.Bundle;
 
 import com.github.sv244.torrentstream.Torrent;
 
-import butter.droid.base.updater.ButterUpdater;
+import javax.inject.Inject;
+
+import butter.droid.base.manager.updater.ButterUpdateManager;
 import butter.droid.base.utils.VersionUtils;
 import butter.droid.tv.activities.TVSearchActivity;
 
 public abstract class TVBaseActivity extends TVTorrentBaseActivity {
+
+	@Inject
+	ButterUpdateManager updateManager;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState, int layoutId) {
@@ -40,15 +45,16 @@ public abstract class TVBaseActivity extends TVTorrentBaseActivity {
 					.setCancelable(false)
 					.show();
 
-			ButterUpdater.getInstance(this, new ButterUpdater.Listener() {
+			updateManager.setListener(new ButterUpdateManager.Listener() {
 				@Override
 				public void updateAvailable(String updateFile) {
 					Intent installIntent = new Intent(Intent.ACTION_VIEW);
-					installIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdater.ANDROID_PACKAGE);
+					installIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE);
 					installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 					startActivity(installIntent);
 				}
-			}).checkUpdatesManually();
+			});
+			updateManager.checkUpdatesManually();
 		}
 	}
 
