@@ -20,6 +20,7 @@ package butter.droid.adapters;
 import android.content.Context;
 import android.graphics.PorterDuff;
 import android.support.annotation.NonNull;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,15 +46,15 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private OnItemClickListener mItemClickListener;
     private List<NavigationDrawerFragment.AbsNavDrawerItem> mItems;
-    final int mNormalColor, mCheckedColor, mCheckedBackgroundRes, mNormalBackgroundRes;
+    private final int mNormalColor, mCheckedColor, mCheckedBackgroundRes, mNormalBackgroundRes;
     private Callback mCallback;
 
     public NavigationAdapter(@NonNull Context context, @NonNull Callback callback,
                              List<NavigationDrawerFragment.AbsNavDrawerItem> items) {
         mItems = items;
         mCallback = callback;
-        mNormalColor = context.getResources().getColor(R.color.nav_drawer_deselected);
-        mCheckedColor = context.getResources().getColor(R.color.primary);
+        mNormalColor = ContextCompat.getColor(context, R.color.nav_drawer_deselected);
+        mCheckedColor = ContextCompat.getColor(context, R.color.primary);
         mNormalBackgroundRes = R.drawable.selectable_nav_background;
         mCheckedBackgroundRes = R.color.nav_drawer_selected_bg;
     }
