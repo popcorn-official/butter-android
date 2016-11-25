@@ -103,20 +103,24 @@ public class NavigationAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
         AbsNavDrawerItem item = getItem(position);
 
-        /*if(item.isSwitch()) {
-            if(item.showProgress()) {
-                viewHolder.checkbox.setVisibility(View.INVISIBLE);
-                viewHolder.progressBar.setVisibility(View.VISIBLE);
+        if (item instanceof AbsNavDrawerItem.VPNNavDrawerItem) {
+
+            AbsNavDrawerItem.VPNNavDrawerItem vpnNavDrawerItem = (AbsNavDrawerItem.VPNNavDrawerItem) item;
+
+            if (vpnNavDrawerItem.isSwitch()) {
+                if (vpnNavDrawerItem.showProgress()) {
+                    viewHolder.checkbox.setVisibility(View.INVISIBLE);
+                    viewHolder.progressBar.setVisibility(View.VISIBLE);
+                } else {
+                    viewHolder.checkbox.setVisibility(View.VISIBLE);
+                    viewHolder.progressBar.setVisibility(View.INVISIBLE);
+                }
+                viewHolder.checkbox.setChecked(vpnNavDrawerItem.getSwitchValue());
             } else {
-                viewHolder.checkbox.setVisibility(View.VISIBLE);
+                viewHolder.checkbox.setVisibility(View.INVISIBLE);
                 viewHolder.progressBar.setVisibility(View.INVISIBLE);
             }
-            viewHolder.checkbox.setChecked(item.getSwitchValue());
-        } else {
-            viewHolder.checkbox.setVisibility(View.INVISIBLE);
-            viewHolder.progressBar.setVisibility(View.INVISIBLE);
-        }*/
-
+        }
 
         viewHolder.title.setText(item.getTitle());
 
