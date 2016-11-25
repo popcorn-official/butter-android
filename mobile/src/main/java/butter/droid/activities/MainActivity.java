@@ -255,7 +255,7 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
             mTabs.setVisibility(View.VISIBLE);
 
             viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
-            mTabs.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+            mTabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
             if(mTabs.getTabCount() > 0) {
                 mTabs.getTabAt(0).select();
