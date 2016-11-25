@@ -3,7 +3,6 @@ package butter.droid.base.providers.media.response.models.movies;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.annotations.SerializedName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,7 +23,7 @@ public class Movie extends ResponseItem {
     private String title;
     @JsonProperty("year")
     private String year;
-    @SerializedName("synopsis")
+    @JsonProperty("synopsis")
     private String synopsis;
     @JsonProperty("runtime")
     private String runtime;

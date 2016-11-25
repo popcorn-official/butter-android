@@ -21,15 +21,17 @@ import butter.droid.base.utils.FileUtils;
 
 public class SubtitleDownloader {
 
+    private final SubsProvider subsProvider;
     private final Media media;
     private final WeakReference<Context> contextReference;
 
     private String subtitleLanguage;
     private WeakReference<ISubtitleDownloaderListener> listenerReference;
 
-    public SubtitleDownloader(@NonNull Context context, @NonNull StreamInfo streamInfo, @NonNull String language) {
+    public SubtitleDownloader(@NonNull SubsProvider subsProvider, @NonNull Context context, @NonNull StreamInfo streamInfo, @NonNull String language) {
         if (language.equals(SubsProvider.SUBTITLE_LANGUAGE_NONE)) throw new IllegalArgumentException("language must be specified");
 
+        this.subsProvider = subsProvider;
         contextReference = new WeakReference<>(context);
         subtitleLanguage = language;
 
@@ -40,8 +42,7 @@ public class SubtitleDownloader {
     public void downloadSubtitle() {
         if (listenerReference == null) throw new IllegalArgumentException("listener must not null. Call setSubtitleDownloaderListener() to sets one");
         if (contextReference.get() == null) return;
-        Context context = contextReference.get();
-        SubsProvider.download(context, media, subtitleLanguage, new Callback() {
+        subsProvider.download(media, subtitleLanguage, new Callback() {
             @Override
             public void onFailure(Request request, IOException exception) {
                 onSubtitleDownloadFailed();
@@ -97,9 +98,7 @@ public class SubtitleDownloader {
             task.execute(subtitleFile);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
-            if (listener != null){
-                listener.onSubtitleDownloadCompleted(false, null);
-            }
+            listener.onSubtitleDownloadCompleted(false, null);
         }
     }
 
@@ -108,13 +107,12 @@ public class SubtitleDownloader {
      */
     private void onSubtitleDownloadFailed() {
         subtitleLanguage = SubsProvider.SUBTITLE_LANGUAGE_NONE;
+        if (listenerReference.get() == null) return;
         ISubtitleDownloaderListener listener = listenerReference.get();
-        if (listener != null){
-            listener.onSubtitleDownloadCompleted(false, null);
-        }
+        listener.onSubtitleDownloadCompleted(false, null);
     }
 
-    static private class SubtitleParseTask extends AsyncTask<File, TimedTextObject, TimedTextObject> {
+    private class SubtitleParseTask extends AsyncTask<File, TimedTextObject, TimedTextObject> {
         String subtitleLanguage;
         WeakReference<ISubtitleDownloaderListener> listenerReference;
 
@@ -162,11 +160,12 @@ public class SubtitleDownloader {
         private TimedTextObject parseAsTimedTextObject(File file) throws IOException {
             FileInputStream fileInputStream = new FileInputStream(file);
             FormatSRT formatSRT = new FormatSRT();
-            return formatSRT.parseFile(
+            TimedTextObject result = formatSRT.parseFile(
                     file.toString(),
                     FileUtils.inputstreamToCharsetString(
                             fileInputStream,
                             subtitleLanguage).split("\n"));
+            return result;
         }
     }
 

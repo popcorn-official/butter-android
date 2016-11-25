@@ -17,7 +17,6 @@ public class Quality {
     /**
      * @return The provider
      */
-    @JsonProperty("provider")
     public String getProvider() {
         return provider;
     }
@@ -25,7 +24,6 @@ public class Quality {
     /**
      * @param provider The provider
      */
-    @JsonProperty("provider")
     public void setProvider(String provider) {
         this.provider = provider;
     }
@@ -65,7 +63,6 @@ public class Quality {
     /**
      * @return The url
      */
-    @JsonProperty("url")
     public String getUrl() {
         return url;
     }
@@ -73,7 +70,6 @@ public class Quality {
     /**
      * @param url The url
      */
-    @JsonProperty("url")
     public void setUrl(String url) {
         this.url = url;
     }

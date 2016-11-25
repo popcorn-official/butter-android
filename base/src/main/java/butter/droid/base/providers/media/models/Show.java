@@ -22,8 +22,7 @@ import android.os.Parcelable;
 
 import java.util.LinkedList;
 
-import butter.droid.base.providers.media.MediaProvider;
-import butter.droid.base.providers.subs.SubsProvider;
+import butter.droid.base.manager.provider.ProviderManager;
 
 public class Show extends Media implements Parcelable {
     @SuppressWarnings("unused")
@@ -50,8 +49,13 @@ public class Show extends Media implements Parcelable {
     public LinkedList<Episode> episodes = new LinkedList<>();
     private String certification = "n/a";
 
-    public Show(MediaProvider mediaProvider, SubsProvider subsProvider) {
-        super(mediaProvider, subsProvider);
+    public Show() {
+        super();
+    }
+
+    @Override
+    public int getProviderType() {
+        return ProviderManager.PROVIDER_TYPE_SHOW;
     }
 
     private Show(Parcel in) {

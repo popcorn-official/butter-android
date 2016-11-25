@@ -37,14 +37,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.squareup.okhttp.Call;
+import com.squareup.okhttp.OkHttpClient;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.MediaDetailActivity;
 import butter.droid.adapters.MediaGridAdapter;
 import butter.droid.base.ButterApplication;
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.utils.LocaleUtils;
@@ -73,7 +78,6 @@ import timber.log.Timber;
  */
 public class MediaListFragment extends Fragment implements LoadingDetailDialogFragment.Callback {
 
-    public static final String EXTRA_PROVIDER = "extra_provider";
     public static final String EXTRA_SORT = "extra_sort";
     public static final String EXTRA_ORDER = "extra_order";
     public static final String EXTRA_GENRE = "extra_genre";
@@ -81,6 +85,11 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
     public static final String DIALOG_LOADING_DETAIL = "DIALOG_LOADING_DETAIL";
 
     public static final int LOADING_DIALOG_FRAGMENT = 1;
+
+    @Inject
+    ProviderManager providerManager;
+    @Inject
+    OkHttpClient client;
 
     private Context mContext;
     private MediaGridAdapter mAdapter;
@@ -106,7 +115,6 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
 
     private int mTotalItemCount = 0, mLoadingTreshold = mColumns * 3, mPreviousTotal = 0;
 
-    private MediaProvider mProvider;
     private Call mCurrentCall;
     private int mPage = 1;
     private MediaProvider.Filters mFilters = new MediaProvider.Filters();
@@ -121,221 +129,17 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
     TextView mEmptyView;
     @BindView(R.id.progress_textview)
     TextView mProgressTextView;
-
-    public static MediaListFragment newInstance(Mode mode, MediaProvider provider, MediaProvider.Filters.Sort filter, MediaProvider.Filters.Order defOrder) {
-        return newInstance(mode, provider, filter, defOrder, null);
-    }
-
-    public static MediaListFragment newInstance(Mode mode, MediaProvider provider, MediaProvider.Filters.Sort filter, MediaProvider.Filters.Order defOrder, String genre) {
-        MediaListFragment frag = new MediaListFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_PROVIDER, provider);
-        args.putSerializable(EXTRA_MODE, mode);
-        args.putSerializable(EXTRA_SORT, filter);
-        args.putSerializable(EXTRA_ORDER, defOrder);
-        args.putString(EXTRA_GENRE, genre);
-        frag.setArguments(args);
-        return frag;
-    }
-
-    public void changeGenre(String genre) {
-        if (!(mFilters.genre == null ? "" : mFilters.genre).equals(genre == null ? "" : genre)) {
-            if(mCurrentCall != null)
-                ButterApplication.getHttpClient().getDispatcher().getExecutorService().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        mCurrentCall.cancel();
-                    }
-                });
-
-            mItems.clear();
-            mAdapter.clearItems();
-
-            setState(State.LOADING);
-            mGenre = mFilters.genre = genre;
-            mFilters.page = 1;
-            mCurrentCall = mProvider.getList(new MediaProvider.Filters(mFilters), mCallback);
-        }
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        mContext = getActivity();
-
-        mRootView = inflater.inflate(R.layout.fragment_media, container, false);
-        ButterKnife.bind(this, mRootView);
-
-        mColumns = getResources().getInteger(R.integer.overview_cols);
-        mLoadingTreshold = mColumns * 3;
-
-        mLayoutManager = new GridLayoutManager(mContext, mColumns);
-        mRecyclerView.setLayoutManager(mLayoutManager);
-
-        return mRootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        mRecyclerView.setHasFixedSize(true);
-        mRecyclerView.addOnScrollListener(mScrollListener);
-        //adapter should only ever be created once on fragment initialise.
-        mAdapter = new MediaGridAdapter(mContext, mItems, mColumns);
-        mAdapter.setOnItemClickListener(mOnItemClickListener);
-        mRecyclerView.setAdapter(mAdapter);
-    }
-
-    @Override
-    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
-        super.onViewStateRestored(savedInstanceState);
-        mAdapter.setOnItemClickListener(mOnItemClickListener);
-    }
-
-    @Override
-    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-        super.onActivityCreated(savedInstanceState);
-
-        //get the provider type and create a provider
-        mProvider = getArguments().getParcelable(EXTRA_PROVIDER);
-        MediaProvider.Filters.Sort sort = (MediaProvider.Filters.Sort) getArguments().getSerializable(EXTRA_SORT);
-        MediaProvider.Filters.Order defOrder = (MediaProvider.Filters.Order) getArguments().getSerializable(EXTRA_ORDER);
-        mFilters.sort = sort;
-        // if not changed use default order
-        mFilters.order = defOrder;
-        mFilters.genre = getArguments().getString(EXTRA_GENRE);
-
-        String language = PrefUtils.get(getActivity(), Prefs.LOCALE, ButterApplication.getSystemLanguage());
-        mFilters.langCode = LocaleUtils.toLocale(language).getLanguage();
-
-        Mode mode = (Mode) getArguments().getSerializable(EXTRA_MODE);
-        if (mode == Mode.SEARCH) mEmptyView.setText(getString(R.string.no_search_results));
-
-        //don't load initial data in search mode
-        if (mode != Mode.SEARCH && mAdapter.getItemCount() == 0) {
-            mCurrentCall = mProvider.getList(new MediaProvider.Filters(mFilters), mCallback);/* fetch new items */
-            setState(State.LOADING);
-        } else updateUI();
-    }
-
-    /**
-     * Responsible for updating the UI based on the state of this fragment
-     */
-    private void updateUI() {
-        if (!isAdded()) return;
-
-        ThreadUtils.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                //animate recyclerview to full alpha
-                //		if (mRecyclerView.getAlpha() != 1.0f)
-                //			mRecyclerView.animate().alpha(1.0f).setDuration(100).start();
-
-                //update loading message based on state
-                switch (mState) {
-                    case LOADING_DETAIL:
-                        mLoadingMessage = R.string.loading_details;
-                        break;
-                    case SEARCHING:
-                        mLoadingMessage = R.string.searching;
-                        break;
-                    default:
-                        int providerMessage = mProvider.getLoadingMessage();
-                        mLoadingMessage = providerMessage > 0 ? providerMessage : R.string.loading_data;
-                        break;
-                }
-
-                switch (mState) {
-                    case LOADING_DETAIL:
-                    case SEARCHING:
-                    case LOADING:
-                        if (mAdapter.isLoading()) mAdapter.removeLoading();
-                        //show the progress bar
-                        mRecyclerView.setVisibility(View.VISIBLE);
-                        mRecyclerView.animate().alpha(0.5f).setDuration(500).start();
-                        mEmptyView.setVisibility(View.GONE);
-                        mProgressOverlay.setVisibility(View.VISIBLE);
-                        break;
-                    case LOADED:
-                        if (mAdapter.isLoading()) mAdapter.removeLoading();
-                        mProgressOverlay.setVisibility(View.GONE);
-                        boolean hasItems = mItems.size() > 0;
-                        //show either the recyclerview or the empty view
-                        mRecyclerView.setVisibility(hasItems ? View.VISIBLE : View.INVISIBLE);
-                        mEmptyView.setVisibility(hasItems ? View.GONE : View.VISIBLE);
-                        break;
-                    case LOADING_PAGE:
-                        //add a loading view to the adapter
-                        if (!mAdapter.isLoading()) mAdapter.addLoading();
-                        mEmptyView.setVisibility(View.GONE);
-                        mRecyclerView.setVisibility(View.VISIBLE);
-                        break;
-                }
-                updateLoadingMessage();
-            }
-        });
-    }
-
-    private void updateLoadingMessage() {
-        mProgressTextView.setText(mLoadingMessage);
-    }
-
-    @DebugLog
-    private void setState(State state) {
-        if (mState == state) return;//do nothing
-        mState = state;
-        updateUI();
-    }
-
-    public void triggerSearch(String searchQuery) {
-        if (!isAdded()) return;
-        if (null == mAdapter) return;
-        if (!NetworkUtils.isNetworkConnected(getActivity())) {
-            Toast.makeText(getActivity(), R.string.network_message, Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if(mCurrentCall != null)
-            ButterApplication.getHttpClient().getDispatcher().getExecutorService().execute(new Runnable() {
-                @Override
-                public void run() {
-                    mCurrentCall.cancel();
-                }
-            });
-
-        mEndOfListReached = false;
-
-        mItems.clear();
-        mAdapter.clearItems();//clear out adapter
-
-        if (searchQuery.equals("")) {
-            setState(State.LOADED);
-            return; //don't do a search for empty queries
-        }
-
-        setState(State.SEARCHING);
-        mFilters.keywords = searchQuery;
-        mFilters.page = 1;
-        mPage = 1;
-        mCurrentCall = mProvider.getList(new MediaProvider.Filters(mFilters), mCallback);
-    }
-
     private MediaProvider.Callback mCallback = new MediaProvider.Callback() {
         @Override
         @DebugLog
         public void onSuccess(MediaProvider.Filters filters, final ArrayList<Media> items, boolean changed) {
             items.removeAll(mItems);
-            if(items.size() == 0) {
+            if (items.size() == 0) {
                 mEndOfListReached = true;
                 changed = false;
             }
 
-            if(!changed) {
+            if (!changed) {
                 setState(State.LOADED);
                 return;
             }
@@ -404,12 +208,211 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
                         }
                     });
                 } else {
-                    mCurrentCall = mProvider.getList(mItems, new MediaProvider.Filters(mFilters), this);
+                    mCurrentCall = providerManager.getCurrentMediaProvider().getList(mItems, new MediaProvider.Filters(mFilters), this);
                 }
                 mRetries++;
             }
         }
     };
+    private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
+        @Override
+        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+            int visibleItemCount = mLayoutManager.getChildCount();
+            mTotalItemCount = mLayoutManager.getItemCount() - (mAdapter.isLoading() ? 1 : 0);
+            int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
+
+            if (mState == State.LOADING_PAGE) {
+                if (mTotalItemCount > mPreviousTotal) {
+                    mPreviousTotal = mTotalItemCount;
+                    mPreviousTotal = mTotalItemCount = mLayoutManager.getItemCount();
+                    setState(State.LOADED);
+                }
+            }
+
+            if (!mEndOfListReached && mState != State.SEARCHING && mState != State.LOADING_PAGE && mState != State.LOADING && (mTotalItemCount - visibleItemCount) <= (firstVisibleItem +
+                    mLoadingTreshold)) {
+
+                mFilters.page = mPage;
+                mCurrentCall = providerManager.getCurrentMediaProvider().getList(mItems, new MediaProvider.Filters(mFilters), mCallback);
+
+                mPreviousTotal = mTotalItemCount = mLayoutManager.getItemCount();
+                setState(State.LOADING_PAGE);
+            }
+        }
+    };
+
+    public static MediaListFragment newInstance(Mode mode, MediaProvider.Filters.Sort filter, MediaProvider.Filters.Order defOrder) {
+        return newInstance(mode, filter, defOrder, null);
+    }
+
+    public static MediaListFragment newInstance(Mode mode, MediaProvider.Filters.Sort filter, MediaProvider.Filters.Order defOrder, String genre) {
+        MediaListFragment frag = new MediaListFragment();
+        Bundle args = new Bundle();
+        args.putSerializable(EXTRA_MODE, mode);
+        args.putSerializable(EXTRA_SORT, filter);
+        args.putSerializable(EXTRA_ORDER, defOrder);
+        args.putString(EXTRA_GENRE, genre);
+        frag.setArguments(args);
+        return frag;
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        mContext = getActivity();
+
+        mRootView = inflater.inflate(R.layout.fragment_media, container, false);
+        ButterKnife.bind(this, mRootView);
+
+        mColumns = getResources().getInteger(R.integer.overview_cols);
+        mLoadingTreshold = mColumns * 3;
+
+        mLayoutManager = new GridLayoutManager(mContext, mColumns);
+        mRecyclerView.setLayoutManager(mLayoutManager);
+
+        return mRootView;
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+
+        mRecyclerView.setHasFixedSize(true);
+        mRecyclerView.addOnScrollListener(mScrollListener);
+        //adapter should only ever be created once on fragment initialise.
+        mAdapter = new MediaGridAdapter(mContext, mItems, mColumns);
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
+    @Override
+    public void onViewStateRestored(@Nullable Bundle savedInstanceState) {
+        super.onViewStateRestored(savedInstanceState);
+        mAdapter.setOnItemClickListener(mOnItemClickListener);
+    }
+
+    public void changeGenre(String genre) {
+        if (!(mFilters.genre == null ? "" : mFilters.genre).equals(genre == null ? "" : genre)) {
+            if (mCurrentCall != null)
+                client.getDispatcher().getExecutorService().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mCurrentCall.cancel();
+                    }
+                });
+
+            mItems.clear();
+            mAdapter.clearItems();
+
+            mGenre = mFilters.genre = genre;
+            mFilters.page = 1;
+            mCurrentCall = providerManager.getCurrentMediaProvider()
+                    .getList(new MediaProvider.Filters(mFilters), mCallback);
+        }
+
+        setState(State.LOADING);
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
+    }
+
+    private void updateLoadingMessage() {
+        mProgressTextView.setText(mLoadingMessage);
+    }
+
+    @DebugLog
+    private void setState(State state) {
+        if (mState == state) return;//do nothing
+        mState = state;
+        updateUI();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        //get the provider type and create a provider
+        MediaProvider.Filters.Sort sort = (MediaProvider.Filters.Sort) getArguments().getSerializable(EXTRA_SORT);
+        MediaProvider.Filters.Order defOrder = (MediaProvider.Filters.Order) getArguments().getSerializable(EXTRA_ORDER);
+        mFilters.sort = sort;
+        // if not changed use default order
+        mFilters.order = defOrder;
+        mFilters.genre = getArguments().getString(EXTRA_GENRE);
+
+        String language = PrefUtils.get(getActivity(), Prefs.LOCALE, ButterApplication.getSystemLanguage());
+        mFilters.langCode = LocaleUtils.toLocale(language).getLanguage();
+
+        Mode mode = (Mode) getArguments().getSerializable(EXTRA_MODE);
+        if (mode == Mode.SEARCH) mEmptyView.setText(getString(R.string.no_search_results));
+
+        //don't load initial data in search mode
+        if (mode != Mode.SEARCH && mAdapter.getItemCount() == 0) {
+            mCurrentCall = providerManager.getCurrentMediaProvider().getList(new MediaProvider.Filters(mFilters), mCallback);/* fetch new items */
+            setState(State.LOADING);
+        } else updateUI();
+    }
+
+    /**
+     * Responsible for updating the UI based on the state of this fragment
+     */
+    private void updateUI() {
+        if (!isAdded()) return;
+
+        ThreadUtils.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                //animate recyclerview to full alpha
+                //		if (mRecyclerView.getAlpha() != 1.0f)
+                //			mRecyclerView.animate().alpha(1.0f).setDuration(100).start();
+
+                //update loading message based on state
+                switch (mState) {
+                    case LOADING_DETAIL:
+                        mLoadingMessage = R.string.loading_details;
+                        break;
+                    case SEARCHING:
+                        mLoadingMessage = R.string.searching;
+                        break;
+                    default:
+                        int providerMessage = providerManager.getCurrentMediaProvider().getLoadingMessage();
+                        mLoadingMessage = providerMessage > 0 ? providerMessage : R.string.loading_data;
+                        break;
+                }
+
+                switch (mState) {
+                    case LOADING_DETAIL:
+                    case SEARCHING:
+                    case LOADING:
+                        if (mAdapter.isLoading()) mAdapter.removeLoading();
+                        //show the progress bar
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        mRecyclerView.animate().alpha(0.5f).setDuration(500).start();
+                        mEmptyView.setVisibility(View.GONE);
+                        mProgressOverlay.setVisibility(View.VISIBLE);
+                        break;
+                    case LOADED:
+                        if (mAdapter.isLoading()) mAdapter.removeLoading();
+                        mProgressOverlay.setVisibility(View.GONE);
+                        boolean hasItems = mItems.size() > 0;
+                        //show either the recyclerview or the empty view
+                        mRecyclerView.setVisibility(hasItems ? View.VISIBLE : View.INVISIBLE);
+                        mEmptyView.setVisibility(hasItems ? View.GONE : View.VISIBLE);
+                        break;
+                    case LOADING_PAGE:
+                        //add a loading view to the adapter
+                        if (!mAdapter.isLoading()) mAdapter.addLoading();
+                        mEmptyView.setVisibility(View.GONE);
+                        mRecyclerView.setVisibility(View.VISIBLE);
+                        break;
+                }
+                updateLoadingMessage();
+            }
+        });
+    }
 
     private MediaGridAdapter.OnItemClickListener mOnItemClickListener = new MediaGridAdapter.OnItemClickListener() {
         @Override
@@ -455,33 +458,38 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
         loadingFragment.show(getFragmentManager(), DIALOG_LOADING_DETAIL);
     }
 
-
-    private RecyclerView.OnScrollListener mScrollListener = new RecyclerView.OnScrollListener() {
-        @Override
-        public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-            int visibleItemCount = mLayoutManager.getChildCount();
-            mTotalItemCount = mLayoutManager.getItemCount() - (mAdapter.isLoading() ? 1 : 0);
-            int firstVisibleItem = mLayoutManager.findFirstVisibleItemPosition();
-
-            if (mState == State.LOADING_PAGE) {
-                if (mTotalItemCount > mPreviousTotal) {
-                    mPreviousTotal = mTotalItemCount;
-                    mPreviousTotal = mTotalItemCount = mLayoutManager.getItemCount();
-                    setState(State.LOADED);
-                }
-            }
-
-            if (!mEndOfListReached && mState != State.SEARCHING && mState != State.LOADING_PAGE && mState != State.LOADING && (mTotalItemCount - visibleItemCount) <= (firstVisibleItem +
-                    mLoadingTreshold)) {
-
-                mFilters.page = mPage;
-                mCurrentCall = mProvider.getList(mItems, new MediaProvider.Filters(mFilters), mCallback);
-
-                mPreviousTotal = mTotalItemCount = mLayoutManager.getItemCount();
-                setState(State.LOADING_PAGE);
-            }
+    public void triggerSearch(String searchQuery) {
+        if (!isAdded()) return;
+        if (null == mAdapter) return;
+        if (!NetworkUtils.isNetworkConnected(getActivity())) {
+            Toast.makeText(getActivity(), R.string.network_message, Toast.LENGTH_SHORT).show();
+            return;
         }
-    };
+
+        if (mCurrentCall != null)
+            client.getDispatcher().getExecutorService().execute(new Runnable() {
+                @Override
+                public void run() {
+                    mCurrentCall.cancel();
+                }
+            });
+
+        mEndOfListReached = false;
+
+        mItems.clear();
+        mAdapter.clearItems();//clear out adapter
+
+        if (searchQuery.equals("")) {
+            setState(State.LOADED);
+            return; //don't do a search for empty queries
+        }
+
+        setState(State.SEARCHING);
+        mFilters.keywords = searchQuery;
+        mFilters.page = 1;
+        mPage = 1;
+        mCurrentCall = providerManager.getCurrentMediaProvider().getList(new MediaProvider.Filters(mFilters), mCallback);
+    }
 
 
     /**

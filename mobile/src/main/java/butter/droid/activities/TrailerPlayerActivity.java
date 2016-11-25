@@ -32,12 +32,15 @@ import android.view.MenuItem;
 
 import java.net.URLDecoder;
 
+import javax.inject.Inject;
+
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.base.ButterBaseActivity;
+import butter.droid.base.manager.youtube.YouTubeManager;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.torrent.TorrentService;
-import butter.droid.base.youtube.YouTubeData;
 import butter.droid.fragments.VideoPlayerFragment;
 
 public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPlayerFragment.Callback {
@@ -45,6 +48,9 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
     private StreamInfo mStreamInfo;
     private Media mMedia;
     private VideoPlayerFragment mVideoPlayerFragment;
+
+    @Inject
+    YouTubeManager youTubeManager;
 
     public final static String LOCATION = "stream_url";
     public final static String DATA = "video_data";
@@ -59,6 +65,10 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
         super.onCreate(savedInstanceState, R.layout.activity_videoplayer);
 
         mMedia = getIntent().getParcelableExtra(DATA);
@@ -70,8 +80,8 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
         mVideoPlayerFragment = (VideoPlayerFragment) getSupportFragmentManager().findFragmentById(R.id.video_fragment);
         mVideoPlayerFragment.enableSubsButton(false);
 
-        QueryYouTubeTask youTubeTask = new QueryYouTubeTask();
-        youTubeTask.execute(YouTubeData.getYouTubeVideoId(youTubeUrl));
+        QueryYouTubeTask youTubeTask = new QueryYouTubeTask(youTubeManager);
+        youTubeTask.execute(youTubeManager.getYouTubeVideoId(youTubeUrl));
     }
 
     @Override
@@ -86,7 +96,7 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
 
     @Override
     public Long getResumePosition() {
-        return 0l;
+        return 0L;
     }
 
     @Override
@@ -101,7 +111,13 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
 
     private class QueryYouTubeTask extends AsyncTask<String, Void, Uri> {
 
+        private final YouTubeManager youTubeManager;
+
         private boolean mShowedError = false;
+
+        private QueryYouTubeTask(YouTubeManager youTubeManager) {
+            this.youTubeManager = youTubeManager;
+        }
 
         @Override
         protected Uri doInBackground(String... params) {
@@ -137,7 +153,7 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
 
                 ////////////////////////////////////
                 // calculate the actual URL of the video, encoded with proper YouTube token
-                uriStr = YouTubeData.calculateYouTubeUrl(quality, true, videoId);
+                uriStr = youTubeManager.calculateYouTubeUrl(quality, true, videoId);
 
                 if (isCancelled())
                     return null;

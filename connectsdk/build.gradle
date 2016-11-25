@@ -103,7 +103,7 @@ dependencies {
     compile "com.android.support:support-v4:${rootProject.ext.appCompatVersion}"
     compile "com.android.support:appcompat-v7:${rootProject.ext.appCompatVersion}"
     compile "com.android.support:mediarouter-v7:${rootProject.ext.appCompatVersion}"
-    compile 'com.google.android.gms:play-services-cast:8.4.0'
+    compile 'com.google.android.gms:play-services-cast:9.8.0'
 
     testCompile 'org.apache.maven:maven-ant-tasks:2.1.3'
     testCompile 'junit:junit:4.12'

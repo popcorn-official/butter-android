@@ -26,9 +26,9 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -48,41 +48,41 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 
-import butter.droid.base.providers.media.MoviesProvider;
-import android.support.annotation.Nullable;
+import javax.inject.Inject;
+
 import butter.droid.BuildConfig;
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.base.ButterBaseActivity;
-import butter.droid.base.Constants;
 import butter.droid.base.beaming.BeamManager;
 import butter.droid.base.beaming.BeamPlayerNotificationService;
 import butter.droid.base.beaming.server.BeamServerService;
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.manager.provider.ProviderManager;
+import butter.droid.base.manager.youtube.YouTubeManager;
 import butter.droid.base.providers.media.models.Movie;
-import butter.droid.base.providers.subs.SubsProvider;
-import butter.droid.base.providers.subs.YSubsProvider;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.utils.PrefUtils;
-import butter.droid.base.utils.SignUtils;
-import butter.droid.base.youtube.YouTubeData;
-import butter.droid.fragments.dialog.MessageDialogFragment;
+import butter.droid.base.utils.ProviderUtils;
+import butter.droid.base.vpn.VPNManager;
 import butter.droid.fragments.MediaContainerFragment;
 import butter.droid.fragments.NavigationDrawerFragment;
 import butter.droid.utils.ToolbarUtils;
 import butter.droid.widget.ScrimInsetsFrameLayout;
-import butter.droid.base.vpn.VPNManager;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import timber.log.Timber;
 
 /**
  * The main activity that houses the navigation drawer, and controls navigation between fragments
  */
-public class MainActivity extends ButterBaseActivity implements NavigationDrawerFragment.Callbacks {
+public class MainActivity extends ButterBaseActivity implements ProviderManager.OnProviderChangeListener {
 
     private static final int PERMISSIONS_REQUEST = 123;
-    private Fragment mCurrentFragment;
+
+    @Inject
+    ProviderManager providerManager;
+    @Inject
+    YouTubeManager youTubeManager;
 
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
@@ -91,17 +91,22 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
     @Nullable
     @BindView(R.id.tabs)
     TabLayout mTabs;
-    NavigationDrawerFragment mNavigationDrawerFragment;
+
+    private NavigationDrawerFragment mNavigationDrawerFragment;
 
     @SuppressLint("MissingSuperCall")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
+
         super.onCreate(savedInstanceState, R.layout.activity_main);
 
         if (!PrefUtils.contains(this, TermsActivity.TERMS_ACCEPTED)) {
             startActivity(new Intent(this, TermsActivity.class));
         }
-
 
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSIONS_REQUEST);
@@ -131,16 +136,20 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
 
         // Set up the drawer.
         DrawerLayout drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawerLayout.setStatusBarBackgroundColor(getResources().getColor(R.color.primary_dark));
+        drawerLayout.setStatusBarBackgroundColor(ContextCompat.getColor(MobileButterApplication.getAppContext(), R.color.primary_dark));
 
         mNavigationDrawerFragment =
                 (NavigationDrawerFragment) getSupportFragmentManager().findFragmentById(R.id.navigation_drawer_fragment);
 
         mNavigationDrawerFragment.initialise(mNavigationDrawerContainer, drawerLayout);
 
-        if (null != savedInstanceState) return;
-        int providerId = PrefUtils.get(this, Prefs.DEFAULT_VIEW, 0);
-        mNavigationDrawerFragment.selectItem(providerId);
+        if (savedInstanceState != null) {
+            return;
+        }
+
+        @ProviderManager.ProviderType int provider = PrefUtils.get(this, Prefs.DEFAULT_PROVIDER, ProviderManager.PROVIDER_TYPE_MOVIE);
+        mNavigationDrawerFragment.selectItem(provider);
+        showProvider(provider);
     }
 
     @Override
@@ -151,18 +160,25 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
     @Override
     protected void onResume() {
         super.onResume();
-        String title = mNavigationDrawerFragment.getCurrentItem().getTitle();
-        setTitle(null != title ? title : getString(R.string.app_name));
+
+        setTitle(ProviderUtils.getProviderTitle(providerManager.getCurrentMediaProviderType()));
         supportInvalidateOptionsMenu();
-        if (mNavigationDrawerFragment.getCurrentItem() != null && mNavigationDrawerFragment.getCurrentItem().getTitle() != null) {
-            setTitle(mNavigationDrawerFragment.getCurrentItem().getTitle());
-        }
 
         mNavigationDrawerFragment.initItems();
 
-        if(BeamServerService.getServer() != null)
+        if (BeamServerService.getServer() != null) {
             BeamServerService.getServer().stop();
+        }
+
         BeamPlayerNotificationService.cancelNotification();
+
+        providerManager.addProviderListener(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        providerManager.removeProviderListener(this);
     }
 
     @Override
@@ -172,10 +188,10 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
     }
 
     @Override
-        public void onVPNStatusUpdate(VPNManager.State state, String message) {
+    public void onVPNStatusUpdate(VPNManager.State state, String message) {
         super.onVPNStatusUpdate(state, message);
         Timber.d("New state: %s", state);
-        NavigationDrawerFragment.NavDrawerItem vpnItem = mNavigationDrawerFragment.getVPNItem();
+        NavigationDrawerFragment.AbsNavDrawerItem.VPNNavDrawerItem vpnItem = mNavigationDrawerFragment.getVPNItem();
         if(vpnItem != null) {
             if (state.equals(VPNManager.State.DISCONNECTED)) {
                 vpnItem.setSwitchValue(false);
@@ -212,7 +228,7 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
                 break;
             case R.id.action_search:
                 //start the search activity
-                SearchActivity.startActivity(this, mNavigationDrawerFragment.getCurrentItem().getMediaProvider());
+                SearchActivity.startActivity(this);
                 break;
         }
         return super.onOptionsItemSelected(item);
@@ -220,26 +236,8 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
 
 
     @Override
-    public void onNavigationDrawerItemSelected(NavigationDrawerFragment.NavDrawerItem item, String title) {
-        setTitle(null != title ? title : getString(R.string.app_name));
-        // update the main content by replacing fragments
-        FragmentManager fragmentManager = getSupportFragmentManager();
-
-        String tag = title + "_tag";
-        // Fragment fragment = mFragmentCache.get(position);
-        mCurrentFragment = fragmentManager.findFragmentByTag(tag);
-        if (null == mCurrentFragment && item.hasProvider()) {
-            mCurrentFragment = MediaContainerFragment.newInstance(item.getMediaProvider());
-        }
-
-        if(mTabs.getTabCount() > 0)
-            mTabs.getTabAt(0).select();
-
-        fragmentManager.beginTransaction().replace(R.id.container, mCurrentFragment, tag).commit();
-
-        if(mCurrentFragment instanceof MediaContainerFragment) {
-            updateTabs((MediaContainerFragment) mCurrentFragment, ((MediaContainerFragment) mCurrentFragment).getCurrentSelection());
-        }
+    public void onProviderChanged(@ProviderManager.ProviderType int provider) {
+        showProvider(provider);
     }
 
     public void updateTabs(MediaContainerFragment containerFragment, final int position) {
@@ -257,7 +255,7 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
             mTabs.setVisibility(View.VISIBLE);
 
             viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabs));
-            mTabs.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+            mTabs.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
 
             if(mTabs.getTabCount() > 0) {
                 mTabs.getTabAt(0).select();
@@ -273,6 +271,21 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
         } else {
             mTabs.setVisibility(View.GONE);
         }
+    }
+
+    private void showProvider(@ProviderManager.ProviderType int provider) {
+        setTitle(ProviderUtils.getProviderTitle(provider));
+        // update the main content by replacing fragments
+        FragmentManager fragmentManager = getSupportFragmentManager();
+
+        MediaContainerFragment mediaFragment = MediaContainerFragment.newInstance();
+
+        if (mTabs.getTabCount() > 0) {
+            mTabs.getTabAt(0).select();
+        }
+
+        fragmentManager.beginTransaction().replace(R.id.container, mediaFragment).commit();
+        updateTabs(mediaFragment, mediaFragment.getCurrentSelection());
     }
 
     private void openPlayerTestDialog() {
@@ -294,13 +307,14 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
                 final String location = files[index];
                 if (location.equals("dialog")) {
                     final EditText dialogInput = new EditText(MainActivity.this);
-                    dialogInput.setText("http://download.wavetlan.com/SVV/Media/HTTP/MP4/ConvertedFiles/QuickTime/QuickTime_test13_5m19s_AVC_VBR_324kbps_640x480_25fps_AAC-LCv4_CBR_93.4kbps_Stereo_44100Hz.mp4");
+                    dialogInput.setText(
+                            "http://download.wavetlan.com/SVV/Media/HTTP/MP4/ConvertedFiles/QuickTime/QuickTime_test13_5m19s_AVC_VBR_324kbps_640x480_25fps_AAC-LCv4_CBR_93.4kbps_Stereo_44100Hz.mp4");
                     AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this)
                             .setView(dialogInput)
                             .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                                    Movie media = new Movie();
 
                                     media.videoId = "dialogtestvideo";
                                     media.title = "User input test video";
@@ -309,36 +323,40 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
 
                                     BeamManager bm = BeamManager.getInstance(MainActivity.this);
                                     if (bm.isConnected()) {
-                                        BeamPlayerActivity.startActivity(MainActivity.this, new StreamInfo(media, null, null, null, null, location), 0);
+                                        BeamPlayerActivity.startActivity(MainActivity.this,
+                                                new StreamInfo(media, null, null, null, null, location), 0);
                                     } else {
-                                        VideoPlayerActivity.startActivity(MainActivity.this, new StreamInfo(media, null, null, null, null, location), 0);
+                                        VideoPlayerActivity.startActivity(MainActivity.this,
+                                                new StreamInfo(media, null, null, null, null, location), 0);
                                     }
                                 }
                             });
                     builder.show();
-                } else if (YouTubeData.isYouTubeUrl(location)) {
+                } else if (youTubeManager.isYouTubeUrl(location)) {
                     Intent i = new Intent(MainActivity.this, TrailerPlayerActivity.class);
-                    Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                    Movie media = new Movie();
                     media.title = file_types[index];
                     i.putExtra(TrailerPlayerActivity.DATA, media);
                     i.putExtra(TrailerPlayerActivity.LOCATION, location);
                     startActivity(i);
                 } else {
-                    final Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                    final Movie media = new Movie();
                     media.videoId = "bigbucksbunny";
                     media.title = file_types[index];
                     media.subtitles = new HashMap<>();
                     media.subtitles.put("en", "http://sv244.cf/bbb-subs.srt");
 
-                    SubsProvider.download(MainActivity.this, media, "en", new Callback() {
+                    providerManager.getCurrentSubsProvider().download(media, "en", new Callback() {
                         @Override
                         public void onFailure(Request request, IOException e) {
                             BeamManager bm = BeamManager.getInstance(MainActivity.this);
 
                             if (bm.isConnected()) {
-                                BeamPlayerActivity.startActivity(MainActivity.this, new StreamInfo(media, null, null, null, null, location), 0);
+                                BeamPlayerActivity.startActivity(MainActivity.this,
+                                        new StreamInfo(media, null, null, null, null, location), 0);
                             } else {
-                                VideoPlayerActivity.startActivity(MainActivity.this, new StreamInfo(media, null, null, null, null, location), 0);
+                                VideoPlayerActivity.startActivity(MainActivity.this,
+                                        new StreamInfo(media, null, null, null, null, location), 0);
                             }
                         }
 
@@ -346,9 +364,11 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
                         public void onResponse(Response response) throws IOException {
                             BeamManager bm = BeamManager.getInstance(MainActivity.this);
                             if (bm.isConnected()) {
-                                BeamPlayerActivity.startActivity(MainActivity.this, new StreamInfo(media, null, null, "en", null, location), 0);
+                                BeamPlayerActivity.startActivity(MainActivity.this,
+                                        new StreamInfo(media, null, null, "en", null, location), 0);
                             } else {
-                                VideoPlayerActivity.startActivity(MainActivity.this, new StreamInfo(media, null, null, "en", null, location), 0);
+                                VideoPlayerActivity.startActivity(MainActivity.this,
+                                        new StreamInfo(media, null, null, "en", null, location), 0);
                             }
                         }
                     });

@@ -23,7 +23,7 @@ public class MovieResponse extends Response<Movie> {
     public ArrayList<Media> formatListForPopcorn(ArrayList<Media> existingList, MediaProvider mediaProvider, SubsProvider subsProvider) {
         for (Movie item : responseItems) {
 
-            butter.droid.base.providers.media.models.Movie movie = new butter.droid.base.providers.media.models.Movie(mediaProvider, subsProvider);
+            butter.droid.base.providers.media.models.Movie movie = new butter.droid.base.providers.media.models.Movie();
 
             movie.videoId = item.getImdbId();
             movie.imdbId = movie.videoId;

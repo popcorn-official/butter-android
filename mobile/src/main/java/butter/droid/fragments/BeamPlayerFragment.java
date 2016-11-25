@@ -114,7 +114,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentListener {
         ButterKnife.bind(this, v);
 
         mToolbar.getBackground().setAlpha(0);
-        mToolbar.setNavigationIcon(R.drawable.abc_ic_clear_mtrl_alpha);
+        mToolbar.setNavigationIcon(R.drawable.abc_ic_clear_material);
         mButterSeekBar.setOnSeekBarChangeListener(mSeekBarChangeListener);
         mVolumeBar.setOnSeekBarChangeListener(mVolumeBarChangeListener);
     }

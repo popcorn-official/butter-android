@@ -30,6 +30,7 @@ import butter.droid.base.fragments.BaseStreamLoadingFragment;
 import butter.droid.base.providers.media.models.Show;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.tv.R;
+import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.base.TVBaseActivity;
 
 public class TVStreamLoadingActivity extends TVBaseActivity implements BaseStreamLoadingFragment.FragmentListener {
@@ -68,6 +69,11 @@ public class TVStreamLoadingActivity extends TVBaseActivity implements BaseStrea
 	@SuppressLint("MissingSuperCall")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
+		TVButterApplication.getAppContext()
+				.getComponent()
+				.inject(this);
+
 		super.onCreate(savedInstanceState, R.layout.activity_streamloading);
 
 		if (!getIntent().hasExtra(EXTRA_STREAM_INFO)) finish();

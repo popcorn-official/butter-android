@@ -30,7 +30,6 @@ import java.util.AbstractMap;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-import butter.droid.base.ButterApplication;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.meta.MetaProvider;
 import butter.droid.base.providers.subs.SubsProvider;
@@ -42,10 +41,17 @@ import butter.droid.base.providers.subs.SubsProvider;
  */
 public abstract class BaseProvider {
 
-    protected ObjectMapper mapper = new ObjectMapper();
+    private final OkHttpClient client;
+    protected ObjectMapper mapper;
+    protected Call mCurrentCall;
+
+    public BaseProvider(OkHttpClient client, ObjectMapper mapper) {
+        this.client = client;
+        this.mapper = mapper;
+    }
 
     private OkHttpClient getClient() {
-        return ButterApplication.getHttpClient();
+        return client;
     }
 
     /**

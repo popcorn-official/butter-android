@@ -15,15 +15,15 @@
  * along with Butter. If not, see <http://www.gnu.org/licenses/>.
  */
 
-package butter.droid.base.youtube;
+package butter.droid.base.manager.youtube.model;
 
 /**
  * Represents a format in the "fmt_list" parameter
  * Currently, only id is used
  */
-class Format {
+public class Format {
 
-    private int mId;
+    protected int mId;
 
     /**
      * Construct this object from one of the strings in the "fmt_list" parameter
@@ -53,17 +53,15 @@ class Format {
         return mId;
     }
 
-    @Override
-    public int hashCode() {
-        return mId;
-    }
-
     /* (non-Javadoc)
-         * @see java.lang.Object#equals(java.lang.Object)
-         */
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
     @Override
     public boolean equals(Object object) {
-        return object instanceof Format && ((Format) object).mId == mId;
+        if (!(object instanceof Format)) {
+            return false;
+        }
+        return ((Format) object).mId == mId;
     }
 
 }

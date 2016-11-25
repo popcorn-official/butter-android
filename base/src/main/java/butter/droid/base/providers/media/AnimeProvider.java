@@ -17,6 +17,11 @@
 
 package butter.droid.base.providers.media;
 
+import android.support.annotation.Nullable;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.OkHttpClient;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +36,11 @@ import butter.droid.base.providers.media.response.AnimeResponse;
 import butter.droid.base.providers.media.response.models.anime.Anime;
 import butter.droid.base.providers.media.response.models.anime.AnimeDetails;
 import butter.droid.base.providers.subs.SubsProvider;
-import butter.droid.base.providers.subs.YSubsProvider;
 
 public class AnimeProvider extends MediaProvider {
 
-    private SubsProvider subsProvider = new YSubsProvider();
-
-    public AnimeProvider() {
-        super(BuildConfig.ANIME_URLS, "animes/", "anime/", 0);
+    public AnimeProvider(OkHttpClient client, ObjectMapper mapper, @Nullable SubsProvider subsProvider) {
+        super(client, mapper, subsProvider, BuildConfig.ANIME_URLS, "animes/", "anime/", 0);
     }
 
     @Override
@@ -51,7 +53,7 @@ public class AnimeProvider extends MediaProvider {
         ArrayList<Media> formattedData = currentList;
         List<Anime> list = mapper.readValue(responseStr, mapper.getTypeFactory().constructCollectionType(List.class, Anime.class));
         if (!list.isEmpty()) {
-            formattedData = new AnimeResponse(list).formatListForPopcorn(currentList, this, subsProvider);
+            formattedData = new AnimeResponse(list).formatListForPopcorn(currentList, this, getSubsProvider());
         }
         return formattedData;
     }

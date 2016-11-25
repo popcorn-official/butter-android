@@ -57,6 +57,7 @@ import android.widget.TextView;
 import com.github.sv244.torrentstream.StreamStatus;
 import com.github.sv244.torrentstream.Torrent;
 
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.BeamPlayerActivity;
 import butter.droid.base.content.preferences.Prefs;
@@ -133,6 +134,9 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
         mShowReload = true;
     }
 

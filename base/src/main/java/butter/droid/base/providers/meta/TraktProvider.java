@@ -19,6 +19,8 @@ package butter.droid.base.providers.meta;
 
 import android.os.AsyncTask;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.OkHttpClient;
 import com.uwetrottmann.trakt.v2.TraktV2;
 import com.uwetrottmann.trakt.v2.entities.Episode;
 import com.uwetrottmann.trakt.v2.entities.Movie;
@@ -39,6 +41,11 @@ public class TraktProvider extends MetaProvider {
         TRAKT.setApiKey(API_KEY);
         MOVIES = TRAKT.movies();
         EPISODES = TRAKT.episodes();
+    }
+
+
+    public TraktProvider(OkHttpClient client, ObjectMapper mapper) {
+        super(client, mapper);
     }
 
     /**

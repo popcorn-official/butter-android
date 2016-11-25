@@ -23,7 +23,7 @@
         android:logo="@drawable/ic_logo"
         android:label="@string/app_name"
         android:theme="@style/Theme.Butter"
-        android:name="butter.droid.base.ButterApplication"
+        android:name=".MobileButterApplication"
         android:supportsRtl="true">
 
 		<activity

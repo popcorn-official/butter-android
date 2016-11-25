@@ -31,11 +31,12 @@ import android.view.MenuItem;
 
 import java.net.URLDecoder;
 
+import butter.droid.base.manager.youtube.YouTubeManager;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.torrent.TorrentService;
-import butter.droid.base.youtube.YouTubeData;
 import butter.droid.tv.R;
+import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.base.TVBaseActivity;
 import butter.droid.tv.fragments.TVPlaybackOverlayFragment;
 import butter.droid.tv.fragments.TVVideoPlayerFragment;
@@ -47,6 +48,9 @@ public class TVTrailerPlayerActivity extends TVBaseActivity implements TVVideoPl
 
     private StreamInfo mStreamInfo;
     private Media mMedia;
+
+    @Inject
+    YouTubeManager youTubeManager;
 
     public static Intent startActivity(Context context, String youTubeUrl, Media data) {
         Intent i = new Intent(context, TVTrailerPlayerActivity.class);
@@ -61,6 +65,10 @@ public class TVTrailerPlayerActivity extends TVBaseActivity implements TVVideoPl
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
+
+        TVButterApplication.getAppContext()
+                .getComponent()
+                .inject(this)
         super.onCreate(savedInstanceState, R.layout.activity_videoplayer);
 
         mMedia = getIntent().getParcelableExtra(DATA);
@@ -72,8 +80,8 @@ public class TVTrailerPlayerActivity extends TVBaseActivity implements TVVideoPl
         mPlaybackOverlayFragment = (TVPlaybackOverlayFragment) getSupportFragmentManager().findFragmentById(R.id.playback_overlay_fragment);
         mPlaybackOverlayFragment.toggleSubtitleAction(false);
 
-        QueryYouTubeTask youTubeTask = new QueryYouTubeTask();
-        youTubeTask.execute(YouTubeData.getYouTubeVideoId(youTubeUrl));
+        QueryYouTubeTask youTubeTask = new QueryYouTubeTask(youTubeManager);
+        youTubeTask.execute(youTubeManager.getYouTubeVideoId(youTubeUrl));
     }
 
     private void createStreamInfo() {
@@ -93,7 +101,7 @@ public class TVTrailerPlayerActivity extends TVBaseActivity implements TVVideoPl
 
     @Override
     public Long getResumePosition() {
-        return 0l;
+        return 0L;
     }
 
     @Override
@@ -111,7 +119,13 @@ public class TVTrailerPlayerActivity extends TVBaseActivity implements TVVideoPl
 
     private class QueryYouTubeTask extends AsyncTask<String, Void, Uri> {
 
+        private final YouTubeManager youTubeManager;
+
         private boolean mShowedError = false;
+
+        public QueryYouTubeTask(YouTubeManager youTubeManager) {
+            this.youTubeManager = youTubeManager;
+        }
 
         @Override
         protected Uri doInBackground(String... params) {
@@ -147,7 +161,7 @@ public class TVTrailerPlayerActivity extends TVBaseActivity implements TVVideoPl
 
                 ////////////////////////////////////
                 // calculate the actual URL of the video, encoded with proper YouTube token
-                uriStr = YouTubeData.calculateYouTubeUrl(quality, true, videoId);
+                uriStr = youTubeManager.calculateYouTubeUrl(quality, true, videoId);
 
                 if (isCancelled())
                     return null;

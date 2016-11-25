@@ -17,6 +17,11 @@
 
 package butter.droid.base.providers.subs;
 
+import android.content.Context;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.squareup.okhttp.OkHttpClient;
+
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
@@ -34,6 +39,10 @@ public class OpenSubsProvider extends SubsProvider {
 
     private String mApiUrl = "http://api.opensubtitles.org/xml-rpc";
     private String mUserAgent = "Popcorn Time v1";//"Popcorn Time Android v1";
+
+    public OpenSubsProvider(Context context, OkHttpClient client, ObjectMapper mapper) {
+        super(context, client, mapper);
+    }
 
     @Override
     public void getList(Movie movie, Callback callback) {

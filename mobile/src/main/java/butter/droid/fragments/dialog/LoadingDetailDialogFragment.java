@@ -28,17 +28,23 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 
+import javax.inject.Inject;
+
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.utils.ThreadUtils;
 
 public class LoadingDetailDialogFragment extends DialogFragment {
 
+    @Inject
+    ProviderManager providerManager;
+
     private Callback mCallback;
 
     public static final String EXTRA_MEDIA = "media_item";
-    private MediaProvider mProvider;
     private Boolean mSavedInstanceState = false;
 
     public static LoadingDetailDialogFragment newInstance(Integer position) {
@@ -61,6 +67,10 @@ public class LoadingDetailDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
         mSavedInstanceState = false;
         setStyle(STYLE_NO_FRAME, R.style.Theme_Dialog_Transparent);
     }
@@ -68,7 +78,7 @@ public class LoadingDetailDialogFragment extends DialogFragment {
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        if (null != mProvider) mProvider.cancel();
+        providerManager.getCurrentMediaProvider().cancel();
     }
 
     @Override
@@ -87,8 +97,7 @@ public class LoadingDetailDialogFragment extends DialogFragment {
         ArrayList<Media> currentList = mCallback.getCurrentList();
         int position = getArguments().getInt(EXTRA_MEDIA);
         final Media media = currentList.get(position);
-        mProvider = media.getMediaProvider();
-        mProvider.getDetail(currentList, position, new MediaProvider.Callback() {
+        providerManager.getCurrentMediaProvider().getDetail(currentList, position, new MediaProvider.Callback() {
                     @Override
                     public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
                         if (!isAdded()) return;

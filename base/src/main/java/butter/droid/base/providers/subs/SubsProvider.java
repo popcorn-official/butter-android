@@ -19,6 +19,7 @@ package butter.droid.base.providers.subs;
 
 import android.content.Context;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.squareup.okhttp.Call;
 import com.squareup.okhttp.OkHttpClient;
 import com.squareup.okhttp.Request;
@@ -34,7 +35,6 @@ import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import butter.droid.base.ButterApplication;
 import butter.droid.base.content.preferences.Prefs;
 import butter.droid.base.providers.BaseProvider;
 import butter.droid.base.providers.media.models.Episode;
@@ -54,19 +54,26 @@ public abstract class SubsProvider extends BaseProvider {
 
     private static List<String> SUB_EXTENSIONS = Arrays.asList("srt", "ssa", "ass");
 
+    private final Context context;
+    private final OkHttpClient client;
+
+    public SubsProvider(Context context, OkHttpClient client, ObjectMapper mapper) {
+        super(client, mapper);
+        this.context = context;
+        this.client = client;
+    }
+
     public static File getStorageLocation(Context context) {
         return new File(PrefUtils.get(context, Prefs.STORAGE_LOCATION, StorageUtils.getIdealCacheDirectory(context).toString()) + "/subs/");
     }
 
     /**
-     * @param context      Context
      * @param media        Media data
      * @param languageCode Code of language
      * @param callback     Network callback
      * @return Call
      */
-    public static Call download(final Context context, final Media media, final String languageCode, final com.squareup.okhttp.Callback callback) {
-        OkHttpClient client = ButterApplication.getHttpClient();
+    public Call download(final Media media, final String languageCode, final com.squareup.okhttp.Callback callback) {
         if (media.subtitles != null && media.subtitles.containsKey(languageCode)) {
             try {
                 Request request = new Request.Builder().url(media.subtitles.get(languageCode)).build();

@@ -60,6 +60,7 @@ import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.widget.StrokedTextView;
 import butter.droid.tv.R;
+import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.TVMediaDetailActivity;
 import butter.droid.tv.events.ConfigureSubtitleEvent;
 import butter.droid.tv.events.PausePlaybackEvent;
@@ -92,6 +93,10 @@ public class TVVideoPlayerFragment extends BaseVideoPlayerFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        TVButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
         mStreamInfo = ((TVVideoPlayerFragment.Callback) getActivity()).getInfo();
     }
 

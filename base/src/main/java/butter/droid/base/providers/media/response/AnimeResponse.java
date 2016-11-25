@@ -21,14 +21,14 @@ public class AnimeResponse extends Response<Anime> {
         for (Anime item : responseItems) {
             Media media = null;
             if (item.getType().equalsIgnoreCase("movie")) {
-                media = new Movie(null, null);
+                media = new Movie();
                     /*
                      * Chris Alderson:
                      * As of version 2.2.0 of the Anime API there are no movies in the database.
                      * And movies won't be added to the database, so there is no need to check for it.
                      */
             } else if (item.getType().equalsIgnoreCase("show")) {
-                Show show = new Show(mediaProvider, null);
+                Show show = new Show();
 
                 show.title = item.getTitle();
                 show.videoId = item.getId();

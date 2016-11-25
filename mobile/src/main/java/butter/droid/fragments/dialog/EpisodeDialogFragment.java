@@ -45,10 +45,14 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.inject.Inject;
+
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.MediaDetailActivity;
 import butter.droid.base.content.preferences.DefaultQuality;
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.media.models.Episode;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Show;
@@ -72,6 +76,9 @@ import butterknife.OnClick;
 
 public class EpisodeDialogFragment extends DialogFragment {
 
+    @Inject
+    ProviderManager providerManager;
+
     public static final String EXTRA_EPISODE = "episode";
     public static final String EXTRA_SHOW = "show";
 
@@ -80,7 +87,6 @@ public class EpisodeDialogFragment extends DialogFragment {
     private Integer mThreshold = 0, mBottom = 0;
     private Activity mActivity;
     private MetaProvider mMetaProvider;
-    private SubsProvider mSubsProvider;
     private boolean mTouching = false, mOpened = false;
     private String mSelectedSubtitleLanguage, mSelectedQuality;
     private Episode mEpisode;
@@ -142,6 +148,11 @@ public class EpisodeDialogFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
         setStyle(STYLE_NO_FRAME, R.style.Theme_Dialog_Episode);
         setCancelable(false);
 
@@ -151,7 +162,6 @@ public class EpisodeDialogFragment extends DialogFragment {
         mShow = getArguments().getParcelable(EXTRA_SHOW);
         mEpisode = getArguments().getParcelable(EXTRA_EPISODE);
         mMetaProvider = mEpisode.getMetaProvider();
-        mSubsProvider = mEpisode.getSubsProvider();
     }
 
     @NonNull
@@ -194,7 +204,8 @@ public class EpisodeDialogFragment extends DialogFragment {
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
         if (null != mMetaProvider) mMetaProvider.cancel();
-        if (null != mSubsProvider) mSubsProvider.cancel();
+        if (providerManager.hasCurrentSubsProvider())
+            providerManager.getCurrentSubsProvider().cancel();
     }
 
     @Override
@@ -273,8 +284,8 @@ public class EpisodeDialogFragment extends DialogFragment {
 
         mSubtitles.setText(R.string.loading_subs);
         mSubtitles.setClickable(false);
-        if (mSubsProvider != null) {
-            mSubsProvider.getList(mEpisode, new SubsProvider.Callback() {
+        if (providerManager.hasCurrentSubsProvider()) {
+            providerManager.getCurrentSubsProvider().getList(mEpisode, new SubsProvider.Callback() {
                 @Override
                 public void onSuccess(Map<String, String> subtitles) {
                     if (FragmentUtil.isNotAdded(EpisodeDialogFragment.this)) return;

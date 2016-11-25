@@ -17,11 +17,14 @@
 
 package butter.droid.fragments;
 
-import android.app.Activity;
-import android.content.Context;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.annotation.DrawableRes;
+import android.support.annotation.IntDef;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringRes;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -34,26 +37,28 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.PreferencesActivity;
 import butter.droid.adapters.NavigationAdapter;
 import butter.droid.adapters.decorators.OneShotDividerDecorator;
 import butter.droid.base.content.preferences.Prefs;
-import butter.droid.base.providers.media.AnimeProvider;
-import butter.droid.base.providers.media.MediaProvider;
-import butter.droid.base.providers.media.MoviesProvider;
-import butter.droid.base.providers.media.TVProvider;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.utils.PrefUtils;
+import butter.droid.base.utils.ProviderUtils;
 import butter.droid.base.vpn.VPNHTChecker;
 import butter.droid.base.vpn.VPNManager;
 import butter.droid.fragments.dialog.VPNInfoDialogFragment;
 
 
-
-public class NavigationDrawerFragment extends Fragment implements NavigationAdapter.Callback {
+public class NavigationDrawerFragment extends Fragment implements NavigationAdapter.Callback, NavigationAdapter.OnItemClickListener {
 
     /**
      * Remember the position of the selected item.
@@ -61,8 +66,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
     private static final String STATE_SELECTED_POSITION = "selected_navigation_drawer_position";
 
 
-    // Central VPN menu item
-    private NavDrawerItem mVPNItem;
+    @Inject
+    ProviderManager providerManager;
 
 	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      * views
@@ -81,35 +86,16 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
     private NavigationAdapter mAdapter;
-
-    /**
-     * A pointer to the current callbacks instance (the Activity).
-     */
-    private Callbacks mCallbacks;
-
-	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-	 * life cycle methods
-	 * - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - */
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        try {
-            mCallbacks = (Callbacks) context;
-        } catch (ClassCastException e) {
-            throw new ClassCastException("Activity must implement NavigationDrawerCallbacks.");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mCallbacks = null;
-    }
+    // Central VPN menu item
+    private AbsNavDrawerItem.VPNNavDrawerItem mVPNItem;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
 
         mUserLearnedDrawer = PrefUtils.get(getActivity(), Prefs.DRAWER_LEARNED, false);
 
@@ -138,7 +124,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
         super.onViewCreated(view, savedInstanceState);
 
         mAdapter = new NavigationAdapter(getActivity(), this, initItems());
-        mAdapter.setOnItemClickListener(mOnItemClickListener);
+        mAdapter.setOnItemClickListener(this);
 
         mRecyclerView.addItemDecoration(new OneShotDividerDecorator(getActivity(), mAdapter.getItemCount() - 2));
         mRecyclerView.setHasFixedSize(true);
@@ -146,21 +132,31 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
         mRecyclerView.requestFocus();
     }
 
-    public List<NavDrawerItem> initItems() {
-        //todo: make list items dynamic
-        List<NavDrawerItem> navItems = new ArrayList<>();
-        navItems.add(new NavDrawerItem(true));
-        navItems.add(new NavDrawerItem(getString(R.string.title_movies), R.drawable.ic_nav_movies, new MoviesProvider()));
-        navItems.add(new NavDrawerItem(getString(R.string.title_shows), R.drawable.ic_nav_tv, new TVProvider()));
-        navItems.add(new NavDrawerItem(getString(R.string.title_anime), R.drawable.ic_nav_anime, new AnimeProvider()));
-        navItems.add(new NavDrawerItem(getString(R.string.preferences), R.drawable.ic_nav_settings, mOnSettingsClickListener));
-        if(PrefUtils.get(getActivity(), Prefs.SHOW_VPN, true) && VPNHTChecker.isDownloadAvailable(getActivity())) {
-            navItems.add(mVPNItem = new NavDrawerItem(getString(R.string.vpn), R.drawable.ic_nav_vpn, mOnVPNClickListener, VPNManager.getLatestInstance().isConnected()));
+    public List<AbsNavDrawerItem> initItems() {
+
+        List<AbsNavDrawerItem> navItems = new ArrayList<>();
+        navItems.add(new AbsNavDrawerItem.HeaderNavDrawerItem());
+        navItems.add(new AbsNavDrawerItem.ProviderNavDrawerItem(ProviderUtils.getProviderTitle(ProviderManager.PROVIDER_TYPE_MOVIE),
+                ProviderUtils.getProviderIcon(ProviderManager.PROVIDER_TYPE_MOVIE),
+                ProviderManager.PROVIDER_TYPE_MOVIE));
+        navItems.add(new AbsNavDrawerItem.ProviderNavDrawerItem(ProviderUtils.getProviderTitle(ProviderManager.PROVIDER_TYPE_SHOW),
+                ProviderUtils.getProviderIcon(ProviderManager.PROVIDER_TYPE_SHOW),
+                ProviderManager.PROVIDER_TYPE_SHOW));
+        navItems.add(new AbsNavDrawerItem.ProviderNavDrawerItem(ProviderUtils.getProviderTitle(ProviderManager.PROVIDER_TYPE_ANIME),
+                ProviderUtils.getProviderIcon(ProviderManager.PROVIDER_TYPE_ANIME),
+                ProviderManager.PROVIDER_TYPE_ANIME));
+        navItems.add(new AbsNavDrawerItem.ScreenNavDrawerItem(R.string.preferences, R.drawable.ic_nav_settings,
+                PreferencesActivity.getIntent(getContext())));
+        if (PrefUtils.get(getActivity(), Prefs.SHOW_VPN, true) && new VPNHTChecker(getActivity()).isDownloadAvailable()) {
+            navItems.add(mVPNItem = new AbsNavDrawerItem.VPNNavDrawerItem(R.string.vpn, R.drawable.ic_nav_vpn, VPNManager.getLatestInstance().isConnected()));
         }
-        if(mAdapter != null)
+
+        if (mAdapter != null) {
             mAdapter.setItems(navItems);
+        }
+
         VPNManager.State state = VPNManager.getCurrentState();
-        NavigationDrawerFragment.NavDrawerItem vpnItem = getVPNItem();
+        AbsNavDrawerItem.VPNNavDrawerItem vpnItem = getVPNItem();
         if(vpnItem != null) {
             if (state.equals(VPNManager.State.DISCONNECTED)) {
                 vpnItem.setSwitchValue(false);
@@ -175,45 +171,6 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
 
         return navItems;
     }
-
-    private NavDrawerItem.OnClickListener mOnSettingsClickListener = new NavDrawerItem.OnClickListener() {
-        @Override
-        public void onClick(View v, NavigationAdapter.ItemRowHolder rowHolder, int position) {
-            PreferencesActivity.startActivity(getActivity());
-            mDrawerLayout.closeDrawer(mNavigationDrawerContainer);
-        }
-    };
-
-    private NavDrawerItem.OnClickListener mOnVPNClickListener = new NavDrawerItem.OnClickListener() {
-        @Override
-        public void onClick(View v, NavigationAdapter.ItemRowHolder vh, int position) {
-            if(vh.getSwitch() != null) {
-                VPNManager manager = VPNManager.getLatestInstance();
-                if(manager.isVPNInstalled()) {
-                    if (!manager.isConnected()) {
-                        manager.connect();
-                        vh.getSwitch().setChecked(true);
-                    } else {
-                        manager.disconnect();
-                        vh.getSwitch().setChecked(false);
-                    }
-                } else {
-                    VPNInfoDialogFragment.show(getChildFragmentManager());
-                }
-            }
-        }
-    };
-    private NavigationAdapter.OnItemClickListener mOnItemClickListener = new NavigationAdapter.OnItemClickListener() {
-        @Override
-        public void onItemClick(View v, NavigationAdapter.ItemRowHolder vh, NavDrawerItem item, int position) {
-            if (null != item.getOnClickListener()) {
-                item.onClick(v, vh, position);
-                return;
-            }
-
-            selectItem(mAdapter.getCorrectPosition(position));
-        }
-    };
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -233,11 +190,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
         return mCurrentSelectedPosition;
     }
 
-    public NavDrawerItem getCurrentItem() {
-        return mAdapter.getItem(getSelectedPosition() + 1);
-    }
 
-    public NavDrawerItem getVPNItem() {
+    public AbsNavDrawerItem.VPNNavDrawerItem getVPNItem() {
         return mVPNItem;
     }
 	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
@@ -247,8 +201,8 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
     /**
      * Called by the implementing activity to initialise the navigation drawer
      *
-     * @param navigationContainer
-     * @param drawerLayout
+     * @param navigationContainer The navigation container
+     * @param drawerLayout The drawer layout
      */
     public void initialise(ViewGroup navigationContainer, DrawerLayout drawerLayout) {
         mNavigationDrawerContainer = navigationContainer;
@@ -295,7 +249,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
             }
         });
 
-        mDrawerLayout.setDrawerListener(mDrawerToggle);
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
 
     }
 
@@ -306,21 +260,40 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         //consume the home button press
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
+        return mDrawerToggle.onOptionsItemSelected(item) || super.onOptionsItemSelected(item);
 
-        return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Callbacks interface that all activities using this fragment must implement.
-     */
-    public static interface Callbacks {
-        /**
-         * Called when an item in the navigation drawer is selected.
-         */
-        void onNavigationDrawerItemSelected(NavDrawerItem item, String s);
+    @Override
+    public void onItemClick(View v, NavigationAdapter.ItemRowHolder vh, AbsNavDrawerItem item, int position) {
+        switch (item.getType()) {
+            case AbsNavDrawerItem.TYPE_HEADER:
+                throw new IllegalStateException("Header item can not be clickable.");
+            case AbsNavDrawerItem.TYPE_PROVIDER:
+                providerManager.setCurrentProviderType(((AbsNavDrawerItem.ProviderNavDrawerItem) item).getProviderType());
+                selectItem(mAdapter.getCorrectPosition(position));
+                break;
+            case AbsNavDrawerItem.TYPE_SCREEN:
+                getActivity().startActivity(((AbsNavDrawerItem.ScreenNavDrawerItem) item).getIntent());
+                mDrawerLayout.closeDrawer(mNavigationDrawerContainer);
+                break;
+            case AbsNavDrawerItem.TYPE_VPN:
+                if (vh.getSwitch() != null) {
+                    VPNManager manager = VPNManager.getLatestInstance();
+                    if (manager.isVPNInstalled()) {
+                        if (!manager.isConnected()) {
+                            manager.connect();
+                            vh.getSwitch().setChecked(true);
+                        } else {
+                            manager.disconnect();
+                            vh.getSwitch().setChecked(false);
+                        }
+                    } else {
+                        VPNInfoDialogFragment.show(getChildFragmentManager());
+                    }
+                }
+                break;
+        }
     }
 
     /**
@@ -337,113 +310,145 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
             mDrawerLayout.closeDrawer(mNavigationDrawerContainer);
         }
 
-        if (mCallbacks != null) {
-            NavDrawerItem navDrawerItem = mAdapter.getItem(position + 1);
-            mCallbacks.onNavigationDrawerItemSelected(navDrawerItem, null != navDrawerItem ? navDrawerItem.getTitle() : null);
-        }
-
         mAdapter.notifyDataSetChanged();
     }
 
-    /**
-     * Describes an item to be displayed in the navigation list
-     */
-    public static class NavDrawerItem {
-        private NavDrawerItem.OnClickListener mOnClickListener;
-        private boolean mIsHeader = false, mIsSwitch = false, mSwitchValue = false, mShowProgress = false;
-        private String mTitle;
-        private int mIcon;
-        private MediaProvider mMediaProvider;
-        private NavigationAdapter.ItemRowHolder mRowHolder;
+    public abstract static class AbsNavDrawerItem {
 
-        public NavDrawerItem(String title, int icon) {
-            mTitle = title;
-            mIcon = icon;
+
+        public static final int TYPE_HEADER = 0;
+        static final int TYPE_PROVIDER = 1;
+        static final int TYPE_SCREEN = 2;
+        static final int TYPE_VPN = 3;
+        @StringRes
+        private final int title;
+        @DrawableRes
+        private final int icon;
+
+        AbsNavDrawerItem(@StringRes int title, @DrawableRes int icon) {
+            this.title = title;
+            this.icon = icon;
         }
 
-        public NavDrawerItem(String title, int icon, MediaProvider mediaProvider) {
-            this(title, icon);
-            mMediaProvider = mediaProvider;
-        }
-
-        public NavDrawerItem(String title, int icon, OnClickListener listener) {
-            this(title, icon);
-            mOnClickListener = listener;
-        }
-
-        public NavDrawerItem(String title, int icon, OnClickListener listener, boolean isSwitch) {
-            this(title, icon);
-            mOnClickListener = listener;
-            mIsSwitch = true;
-            mSwitchValue = isSwitch;
-        }
-
-        public NavDrawerItem(boolean isHeader) {
-            mIsHeader = true;
-        }
-
-        public void setRowHolder(NavigationAdapter.ItemRowHolder rowHolder) {
-            mRowHolder = rowHolder;
-        }
-
-        public String getTitle() {
-            return mTitle;
+        public int getTitle() {
+            return title;
         }
 
         public int getIcon() {
-            return mIcon;
+            return icon;
         }
 
-        public MediaProvider getMediaProvider() {
-            return mMediaProvider;
+        @NavType
+        public abstract int getType();
+
+        @IntDef({TYPE_HEADER, TYPE_PROVIDER, TYPE_SCREEN, TYPE_VPN})
+        @Retention(RetentionPolicy.SOURCE)
+        @interface NavType {
         }
 
-        public boolean isHeader() {
-            return mIsHeader;
-        }
+        public static class VPNNavDrawerItem extends AbsNavDrawerItem {
 
-        public boolean isSwitch() {
-            return mIsSwitch;
-        }
+            private boolean mIsSwitch = false, mSwitchValue = false, mShowProgress = false;
+            private NavigationAdapter.ItemRowHolder mRowHolder;
 
-        public boolean getSwitchValue() {
-            return mSwitchValue;
-        }
+            public VPNNavDrawerItem(@StringRes int title, @DrawableRes int icon, boolean isSwitch) {
+                super(title, icon);
+                mIsSwitch = true;
+                mSwitchValue = isSwitch;
+            }
 
-        public boolean hasProvider() {
-            return mMediaProvider != null;
-        }
+            @Override
+            public int getType() {
+                return TYPE_VPN;
+            }
 
-        public OnClickListener getOnClickListener() {
-            return mOnClickListener;
-        }
+            public void setRowHolder(NavigationAdapter.ItemRowHolder rowHolder) {
+                mRowHolder = rowHolder;
+            }
 
-        public void onClick(View v, NavigationAdapter.ItemRowHolder itemRowHolder, int position) {
-            mOnClickListener.onClick(v, itemRowHolder, position);
-        }
+            public boolean isSwitch() {
+                return mIsSwitch;
+            }
 
-        public interface OnClickListener {
-            void onClick(View v, NavigationAdapter.ItemRowHolder rowHolder, int position);
-        }
+            public boolean getSwitchValue() {
+                return mSwitchValue;
+            }
 
-        public void showProgress(boolean b) {
-            mShowProgress = b;
-            if(mRowHolder != null) {
-                mRowHolder.getProgressBar().setVisibility(b ? View.VISIBLE : View.INVISIBLE);
-                if(mIsSwitch) {
-                    mRowHolder.getSwitch().setVisibility(b ? View.INVISIBLE : View.VISIBLE);
+            public void setSwitchValue(boolean b) {
+                if (mRowHolder != null) {
+                    mRowHolder.getSwitch().setChecked(b);
                 }
+            }
+
+            public void showProgress(boolean b) {
+                mShowProgress = b;
+                if (mRowHolder != null) {
+                    mRowHolder.getProgressBar().setVisibility(b ? View.VISIBLE : View.INVISIBLE);
+                    if (mIsSwitch) {
+                        mRowHolder.getSwitch().setVisibility(b ? View.INVISIBLE : View.VISIBLE);
+                    }
+                }
+            }
+
+            public boolean showProgress() {
+                return mShowProgress;
             }
         }
 
-        public boolean showProgress() {
-            return mShowProgress;
+        public static class ScreenNavDrawerItem extends AbsNavDrawerItem {
+
+            @NonNull
+            private final Intent intent;
+
+            public ScreenNavDrawerItem(@StringRes int title, @DrawableRes int icon, @NonNull Intent intent) {
+                super(title, icon);
+                this.intent = intent;
+            }
+
+            @Override
+            public int getType() {
+                return TYPE_SCREEN;
+            }
+
+            @NonNull
+            public Intent getIntent() {
+                return intent;
+            }
         }
 
-        public void setSwitchValue(boolean b) {
-            if(mRowHolder != null)
-                mRowHolder.getSwitch().setChecked(b);
+        public static class HeaderNavDrawerItem extends AbsNavDrawerItem {
+            public HeaderNavDrawerItem() {
+                super(0, 0);
+            }
+
+            @Override
+            public int getType() {
+                return TYPE_HEADER;
+            }
         }
+
+        public static class ProviderNavDrawerItem extends AbsNavDrawerItem {
+
+            @ProviderManager.ProviderType
+            private final int providerType;
+
+            public ProviderNavDrawerItem(@StringRes int title, @DrawableRes int icon, @ProviderManager.ProviderType int providerType) {
+                super(title, icon);
+                this.providerType = providerType;
+            }
+
+            @ProviderManager.ProviderType
+            public int getProviderType() {
+                return providerType;
+            }
+
+            @Override
+            public int getType() {
+                return TYPE_PROVIDER;
+            }
+
+        }
+
     }
 
 }

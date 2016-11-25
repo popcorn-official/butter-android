@@ -145,7 +145,7 @@ public class TorrentService extends Service implements TorrentListener {
         Intent stopIntent = new Intent();
         stopIntent.setAction(TorrentBroadcastReceiver.STOP);
         PendingIntent pendingStopIntent = PendingIntent.getBroadcast(this, TorrentBroadcastReceiver.REQUEST_CODE, stopIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-        NotificationCompat.Action stopAction = new NotificationCompat.Action.Builder(R.drawable.abc_ic_clear_mtrl_alpha, getString(R.string.stop), pendingStopIntent).build();
+        NotificationCompat.Action stopAction = new NotificationCompat.Action.Builder(R.drawable.abc_ic_clear_material, getString(R.string.stop), pendingStopIntent).build();
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
                 .setSmallIcon(R.drawable.ic_notif_logo)

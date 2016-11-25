@@ -24,22 +24,10 @@ import android.os.Parcelable;
 import java.util.HashMap;
 import java.util.Map;
 
-import butter.droid.base.providers.media.MediaProvider;
-import butter.droid.base.providers.subs.SubsProvider;
+import butter.droid.base.manager.provider.ProviderManager;
 
-public class Media implements Parcelable {
-    @SuppressWarnings("unused")
-    public static final Creator<Media> CREATOR = new Creator<Media>() {
-        @Override
-        public Media createFromParcel(Parcel in) {
-            return new Media(in);
-        }
+public abstract class Media implements Parcelable {
 
-        @Override
-        public Media[] newArray(int size) {
-            return new Media[size];
-        }
-    };
     public String videoId;
     public String imdbId;
     public String title;
@@ -52,12 +40,8 @@ public class Media implements Parcelable {
     public String headerImage;
     public Map<String, String> subtitles;
     public int color = Color.parseColor("#3F51B5");
-    private SubsProvider mSubsProvider = null;
-    private MediaProvider mMediaProvider = null;
 
-    public Media(MediaProvider provider, SubsProvider subsProvider) {
-        mMediaProvider = provider;
-        mSubsProvider = subsProvider;
+    public Media() {
     }
 
     public Media(Parcel in) {
@@ -73,29 +57,15 @@ public class Media implements Parcelable {
         headerImage = in.readString();
         color = in.readInt();
 
-        String className = in.readString();
-        mSubsProvider = null;
-        try {
-            Class<?> clazz = Class.forName(className);
-            mSubsProvider = (SubsProvider) clazz.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        className = in.readString();
-        mMediaProvider = null;
-        try {
-            Class<?> clazz = Class.forName(className);
-            mMediaProvider = (MediaProvider) clazz.newInstance();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
         int length = in.readInt();
         subtitles = new HashMap<>();
         for (int i = 0; i < length; i++) {
             subtitles.put(in.readString(), in.readString());
         }
     }
+
+    @ProviderManager.ProviderType
+    public abstract int getProviderType();
 
     @Override
     public int describeContents() {
@@ -115,8 +85,6 @@ public class Media implements Parcelable {
         dest.writeString(fullImage);
         dest.writeString(headerImage);
         dest.writeInt(color);
-        dest.writeString(mSubsProvider != null ? mSubsProvider.getClass().getCanonicalName() : "");
-        dest.writeString(mMediaProvider != null ? mMediaProvider.getClass().getCanonicalName() : "");
         if (subtitles != null) {
             dest.writeInt(subtitles.size());
             for (Map.Entry<String, String> entry : subtitles.entrySet()) {
@@ -126,14 +94,6 @@ public class Media implements Parcelable {
         } else {
             dest.writeInt(0);
         }
-    }
-
-    public SubsProvider getSubsProvider() {
-        return mSubsProvider;
-    }
-
-    public MediaProvider getMediaProvider() {
-        return mMediaProvider;
     }
 
     public static class Torrent implements Parcelable {

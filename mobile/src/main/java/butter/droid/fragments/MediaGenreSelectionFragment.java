@@ -31,22 +31,25 @@ import android.widget.TextView;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.adapters.GenreAdapter;
 import butter.droid.adapters.decorators.DividerItemDecoration;
-import butter.droid.base.providers.media.MediaProvider;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.media.models.Genre;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class MediaGenreSelectionFragment extends Fragment {
 
-    public static final String EXTRA_PROVIDER = "extra_provider";
+    @Inject
+    ProviderManager providerManager;
 
     private Context mContext;
     private RecyclerView.LayoutManager mLayoutManager;
     private GenreAdapter mAdapter;
-    private MediaProvider mProvider;
     private Listener mListener;
     private int mSelectedPos = 0;
 
@@ -59,11 +62,8 @@ public class MediaGenreSelectionFragment extends Fragment {
     @BindView(R.id.progress_textview)
     TextView mProgressTextView;
 
-    public static MediaGenreSelectionFragment newInstance(MediaProvider provider, Listener listener) {
+    public static MediaGenreSelectionFragment newInstance(Listener listener) {
         MediaGenreSelectionFragment frag = new MediaGenreSelectionFragment();
-        Bundle args = new Bundle();
-        args.putParcelable(EXTRA_PROVIDER, provider);
-        frag.setArguments(args);
         frag.setListener(listener);
         return frag;
     }
@@ -75,7 +75,9 @@ public class MediaGenreSelectionFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mProvider = getArguments().getParcelable(EXTRA_PROVIDER);
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
     }
 
     @Override
@@ -95,7 +97,7 @@ public class MediaGenreSelectionFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        List<Genre> genreList = mProvider.getGenres();
+        List<Genre> genreList = providerManager.getCurrentMediaProvider().getGenres();
 
         mRecyclerView.setHasFixedSize(true);
         mRecyclerView.addItemDecoration(new DividerItemDecoration(mContext, DividerItemDecoration.VERTICAL_LIST, R.drawable.list_divider_nospacing));
@@ -116,7 +118,7 @@ public class MediaGenreSelectionFragment extends Fragment {
     };
 
     public interface Listener {
-        public void onGenreSelected(String genre);
+        void onGenreSelected(String genre);
     }
 
 }

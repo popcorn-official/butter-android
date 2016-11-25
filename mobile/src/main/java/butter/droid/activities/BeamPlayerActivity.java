@@ -26,15 +26,16 @@ import android.support.annotation.NonNull;
 import android.view.MenuItem;
 import android.view.View;
 
+import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.base.ButterBaseActivity;
 import butter.droid.base.beaming.BeamManager;
 import butter.droid.base.beaming.server.BeamServerService;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.torrent.TorrentService;
-import butter.droid.fragments.dialog.OptionDialogFragment;
 import butter.droid.fragments.BeamPlayerFragment;
 import butter.droid.fragments.VideoPlayerFragment;
+import butter.droid.fragments.dialog.OptionDialogFragment;
 
 public class BeamPlayerActivity extends ButterBaseActivity implements VideoPlayerFragment.Callback {
 
@@ -68,6 +69,11 @@ public class BeamPlayerActivity extends ButterBaseActivity implements VideoPlaye
     @Override
     public void onCreate(Bundle savedInstanceState) {
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+
+        MobileButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
+
         super.onCreate(savedInstanceState, R.layout.activity_beamplayer);
 
         setShowCasting(true);

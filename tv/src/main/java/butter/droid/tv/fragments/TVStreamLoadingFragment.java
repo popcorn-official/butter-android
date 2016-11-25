@@ -53,6 +53,7 @@ import butter.droid.base.providers.media.models.Show;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.utils.ThreadUtils;
 import butter.droid.tv.R;
+import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.TVStreamLoadingActivity;
 import butter.droid.tv.activities.TVVideoPlayerActivity;
 import butter.droid.tv.utils.BackgroundUpdater;
@@ -72,6 +73,15 @@ public class TVStreamLoadingFragment extends BaseStreamLoadingFragment {
 	TextView mTertiaryTextView;
 
 	BackgroundUpdater mBackgroundUpdater = new BackgroundUpdater();
+
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
+
+		TVButterApplication.getAppContext()
+				.getComponent()
+				.inject(this);
+	}
 
 	@TargetApi(Build.VERSION_CODES.LOLLIPOP)
 	@Override
