@@ -30,7 +30,6 @@ import java.util.List;
 
 import butter.droid.base.content.preferences.Prefs;
 import butter.droid.base.providers.media.MediaProvider;
-import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.YtsMoviesProvider;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Movie;

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import butter.droid.base.providers.media.MediaProvider;
-import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.TVProvider;
 import butter.droid.base.providers.media.YtsMoviesProvider;
 import butter.droid.base.providers.media.models.Episode;
