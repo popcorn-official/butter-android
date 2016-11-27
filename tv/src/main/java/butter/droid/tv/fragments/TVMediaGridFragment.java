@@ -35,10 +35,9 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-import butter.droid.base.providers.media.MoviesProvider;
-import butter.droid.base.providers.media.TVProvider;
-import hugo.weaving.DebugLog;
 import butter.droid.base.providers.media.MediaProvider;
+import butter.droid.base.providers.media.TVProvider;
+import butter.droid.base.providers.media.YtsMoviesProvider;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Movie;
 import butter.droid.base.providers.media.models.Show;
@@ -49,6 +48,7 @@ import butter.droid.tv.activities.TVMediaDetailActivity;
 import butter.droid.tv.activities.TVMediaGridActivity;
 import butter.droid.tv.presenters.MediaCardPresenter;
 import butter.droid.tv.utils.BackgroundUpdater;
+import hugo.weaving.DebugLog;
 import timber.log.Timber;
 
 
@@ -95,7 +95,7 @@ public class TVMediaGridFragment extends VerticalGridFragment implements OnItemV
 
         switch (mCallback.getType()) {
             case MOVIE:
-                mProvider = new MoviesProvider();
+                mProvider = new YtsMoviesProvider();
                 break;
             case SHOW:
                 mProvider = new TVProvider();
@@ -147,12 +147,12 @@ public class TVMediaGridFragment extends VerticalGridFragment implements OnItemV
 
             @DebugLog
             @Override
-            public void onFailure(Exception e) {
+            public void onFailure(final Exception e) {
                 e.printStackTrace();
                 ThreadUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), "error getting show list", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
             }

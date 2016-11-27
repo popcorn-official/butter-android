@@ -26,6 +26,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -48,32 +49,26 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 
-import butter.droid.base.providers.media.MoviesProvider;
-import android.support.annotation.Nullable;
 import butter.droid.BuildConfig;
 import butter.droid.R;
 import butter.droid.activities.base.ButterBaseActivity;
-import butter.droid.base.Constants;
 import butter.droid.base.beaming.BeamManager;
 import butter.droid.base.beaming.BeamPlayerNotificationService;
 import butter.droid.base.beaming.server.BeamServerService;
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.providers.media.YtsMoviesProvider;
 import butter.droid.base.providers.media.models.Movie;
 import butter.droid.base.providers.subs.SubsProvider;
 import butter.droid.base.providers.subs.YSubsProvider;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.utils.PrefUtils;
-import butter.droid.base.utils.SignUtils;
+import butter.droid.base.vpn.VPNManager;
 import butter.droid.base.youtube.YouTubeData;
-import butter.droid.fragments.dialog.MessageDialogFragment;
 import butter.droid.fragments.MediaContainerFragment;
 import butter.droid.fragments.NavigationDrawerFragment;
 import butter.droid.utils.ToolbarUtils;
 import butter.droid.widget.ScrimInsetsFrameLayout;
-import butter.droid.base.vpn.VPNManager;
-
 import butterknife.BindView;
-import butterknife.ButterKnife;
 import timber.log.Timber;
 
 /**
@@ -300,7 +295,7 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
                             .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                                    Movie media = new Movie(new YtsMoviesProvider(), new YSubsProvider());
 
                                     media.videoId = "dialogtestvideo";
                                     media.title = "User input test video";
@@ -318,13 +313,13 @@ public class MainActivity extends ButterBaseActivity implements NavigationDrawer
                     builder.show();
                 } else if (YouTubeData.isYouTubeUrl(location)) {
                     Intent i = new Intent(MainActivity.this, TrailerPlayerActivity.class);
-                    Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                    Movie media = new Movie(new YtsMoviesProvider(), new YSubsProvider());
                     media.title = file_types[index];
                     i.putExtra(TrailerPlayerActivity.DATA, media);
                     i.putExtra(TrailerPlayerActivity.LOCATION, location);
                     startActivity(i);
                 } else {
-                    final Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                    final Movie media = new Movie(new YtsMoviesProvider(), new YSubsProvider());
                     media.videoId = "bigbucksbunny";
                     media.title = file_types[index];
                     media.subtitles = new HashMap<>();

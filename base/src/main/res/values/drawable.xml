@@ -11,7 +11,14 @@
     <drawable name="movie_filter_top_rated">@android:color/transparent</drawable>
     <drawable name="movie_filter_popular_now">@android:color/transparent</drawable>
     <drawable name="movie_filter_trending">@android:color/transparent</drawable>
-    
+
+    <drawable name="yts_filter_trending">@android:color/transparent</drawable>
+    <drawable name="yts_filter_popular_now">@android:color/transparent</drawable>
+    <drawable name="yts_filter_top_rated">@android:color/transparent</drawable>
+    <drawable name="yts_filter_release_date">@android:color/transparent</drawable>
+    <drawable name="yts_filter_year">@android:color/transparent</drawable>
+    <drawable name="yts_filter_a_to_z">@android:color/transparent</drawable>
+
     <drawable name="tvshow_filter_trending">@android:color/transparent</drawable>
     <drawable name="tvshow_filter_popular_now">@android:color/transparent</drawable>
     <drawable name="tvshow_filter_top_rated">@android:color/transparent</drawable>

@@ -45,8 +45,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import butter.droid.base.providers.media.MoviesProvider;
 import butter.droid.base.providers.media.TVProvider;
+import butter.droid.base.providers.media.YtsMoviesProvider;
 import hugo.weaving.DebugLog;
 import butter.droid.base.providers.media.MediaProvider;
 import butter.droid.base.providers.media.models.Media;
@@ -77,7 +77,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
     private ArrayObjectAdapter mShowAdapter;
     private ArrayObjectAdapter mMoviesAdapter;
 
-    private MediaProvider mMoviesProvider = new MoviesProvider();
+    private MediaProvider mMoviesProvider = new YtsMoviesProvider();
     private MediaProvider mShowsProvider = new TVProvider();
 
     private BackgroundUpdater mBackgroundUpdater;
@@ -140,6 +140,48 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
     }
 
     private void loadData() {
+        loadMoviesData();
+    }
+
+    private void loadMoviesData() {
+        final MediaProvider.Filters movieFilters = new MediaProvider.Filters();
+        movieFilters.sort = MediaProvider.Filters.Sort.YEAR;
+        movieFilters.order = MediaProvider.Filters.Order.DESC;
+
+        mMoviesProvider.getList(null, movieFilters, new MediaProvider.Callback() {
+            @DebugLog
+            @Override
+            public void onSuccess(MediaProvider.Filters filters, final ArrayList<Media> items, boolean changed) {
+                ThreadUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
+                        mMoviesAdapter.clear();
+                        mMoviesAdapter.addAll(0, list);
+
+                        if(mSelectedRow == 0)
+                            mBackgroundUpdater.updateBackgroundAsync(items.get(0).headerImage);
+                        loadTvShows();
+                    }
+                });
+            }
+
+            @DebugLog
+            @Override
+            public void onFailure(final Exception e) {
+                ThreadUtils.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
+                        loadTvShows();
+                    }
+                });
+            }
+        });
+    }
+
+    private void loadTvShows() {
         final MediaProvider.Filters showsFilter = new MediaProvider.Filters();
         showsFilter.sort = MediaProvider.Filters.Sort.DATE;
         showsFilter.order = MediaProvider.Filters.Order.DESC;
@@ -147,52 +189,28 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
         mShowsProvider.getList(null, showsFilter, new MediaProvider.Callback() {
             @DebugLog
             @Override
-            public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
-                List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
-                mShowAdapter.clear();
-                mShowAdapter.addAll(0, list);
-
-                if(mSelectedRow == 1)
-                    mBackgroundUpdater.updateBackgroundAsync(items.get(0).headerImage);
-            }
-
-            @DebugLog
-            @Override
-            public void onFailure(Exception e) {
-                e.printStackTrace();
+            public void onSuccess(MediaProvider.Filters filters, final ArrayList<Media> items, boolean changed) {
                 ThreadUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), R.string.encountered_error, Toast.LENGTH_SHORT).show();
+                        List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
+                        mShowAdapter.clear();
+                        mShowAdapter.addAll(0, list);
+
+                        if(mSelectedRow == 1)
+                            mBackgroundUpdater.updateBackgroundAsync(items.get(0).headerImage);
                     }
                 });
             }
-        });
-
-        final MediaProvider.Filters movieFilters = new MediaProvider.Filters();
-        movieFilters.sort = MediaProvider.Filters.Sort.POPULARITY;
-        movieFilters.order = MediaProvider.Filters.Order.DESC;
-
-        mMoviesProvider.getList(null, movieFilters, new MediaProvider.Callback() {
-            @DebugLog
-            @Override
-            public void onSuccess(MediaProvider.Filters filters, ArrayList<Media> items, boolean changed) {
-                List<MediaCardPresenter.MediaCardItem> list = MediaCardPresenter.convertMediaToOverview(items);
-                mMoviesAdapter.clear();
-                mMoviesAdapter.addAll(0, list);
-
-                if(mSelectedRow == 0)
-                    mBackgroundUpdater.updateBackgroundAsync(items.get(0).headerImage);
-            }
 
             @DebugLog
             @Override
-            public void onFailure(Exception e) {
-                e.printStackTrace();
+            public void onFailure(final Exception e) {
                 ThreadUtils.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        Toast.makeText(getActivity(), R.string.movies_error, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_LONG).show();
+                        e.printStackTrace();
                     }
                 });
             }
@@ -314,7 +332,25 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
             case R.id.movie_filter_popular_now:
             case R.id.movie_filter_year:
             case R.id.movie_filter_top_rated:
-                TVMediaGridActivity.startActivity(getActivity(), moreItem.getNavInfo().getLabel(), TVMediaGridActivity.ProviderType.MOVIE, moreItem.getNavInfo().getFilter(), moreItem.getNavInfo().getOrder(), null);
+                TVMediaGridActivity.startActivity(
+                        getActivity(),
+                        moreItem.getNavInfo().getLabel(),
+                        TVMediaGridActivity.ProviderType.MOVIE,
+                        moreItem.getNavInfo().getFilter(),
+                        moreItem.getNavInfo().getOrder(), null);
+                break;
+            case R.id.yts_filter_a_to_z:
+            case R.id.yts_filter_popular_now:
+            case R.id.yts_filter_release_date:
+            case R.id.yts_filter_top_rated:
+            case R.id.yts_filter_trending:
+            case R.id.yts_filter_year:
+                TVMediaGridActivity.startActivity(
+                        getActivity(),
+                        moreItem.getNavInfo().getLabel(),
+                        TVMediaGridActivity.ProviderType.MOVIE,
+                        moreItem.getNavInfo().getFilter(),
+                        moreItem.getNavInfo().getOrder(), null);
                 break;
             case R.id.tvshow_filter_a_to_z:
             case R.id.tvshow_filter_trending:
@@ -322,7 +358,12 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
             case R.id.tvshow_filter_popular_now:
             case R.id.tvshow_filter_year:
             case R.id.tvshow_filter_top_rated:
-                TVMediaGridActivity.startActivity(getActivity(), moreItem.getNavInfo().getLabel(), TVMediaGridActivity.ProviderType.SHOW, moreItem.getNavInfo().getFilter(), moreItem.getNavInfo().getOrder(), null);
+                TVMediaGridActivity.startActivity(
+                        getActivity(),
+                        moreItem.getNavInfo().getLabel(),
+                        TVMediaGridActivity.ProviderType.SHOW,
+                        moreItem.getNavInfo().getFilter(),
+                        moreItem.getNavInfo().getOrder(), null);
                 break;
             case R.id.movie_filter_genres:
                 Toast.makeText(getActivity(), "Not implemented yet", Toast.LENGTH_LONG).show();
@@ -354,7 +395,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
                             .setPositiveButton("Start", new DialogInterface.OnClickListener() {
                                 @Override
                                 public void onClick(DialogInterface dialog, int which) {
-                                    Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                                    Movie media = new Movie(new YtsMoviesProvider(), new YSubsProvider());
 
                                     media.videoId = "dialogtestvideo";
                                     media.title = "User input test video";
@@ -365,7 +406,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
                     builder.show();
                 }
 
-                final Movie media = new Movie(new MoviesProvider(), new YSubsProvider());
+                final Movie media = new Movie(new YtsMoviesProvider(), new YSubsProvider());
                 media.videoId = "bigbucksbunny";
                 media.title = file_types[index];
                 media.subtitles = new HashMap<>();
