@@ -45,6 +45,7 @@ public class YtsMovieResponse {
             ArrayList<LinkedTreeMap<String, Object>> torrents =
                     (ArrayList<LinkedTreeMap<String, Object>>) item.get("torrents");
             if (torrents != null) {
+                Map<String, Media.Torrent> torrentMap = new HashMap<>();
                 for (LinkedTreeMap<String, Object> torrentEntry : torrents) {
                     int seeds = ((Double) torrentEntry.get("seeds")).intValue();
                     int peers = ((Double) torrentEntry.get("peers")).intValue();
@@ -52,10 +53,9 @@ public class YtsMovieResponse {
                     String url = (String) torrentEntry.get("url");
                     Media.Torrent torrent = new Media.Torrent(url, seeds, peers, hash);
                     String quality = (String) torrentEntry.get("quality");
-                    Map<String, Media.Torrent> torrentMap = new HashMap<>();
                     torrentMap.put(quality, torrent);
-                    movie.torrents.put("en", torrentMap);
                 }
+                movie.torrents.put("en", torrentMap);
             }
 
             existingList.add(movie);
