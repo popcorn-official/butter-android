@@ -149,10 +149,10 @@ public class YtsMoviesProvider extends MediaProvider {
                         ArrayList<Media> formattedData = result.formatListForPopcorn(currentList, YtsMoviesProvider.this, new YSubsProvider());
                         callback.onSuccess(filters, formattedData, list.size() > 0);
                     }
+                    else callback.onFailure(new NetworkErrorException("Couldn't connect to YTS movies API"));
                 } catch (Exception e) {
                     callback.onFailure(e);
                 }
-                callback.onFailure(new NetworkErrorException("Couldn't connect to MOVIEAPI"));
             }
         });
     }
