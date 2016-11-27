@@ -54,7 +54,7 @@ public class YtsMovieResponse {
                     String quality = (String) torrentEntry.get("quality");
                     Map<String, Media.Torrent> torrentMap = new HashMap<>();
                     torrentMap.put(quality, torrent);
-                    movie.torrents.put(LocaleUtils.toLocale("en").getDisplayLanguage() , torrentMap);
+                    movie.torrents.put("en", torrentMap);
                 }
             }
 
