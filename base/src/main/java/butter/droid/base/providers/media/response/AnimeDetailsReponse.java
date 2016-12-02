@@ -91,11 +91,11 @@ public class AnimeDetailsReponse extends DetailsResponse<AnimeDetails> {
             media.imdbId = "mal-" + media.videoId;
             media.year = item.getYear();
             if (item.getImages().getPoster() != null && !item.getImages().getPoster().contains("images/posterholder.png")) {
-                media.image = item.getImages().getPoster().replace("/original/", "/medium/");
+                media.image = item.getImages().getPoster();
                 media.fullImage = item.getImages().getPoster();
             }
-            if (item.getImages().getFanart() != null && item.getImages().getFanart().contains("images/posterholder.png")) {
-                media.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
+            if (item.getImages().getFanart() != null && !item.getImages().getFanart().contains("images/posterholder.png")) {
+                media.headerImage = item.getImages().getFanart();
             }
 
             media.genre = item.getGenres().get(0);

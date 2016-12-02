@@ -51,11 +51,11 @@ public class MovieResponse extends Response<Movie> {
             movie.certification = item.getCertification();
 
             if (item.getImages().getPoster() != null && !item.getImages().getPoster().contains("images/posterholder.png")) {
-                movie.image = item.getImages().getPoster().replace("/posters/", "/_cache/posters/");
+                movie.image = item.getImages().getPoster();
                 movie.fullImage = item.getImages().getPoster();
             }
-            if (item.getImages().getFanart() != null && item.getImages().getFanart().contains("images/posterholder.png")) {
-                movie.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
+            if (item.getImages().getFanart() != null && !item.getImages().getFanart().contains("images/posterholder.png")) {
+                movie.headerImage = item.getImages().getFanart();
             }
 
             if (item.getTorrents() != null) {

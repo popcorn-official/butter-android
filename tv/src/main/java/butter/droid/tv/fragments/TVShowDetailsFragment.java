@@ -38,9 +38,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import javax.inject.Inject;
+
 import butter.droid.base.content.preferences.Prefs;
+import butter.droid.base.manager.provider.ProviderManager;
 import butter.droid.base.providers.media.MediaProvider;
-import butter.droid.base.providers.media.TVProvider;
 import butter.droid.base.providers.media.models.Episode;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.providers.media.models.Show;
@@ -48,6 +50,7 @@ import butter.droid.base.providers.subs.SubsProvider;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.tv.R;
+import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.TVStreamLoadingActivity;
 import butter.droid.tv.presenters.ShowDetailsDescriptionPresenter;
 import butter.droid.tv.presenters.showdetail.EpisodeCardPresenter;
@@ -57,7 +60,8 @@ public class TVShowDetailsFragment extends TVBaseDetailsFragment
         OnActionClickedListener,
         EpisodeCardPresenter.Listener {
 
-    private MediaProvider mTvProvider = new TVProvider();
+    @Inject
+    ProviderManager providerManager;
 
     public static Fragment newInstance(Media media) {
         TVShowDetailsFragment fragment = new TVShowDetailsFragment();
@@ -70,10 +74,20 @@ public class TVShowDetailsFragment extends TVBaseDetailsFragment
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        TVButterApplication.getAppContext()
+                .getComponent()
+                .inject(this);
+    }
+
+    @Override
     void loadDetails() {
         ArrayList<Media> mediaList = new ArrayList<>();
         mediaList.add(getShowItem());
-        mTvProvider.getDetail(mediaList, 0, this);
+
+        providerManager.getCurrentMediaProvider().getDetail(mediaList, 0, this);
     }
 
     @Override

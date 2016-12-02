@@ -31,6 +31,8 @@ import android.view.MenuItem;
 
 import java.net.URLDecoder;
 
+import javax.inject.Inject;
+
 import butter.droid.base.manager.youtube.YouTubeManager;
 import butter.droid.base.providers.media.models.Media;
 import butter.droid.base.torrent.StreamInfo;
@@ -68,7 +70,7 @@ public class TVTrailerPlayerActivity extends TVBaseActivity implements TVVideoPl
 
         TVButterApplication.getAppContext()
                 .getComponent()
-                .inject(this)
+                .inject(this);
         super.onCreate(savedInstanceState, R.layout.activity_videoplayer);
 
         mMedia = getIntent().getParcelableExtra(DATA);

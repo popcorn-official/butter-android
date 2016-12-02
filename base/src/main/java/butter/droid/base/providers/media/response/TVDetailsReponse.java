@@ -34,7 +34,7 @@ public class TVDetailsReponse extends DetailsResponse<ShowDetails> {
                 show.image = item.getImages().getPoster().replace("/posters/", "/_cache/posters/");
                 show.fullImage = item.getImages().getPoster();
             }
-            if (item.getImages().getFanart() != null && item.getImages().getFanart().contains("images/posterholder.png")) {
+            if (item.getImages().getFanart() != null && !item.getImages().getFanart().contains("images/posterholder.png")) {
                 show.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
             }
 

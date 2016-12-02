@@ -34,6 +34,7 @@ import butter.droid.tv.fragments.TVMovieDetailsFragment;
 import butter.droid.tv.fragments.TVOverviewFragment;
 import butter.droid.tv.fragments.TVPreferencesFragment;
 import butter.droid.tv.fragments.TVSearchFragment;
+import butter.droid.tv.fragments.TVShowDetailsFragment;
 import butter.droid.tv.fragments.TVStreamLoadingFragment;
 import butter.droid.tv.fragments.TVVideoPlayerFragment;
 import butter.droid.tv.service.RecommendationService;
@@ -71,6 +72,8 @@ public interface ApplicationComponent {
     void inject(RecommendationService service);
 
     void inject(TVOverviewFragment fragment);
+
+    void inject(TVShowDetailsFragment fragment);
 
     void inject(TVMovieDetailsFragment fragment);
 
