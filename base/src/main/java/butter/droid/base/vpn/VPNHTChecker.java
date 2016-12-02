@@ -35,17 +35,16 @@ import butter.droid.base.utils.PrefUtils;
 @Singleton
 public class VPNHTChecker {
 
-    @Inject
-    OkHttpClient client;
-
     private static final String VPN_AVAILABLE = "vpn_available";
     private static Request sCheckingRequest;
 
     private Context mContext;
+    private final OkHttpClient mHttpClient;
 
-    public VPNHTChecker(final Context context) {
+    @Inject
+    public VPNHTChecker(final Context context, OkHttpClient okHttpClient) {
         this.mContext = context;
-
+        this.mHttpClient = okHttpClient;
     }
 
     public boolean isDownloadAvailable() {
@@ -55,7 +54,7 @@ public class VPNHTChecker {
 
         if(sCheckingRequest == null) {
             sCheckingRequest = new Request.Builder().head().url("https://play.google.com/store/apps/details?id=ht.vpn.android").build();
-            client.newCall(sCheckingRequest).enqueue(new Callback() {
+            mHttpClient.newCall(sCheckingRequest).enqueue(new Callback() {
                 @Override
                 public void onFailure(Request request, IOException e) {
                     sCheckingRequest = null;

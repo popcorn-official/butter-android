@@ -51,6 +51,7 @@ import butter.droid.adapters.NavigationAdapter;
 import butter.droid.adapters.decorators.OneShotDividerDecorator;
 import butter.droid.base.content.preferences.Prefs;
 import butter.droid.base.manager.provider.ProviderManager;
+import butter.droid.base.manager.updater.ButterUpdateManager;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.ProviderUtils;
 import butter.droid.base.vpn.VPNHTChecker;
@@ -68,6 +69,9 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
 
     @Inject
     ProviderManager providerManager;
+
+    @Inject
+    VPNHTChecker vpnhtChecker;
 
 	/* - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
      * views
@@ -147,7 +151,7 @@ public class NavigationDrawerFragment extends Fragment implements NavigationAdap
                 ProviderManager.PROVIDER_TYPE_ANIME));
         navItems.add(new AbsNavDrawerItem.ScreenNavDrawerItem(R.string.preferences, R.drawable.ic_nav_settings,
                 PreferencesActivity.getIntent(getContext())));
-        if (PrefUtils.get(getActivity(), Prefs.SHOW_VPN, true) && new VPNHTChecker(getActivity()).isDownloadAvailable()) {
+        if (PrefUtils.get(getActivity(), Prefs.SHOW_VPN, true) && vpnhtChecker.isDownloadAvailable()) {
             navItems.add(mVPNItem = new AbsNavDrawerItem.VPNNavDrawerItem(R.string.vpn, R.drawable.ic_nav_vpn, VPNManager.getLatestInstance().isConnected()));
         }
 
