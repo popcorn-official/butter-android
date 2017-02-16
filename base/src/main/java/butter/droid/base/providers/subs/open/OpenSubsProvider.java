@@ -19,6 +19,7 @@ package butter.droid.base.providers.subs.open;
 
 import android.content.Context;
 
+import com.amazon.whisperlink.util.StringUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.util.ArrayList;
@@ -66,7 +67,7 @@ public class OpenSubsProvider extends SubsProvider {
                 final String episodeStr = Integer.toString(episode.episode);
                 final String seasonStr = Integer.toString(episode.season);
 
-                if (!token.isEmpty()) {
+                if (!StringUtil.isEmpty(token)) {
                     search(episode, token, new XMLRPCCallback() {
                         @Override
                         public void onResponse(long id, Object result) {
