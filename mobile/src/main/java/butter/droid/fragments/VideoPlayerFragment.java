@@ -40,6 +40,7 @@ import android.text.SpannableStringBuilder;
 import android.text.style.ForegroundColorSpan;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
@@ -77,6 +78,12 @@ import butterknife.OnClick;
 
 public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View.OnSystemUiVisibilityChangeListener {
 
+    private static final int FADE_OUT_OVERLAY = 5000;
+    private static final int FADE_OUT_INFO = 1000;
+    private static final int TOUCH_NONE = 0;
+    private static final int TOUCH_VOLUME = 1;
+    private static final int TOUCH_BRIGHTNESS = 2;
+    private static final int TOUCH_SEEK = 3;
     @BindView(R.id.toolbar)
     Toolbar mToolbar;
     @BindView(R.id.progress_indicator)
@@ -104,23 +111,11 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
     @BindView(R.id.length_time)
     TextView lengthTime;
     View mDecorView;
-
     private AudioManager mAudioManager;
-
     private long mLastSystemShowTime = System.currentTimeMillis();
-
-    private static final int FADE_OUT_OVERLAY = 5000;
-    private static final int FADE_OUT_INFO = 1000;
-
     private int mLastSystemUIVisibility;
     private boolean mOverlayVisible = true;
-
     private Handler mDisplayHandler;
-
-    private static final int TOUCH_NONE = 0;
-    private static final int TOUCH_VOLUME = 1;
-    private static final int TOUCH_BRIGHTNESS = 2;
-    private static final int TOUCH_SEEK = 3;
     private int mTouchAction;
     private int mSurfaceYDisplayRange;
     private float mTouchY, mTouchX;
@@ -130,6 +125,39 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
 
     private boolean mIsFirstBrightnessGesture = true;
     private float mRestoreAutoBrightness = -1f;
+    private SeekBar.OnSeekBarChangeListener mOnControlBarListener = new SeekBar.OnSeekBarChangeListener() {
+        @Override
+        public void onStartTrackingTouch(SeekBar seekBar) {
+            setSeeking(true);
+        }
+
+        @Override
+        public void onStopTrackingTouch(SeekBar seekBar) {
+            setSeeking(false);
+        }
+
+        @Override
+        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+            if (fromUser && isSeeking() && progress <= (getDuration() / 100 * seekBar.getSecondaryProgress())) {
+                setLastSubtitleCaption(null);
+                setCurrentTime(progress);
+                VideoPlayerFragment.this.onProgressChanged(getCurrentTime(), getDuration());
+                progressSubtitleCaption();
+            }
+        }
+    };
+    private Runnable mOverlayHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hideOverlay();
+        }
+    };
+    private Runnable mInfoHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            hidePlayerInfo();
+        }
+    };
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -155,6 +183,7 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
                 return onTouchEvent(event);
             }
         });
+
         ButterKnife.bind(this, view);
 
         if (LocaleUtils.isRTL(LocaleUtils.getCurrent())) {
@@ -222,7 +251,7 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
                     mToolbar.getPaddingBottom());
         }
 
-        if(getAppCompatActivity().getSupportActionBar() != null) {
+        if (getAppCompatActivity().getSupportActionBar() != null) {
             if (null != mCallback.getInfo()) {
                 if (mMedia != null && mMedia.title != null) {
                     if (null != mCallback.getInfo().getQuality()) {
@@ -287,6 +316,30 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
         return videoSurface;
     }
 
+    public boolean onKeyEvent(KeyEvent event) {
+        //If the user click enter on the remote, show the overlay
+        if (event.getAction() == KeyEvent.ACTION_UP) {
+            switch (event.getKeyCode()) {
+                case KeyEvent.KEYCODE_DPAD_CENTER:
+                    if (!mOverlayVisible) {
+                        showOverlay();
+                        mPlayButton.requestFocus();
+                    } else {
+                        togglePlayPause();
+                    }
+                    break;
+
+                case KeyEvent.KEYCODE_DPAD_RIGHT:
+                    seekForwardClick();
+                    break;
+
+                case KeyEvent.KEYCODE_DPAD_LEFT:
+                    seekBackwardClick();
+                    break;
+            }
+        }
+        return true;
+    }
 
     public boolean onTouchEvent(MotionEvent event) {
         DisplayMetrics screen = new DisplayMetrics();
@@ -354,7 +407,6 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
         }
         return true;
     }
-
 
     @Override
     public void onSystemUiVisibilityChange(int visibility) {
@@ -468,7 +520,6 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
         showPlayerInfo(getString(R.string.brightness) + '\u00A0' + Math.round(lp.screenBrightness * 15));
     }
 
-
     @Override
     protected void onErrorEncountered() {
         /* Encountered Error, exit player with a message */
@@ -484,7 +535,6 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
                 .create();
         dialog.show();
     }
-
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN)
     public void showOverlay() {
@@ -547,7 +597,7 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
     }
 
     public void updatePlayPauseState() {
-        if(FragmentUtil.isNotAdded(this))
+        if (FragmentUtil.isNotAdded(this))
             return;
 
         if (isPlaying()) {
@@ -558,28 +608,6 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
             mPlayButton.setContentDescription(getString(R.string.play));
         }
     }
-
-    private SeekBar.OnSeekBarChangeListener mOnControlBarListener = new SeekBar.OnSeekBarChangeListener() {
-        @Override
-        public void onStartTrackingTouch(SeekBar seekBar) {
-            setSeeking(true);
-        }
-
-        @Override
-        public void onStopTrackingTouch(SeekBar seekBar) {
-            setSeeking(false);
-        }
-
-        @Override
-        public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-            if (fromUser && isSeeking() && progress <= (getDuration() / 100 * seekBar.getSecondaryProgress())) {
-                setLastSubtitleCaption(null);
-                setCurrentTime(progress);
-                VideoPlayerFragment.this.onProgressChanged(getCurrentTime(), getDuration());
-                progressSubtitleCaption();
-            }
-        }
-    };
 
     @Override
     protected void onHardwareAccelerationError() {
@@ -603,20 +631,6 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
         if (!getAppCompatActivity().isFinishing())
             dialog.show();
     }
-
-    private Runnable mOverlayHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hideOverlay();
-        }
-    };
-
-    private Runnable mInfoHideRunnable = new Runnable() {
-        @Override
-        public void run() {
-            hidePlayerInfo();
-        }
-    };
 
     @Override
     protected void showTimedCaptionText(final Caption text) {
@@ -645,10 +659,10 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
 
     @Override
     protected void setProgressVisible(boolean visible) {
-        if(mProgressIndicator.getVisibility() == View.VISIBLE && visible)
+        if (mProgressIndicator.getVisibility() == View.VISIBLE && visible)
             return;
 
-        if(mProgressIndicator.getVisibility() == View.GONE && !visible)
+        if (mProgressIndicator.getVisibility() == View.GONE && !visible)
             return;
 
         mProgressIndicator.setVisibility(visible ? View.VISIBLE : View.GONE);
@@ -658,7 +672,7 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
      * Updates the overlay when the media playback progress has changed
      *
      * @param currentTime Current progress time
-     * @param duration Duration of full medias
+     * @param duration    Duration of full medias
      */
     @Override
     protected void onProgressChanged(long currentTime, long duration) {
@@ -713,7 +727,7 @@ public class VideoPlayerFragment extends BaseVideoPlayerFragment implements View
     }
 
 
-    public void startBeamPlayerActivity(){
+    public void startBeamPlayerActivity() {
         BeamPlayerActivity.startActivity(getActivity(), mCallback.getInfo(), getCurrentTime());
     }
 
