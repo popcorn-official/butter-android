@@ -27,6 +27,7 @@ import android.os.ParcelFileDescriptor;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 
 import org.videolan.libvlc.util.AndroidUtil;
@@ -205,6 +206,12 @@ public class VideoPlayerActivity extends ButterBaseActivity implements VideoPlay
         super.onResume();
         if(null != mService && mService.checkStopped())
             finish();
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        mFragment.onKeyEvent(event);
+        return true;
     }
 
     @Override
