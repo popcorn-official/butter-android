@@ -1,5 +1,10 @@
 language: android
 sudo: false
+addons:
+  sonarcloud:
+    organization: "sravan-apps-github" # the key of the org you chose at step #3
+    #token:
+     # secure: ********* # encrypted value of your token
 android:
   components:
     - build-tools-22.0.1
@@ -23,5 +28,9 @@ before_script:
 - adb shell input keyevent 82 &
 
 script:
-  - ./gradlew test
+  - ./gradlew sonarqube \
+  -Dsonar.projectKey=Sravan-Apps_popcorn-android \
+  -Dsonar.organization=sravan-apps-github \
+  -Dsonar.host.url=https://sonarcloud.io \
+  -Dsonar.login=ef49eb6db460e7c8070875d19a6ea9db1a93bfd1
   
