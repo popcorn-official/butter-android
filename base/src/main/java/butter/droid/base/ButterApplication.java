@@ -26,6 +26,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.support.multidex.MultiDex;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.FileProvider;
 
 import com.sjl.foreground.Foreground;
 import com.squareup.leakcanary.LeakCanary;
@@ -137,6 +138,7 @@ public class ButterApplication extends Application implements ButterUpdateManage
         NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 
         if (updateFile.length() > 0) {
+            Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID + ".provider", new File(updateFile));
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this)
                     .setSmallIcon(R.drawable.ic_notif_logo)
                     .setContentTitle(getString(R.string.update_available))
@@ -145,7 +147,8 @@ public class ButterApplication extends Application implements ButterUpdateManage
                     .setDefaults(NotificationCompat.DEFAULT_ALL);
 
             Intent notificationIntent = new Intent(Intent.ACTION_VIEW);
-            notificationIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE);
+            notificationIntent.setDataAndType(uri, ButterUpdateManager.ANDROID_PACKAGE);
+            notificationIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
 
             notificationBuilder.setContentIntent(PendingIntent.getActivity(this, 0, notificationIntent, 0));
 

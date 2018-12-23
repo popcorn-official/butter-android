@@ -23,11 +23,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.FileProvider;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.io.File;
+
 import javax.inject.Inject;
 
+import butter.droid.BuildConfig;
 import butter.droid.R;
 import butter.droid.base.ButterApplication;
 import butter.droid.base.beaming.BeamManager;
@@ -57,12 +61,15 @@ public class ButterBaseActivity extends TorrentBaseActivity implements BeamManag
                     .setCancelable(false)
                     .show();
 
+
             updateManager.setListener(new ButterUpdateManager.Listener() {
                 @Override
                 public void updateAvailable(String updateFile) {
+                    Uri uri = FileProvider.getUriForFile(ButterBaseActivity.this, BuildConfig.APPLICATION_ID + ".provider", new File(updateFile));
                     Intent installIntent = new Intent(Intent.ACTION_VIEW);
-                    installIntent.setDataAndType(Uri.parse("file://" + updateFile), ButterUpdateManager.ANDROID_PACKAGE);
-                    installIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    installIntent.setDataAndType(uri, ButterUpdateManager.ANDROID_PACKAGE);
+                    installIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                    installIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     startActivity(installIntent);
                 }
             });
