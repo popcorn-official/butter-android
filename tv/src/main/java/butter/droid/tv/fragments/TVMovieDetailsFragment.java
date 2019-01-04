@@ -18,6 +18,9 @@
 package butter.droid.tv.fragments;
 
 import android.app.Fragment;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
 import android.support.v17.leanback.widget.Action;
@@ -146,7 +149,13 @@ public class TVMovieDetailsFragment extends TVBaseDetailsFragment implements Med
 			if (!youTubeManager.isYouTubeUrl(movie.trailer)) {
 				TVVideoPlayerActivity.startActivity(getActivity(), new StreamInfo(movie, null, null, null, null, movie.trailer));
             } else {
-                TVTrailerPlayerActivity.startActivity(getActivity(), movie.trailer, movie);
+				String id = youTubeManager.getYouTubeVideoId(movie.trailer);
+				Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+				try {
+					startActivity(appIntent);
+				} catch (ActivityNotFoundException ex) {
+					TVTrailerPlayerActivity.startActivity(getActivity(), movie.trailer, movie);
+				}
             }
         }
 	}
