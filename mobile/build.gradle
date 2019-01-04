@@ -1,30 +1,18 @@
-apply plugin: 'org.moallemi.advanced-build-version'
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'//for method logging (only in debug builds)
 apply plugin: 'com.github.ben-manes.versions'// to check for dependency updates
 
-advancedVersioning {
-    codeOptions {
-        versionCodeType org.moallemi.gradle.internal.VersionCodeType.DATE
-    }
-    nameOptions {
-        versionMajor 0
-        versionMinor 2
-        versionPatch 9
-    }
-}
-
 android {
     compileSdkVersion rootProject.ext.compileSdk
     buildToolsVersion rootProject.ext.buildToolsVersion
-    def buildNumber = (System.getenv("BUILD_NUMBER") ?: advancedVersioning.versionCode) as int
+    def buildNumber = (System.getenv("BUILD_NUMBER") ?: 1) as int
 
     defaultConfig {
         applicationId "pct.droid"
         minSdkVersion rootProject.ext.minSdk
         targetSdkVersion rootProject.ext.targetSdk
-        versionCode 2
-        versionName advancedVersioning.versionName
+        versionCode buildNumber
+        versionName "0.2.9"
         multiDexEnabled true
     }
 
