@@ -75,8 +75,7 @@ allprojects {
 
 def renameOutputFiles(Project project, variant) {
     variant.outputs.each { output ->
-        def abi = output.getFilter(com.android.build.OutputFile.ABI);
-        output.versionCodeOverride = project.ext.versionCodes.get(abi, 0) * 10000000 + output.versionCode
+        output.versionCodeOverride = project.ext.versionCodes.get(variant.productFlavors[0].name, 0) * 10000000 + output.versionCode
 
         def outputFileName = output.outputFile.name
 

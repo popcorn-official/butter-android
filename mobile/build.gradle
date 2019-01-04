@@ -23,7 +23,7 @@ android {
         applicationId "pct.droid"
         minSdkVersion rootProject.ext.minSdk
         targetSdkVersion rootProject.ext.targetSdk
-        versionCode buildNumber
+        versionCode 2
         versionName advancedVersioning.versionName
         multiDexEnabled true
     }
@@ -48,6 +48,19 @@ android {
         }
     }
 
+    productFlavors {
+        arm {
+            ndk {
+                abiFilters "arm64-v8a", "armeabi-v7a"
+            }
+        }
+        x86 {
+            ndk {
+                abiFilters "x86", "x86_64"
+            }
+        }
+    }
+
     lintOptions {
         abortOnError false
     }
@@ -62,16 +75,7 @@ android {
         exclude 'META-INF/DEPENDENCIES.txt'
     }
 
-    splits {
-        abi {
-            enable true
-            universalApk false
-            reset()
-            include 'armeabi-v7a', 'x86', 'arm64-v8a', 'x86_64'
-        }
-    }
-
-    project.ext.versionCodes = ["armeabi": 1, "armeabi-v7a": 2, "arm64-v8a": 3, "x86": 4, "x86_64": 4]
+    project.ext.versionCodes = ["arm": 3, "x86": 5]
 }
 
 //to check for dependency updates,
