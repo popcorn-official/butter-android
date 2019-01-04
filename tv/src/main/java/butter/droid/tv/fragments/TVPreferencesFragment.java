@@ -46,6 +46,7 @@ public class TVPreferencesFragment extends GuidedStepFragment implements Prefere
 
     private List<GuidedAction> mActions;
     private List<PrefItem> mPrefs;
+    private int mLastSelectedActionIndex = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -97,9 +98,9 @@ public class TVPreferencesFragment extends GuidedStepFragment implements Prefere
     @Override
     public void onGuidedActionClicked(GuidedAction action) {
         super.onGuidedActionClicked(action);
-        int currentPos = getSelectedActionPosition();
-        mPrefs.get(currentPos).onClick();
-        setSelectedActionPosition(currentPos);
+        mLastSelectedActionIndex = getSelectedActionPosition();
+        mPrefs.get(mLastSelectedActionIndex).onClick();
+        setSelectedActionPosition(mLastSelectedActionIndex);
     }
 
     private GuidedAction generateAction(long id, PrefItem item) {
@@ -131,7 +132,7 @@ public class TVPreferencesFragment extends GuidedStepFragment implements Prefere
                     @Override
                     public void onSelect(int position) {
                         onClickListener.onSelection(position, null);
-                        updateAction(getSelectedActionPosition());
+                        updateAction(mLastSelectedActionIndex);
                     }
                 });
                 GuidedStepFragment.add(getFragmentManager(), fragment);
@@ -146,7 +147,7 @@ public class TVPreferencesFragment extends GuidedStepFragment implements Prefere
                     @Override
                     public void onSelect(int position) {
                         onClickListener.onSelection(0, position + lowLimit);
-                        updateAction(getSelectedActionPosition());
+                        updateAction(mLastSelectedActionIndex);
                     }
                 });
                 GuidedStepFragment.add(getFragmentManager(), fragment);
@@ -160,7 +161,7 @@ public class TVPreferencesFragment extends GuidedStepFragment implements Prefere
                     @Override
                     public void onSelect(int position) {
                         onClickListener.onSelection(position, colorCodes[position]);
-                        updateAction(getSelectedActionPosition());
+                        updateAction(mLastSelectedActionIndex);
                     }
                 });
                 GuidedStepFragment.add(getFragmentManager(), fragment);
