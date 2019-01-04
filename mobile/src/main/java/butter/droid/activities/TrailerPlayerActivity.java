@@ -19,14 +19,11 @@ package butter.droid.activities;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
-import android.net.wifi.WifiManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.MenuItem;
 
@@ -122,38 +119,18 @@ public class TrailerPlayerActivity extends ButterBaseActivity implements VideoPl
         @Override
         protected Uri doInBackground(String... params) {
             String uriStr = null;
-            String quality = "17";   // 3gpp medium quality, which should be fast enough to view over EDGE connection
             String videoId = params[0];
 
             if (isCancelled())
                 return null;
 
             try {
-                WifiManager wifiManager = (WifiManager) TrailerPlayerActivity.this.getSystemService(Context.WIFI_SERVICE);
-                TelephonyManager telephonyManager = (TelephonyManager) TrailerPlayerActivity.this.getSystemService(Context.TELEPHONY_SERVICE);
-
-                // if we have a fast connection (wifi or 3g), then we'll get a high quality YouTube video
-                if (wifiManager.isWifiEnabled() && wifiManager.getConnectionInfo() != null && wifiManager.getConnectionInfo().getIpAddress() != 0) {
-                    quality = "22";
-                } else if (telephonyManager.getDataState() == TelephonyManager.DATA_CONNECTED &&
-                        (
-                                telephonyManager.getNetworkType() == TelephonyManager.NETWORK_TYPE_UMTS ||
-                                        telephonyManager.getNetworkType() == TelephonyManager.NETWORK_TYPE_HSUPA ||
-                                        telephonyManager.getNetworkType() == TelephonyManager.NETWORK_TYPE_HSPA ||
-                                        telephonyManager.getNetworkType() == TelephonyManager.NETWORK_TYPE_HSDPA ||
-                                        telephonyManager.getNetworkType() == TelephonyManager.NETWORK_TYPE_EVDO_0 ||
-                                        telephonyManager.getNetworkType() == TelephonyManager.NETWORK_TYPE_EVDO_A
-                        )
-                        ) {
-                    quality = "18";
-                }
-
                 if (isCancelled())
                     return null;
 
                 ////////////////////////////////////
                 // calculate the actual URL of the video, encoded with proper YouTube token
-                uriStr = youTubeManager.calculateYouTubeUrl(quality, true, videoId);
+                uriStr = youTubeManager.calculateYouTubeUrl("22", true, videoId);
 
                 if (isCancelled())
                     return null;
