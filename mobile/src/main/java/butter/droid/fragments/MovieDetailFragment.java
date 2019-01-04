@@ -1,7 +1,10 @@
 package butter.droid.fragments;
 
 import android.annotation.TargetApi;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -334,7 +337,13 @@ public class MovieDetailFragment extends BaseDetailFragment {
         if (!youTubeManager.isYouTubeUrl(sMovie.trailer)) {
             VideoPlayerActivity.startActivity(mActivity, new StreamInfo(sMovie, null, null, null, null, sMovie.trailer));
         } else {
-            TrailerPlayerActivity.startActivity(mActivity, sMovie.trailer, sMovie);
+            String id = youTubeManager.getYouTubeVideoId(sMovie.trailer);
+            Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
+            try {
+                startActivity(appIntent);
+            } catch (ActivityNotFoundException ex) {
+                TrailerPlayerActivity.startActivity(mActivity, sMovie.trailer, sMovie);
+            }
         }
     }
 
