@@ -10,8 +10,7 @@ buildscript {
         classpath 'com.android.tools.build:gradle:2.3.0'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'com.github.dcendents:android-maven-plugin:1.2'
-        classpath 'com.github.ben-manes:gradle-versions-plugin:0.11.3'
-        classpath 'org.moallemi.gradle.advanced-build-version:gradle-plugin:1.5.3'
+        classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
     }
@@ -76,8 +75,7 @@ allprojects {
 
 def renameOutputFiles(Project project, variant) {
     variant.outputs.each { output ->
-        def abi = output.getFilter(com.android.build.OutputFile.ABI);
-        output.versionCodeOverride = project.ext.versionCodes.get(abi, 0) * 10000000 + output.versionCode
+        output.versionCodeOverride = project.ext.versionCodes.get(variant.productFlavors[0].name, 0) * 10000000 + output.versionCode
 
         def outputFileName = output.outputFile.name
 

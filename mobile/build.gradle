@@ -1,30 +1,18 @@
-apply plugin: 'org.moallemi.advanced-build-version'
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'//for method logging (only in debug builds)
 apply plugin: 'com.github.ben-manes.versions'// to check for dependency updates
 
-advancedVersioning {
-    codeOptions {
-        versionCodeType org.moallemi.gradle.internal.VersionCodeType.DATE
-    }
-    nameOptions {
-        versionMajor 0
-        versionMinor 2
-        versionPatch 9
-    }
-}
-
 android {
     compileSdkVersion rootProject.ext.compileSdk
     buildToolsVersion rootProject.ext.buildToolsVersion
-    def buildNumber = (System.getenv("BUILD_NUMBER") ?: advancedVersioning.versionCode) as int
+    def buildNumber = (System.getenv("BUILD_NUMBER") ?: 1) as int
 
     defaultConfig {
         applicationId "pct.droid"
         minSdkVersion rootProject.ext.minSdk
         targetSdkVersion rootProject.ext.targetSdk
         versionCode buildNumber
-        versionName advancedVersioning.versionName
+        versionName "0.2.9"
         multiDexEnabled true
     }
 
@@ -48,6 +36,19 @@ android {
         }
     }
 
+    productFlavors {
+        arm {
+            ndk {
+                abiFilters "arm64-v8a", "armeabi-v7a"
+            }
+        }
+        x86 {
+            ndk {
+                abiFilters "x86", "x86_64"
+            }
+        }
+    }
+
     lintOptions {
         abortOnError false
     }
@@ -62,16 +63,7 @@ android {
         exclude 'META-INF/DEPENDENCIES.txt'
     }
 
-    splits {
-        abi {
-            enable true
-            universalApk false
-            reset()
-            include 'armeabi-v7a', 'x86', 'arm64-v8a', 'x86_64'
-        }
-    }
-
-    project.ext.versionCodes = ["armeabi": 1, "armeabi-v7a": 2, "arm64-v8a": 3, "x86": 4, "x86_64": 4]
+    project.ext.versionCodes = ["arm": 3, "x86": 5]
 }
 
 //to check for dependency updates,

@@ -1,51 +1,18 @@
-/*
- * This file is part of Butter.
- *
- * Butter is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * Butter is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with Butter. If not, see <http://www.gnu.org/licenses/>.
- */
-apply plugin: 'org.moallemi.advanced-build-version'
 apply plugin: 'com.android.application'
 apply plugin: 'hugo'
 apply plugin: 'com.github.ben-manes.versions'
 
-
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
-
-advancedVersioning {
-    codeOptions {
-        versionCodeType org.moallemi.gradle.internal.VersionCodeType.DATE
-    }
-    nameOptions {
-        versionMajor 0
-        versionMinor 1
-        versionPatch 4
-    }
-}
-
 android {
     compileSdkVersion rootProject.ext.compileSdk
     buildToolsVersion rootProject.ext.buildToolsVersion
-    def buildNumber = (System.getenv("BUILD_NUMBER") == null ? advancedVersioning.versionCode : System.getenv("BUILD_NUMBER")) as int
+    def buildNumber = (System.getenv("BUILD_NUMBER") ?: 1) as int
 
     defaultConfig {
         applicationId "pct.droid.tv"
         minSdkVersion 21
         targetSdkVersion rootProject.ext.targetSdk
         versionCode buildNumber
-        versionName advancedVersioning.versionName
+        versionName "0.1.4"
         multiDexEnabled true
     }
 
@@ -70,20 +37,24 @@ android {
         }
     }
 
+    productFlavors {
+        arm {
+            ndk {
+                abiFilters "arm64-v8a", "armeabi-v7a"
+            }
+        }
+        x86 {
+            ndk {
+                abiFilters "x86", "x86_64"
+            }
+        }
+    }
+
     lintOptions {
         abortOnError false
     }
 
-    splits {
-        abi {
-            enable true
-            universalApk false
-            reset()
-            include 'arm64-v8a', 'armeabi-v7a', 'x86', 'x86_64'
-        }
-    }
-
-    project.ext.versionCodes = ["armeabi": 1, "armeabi-v7a": 2, "arm64-v8a": 3, "x86": 4, "x86_64": 5]
+    project.ext.versionCodes = ["arm": 3, "x86": 5]
 }
 
 //./gradlew dependencyUpdates -Drevision=release
