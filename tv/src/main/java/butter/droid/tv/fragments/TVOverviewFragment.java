@@ -150,7 +150,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
 
     private void loadData() {
         final MediaProvider.Filters showsFilter = new MediaProvider.Filters();
-        showsFilter.setSort(MediaProvider.Filters.Sort.DATE);
+        showsFilter.setSort(MediaProvider.Filters.Sort.YEAR);
         showsFilter.setOrder(MediaProvider.Filters.Order.DESC);
 
         providerManager.getMediaProvider(ProviderManager.PROVIDER_TYPE_SHOW)
@@ -185,7 +185,7 @@ public class TVOverviewFragment extends BrowseFragment implements OnItemViewClic
         });
 
         final MediaProvider.Filters movieFilters = new MediaProvider.Filters();
-        movieFilters.setSort(MediaProvider.Filters.Sort.POPULARITY);
+        movieFilters.setSort(MediaProvider.Filters.Sort.TRENDING);
         movieFilters.setOrder(MediaProvider.Filters.Order.DESC);
 
         providerManager.getMediaProvider(ProviderManager.PROVIDER_TYPE_MOVIE)
