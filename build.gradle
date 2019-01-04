@@ -18,8 +18,8 @@ buildscript {
 }
 
 ext {
-    appCompatVersion = "25.0.1"
-    buildToolsVersion = "25.0.1"
+    appCompatVersion = "25.4.0"
+    buildToolsVersion = "25.0.3"
     targetSdk = 25
     compileSdk = 25
     minSdk = 15
@@ -28,11 +28,12 @@ ext {
     picassoVersion = "2.5.2"
     torrentstreamVersion = "733ef8c83d3f11b168fe5a0ce244a7d0b18b0877"
     daggerVersion = "2.7"
-    javaxAnnotationVersion = "1.2"
+    javaxAnnotationVersion = "1.2"  
 }
 
 allprojects {
     repositories {
+        maven { url 'https://maven.google.com' }
         jcenter()
         mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
