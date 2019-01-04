@@ -25,10 +25,11 @@ public class TVResponse extends Response<Show> {
             show.tvdbId = item.getTvdbId();
             show.year = item.getYear();
             if (item.getImages().getPoster() != null && !item.getImages().getPoster().contains("images/posterholder.png")) {
-                show.image = item.getImages().getPoster().replace("/posters/", "/_cache/posters/");
+                show.image = item.getImages().getPoster();
+                show.fullImage = item.getImages().getPoster().replace("w500", "w1280");
             }
             if (item.getImages().getFanart() != null && item.getImages().getFanart().contains("images/posterholder.png")) {
-                show.headerImage = item.getImages().getFanart().replace("/original/", "/medium/");
+                show.headerImage = item.getImages().getFanart().replace("w500", "original");
             }
             existingList.add(show);
         }
