@@ -149,13 +149,9 @@ public class TVMovieDetailsFragment extends TVBaseDetailsFragment implements Med
 			if (!youTubeManager.isYouTubeUrl(movie.trailer)) {
 				TVVideoPlayerActivity.startActivity(getActivity(), new StreamInfo(movie, null, null, null, null, movie.trailer));
             } else {
-				String id = youTubeManager.getYouTubeVideoId(movie.trailer);
-				Intent appIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("vnd.youtube:" + id));
-				try {
-					startActivity(appIntent);
-				} catch (ActivityNotFoundException ex) {
-					TVTrailerPlayerActivity.startActivity(getActivity(), movie.trailer, movie);
-				}
+				Intent trailerIntent = new Intent(Intent.ACTION_VIEW);
+				trailerIntent.setData(Uri.parse(movie.trailer));
+				startActivity(trailerIntent);
             }
         }
 	}
