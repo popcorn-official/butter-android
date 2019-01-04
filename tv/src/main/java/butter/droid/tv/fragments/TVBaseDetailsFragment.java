@@ -27,11 +27,13 @@ import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
 import android.support.v17.leanback.widget.Action;
 import android.support.v17.leanback.widget.ArrayObjectAdapter;
 import android.support.v17.leanback.widget.ClassPresenterSelector;
+import android.support.v17.leanback.widget.DetailsOverviewLogoPresenter;
 import android.support.v17.leanback.widget.DetailsOverviewRow;
+import android.support.v17.leanback.widget.FullWidthDetailsOverviewRowPresenter;
+import android.support.v17.leanback.widget.FullWidthDetailsOverviewSharedElementHelper;
 import android.support.v17.leanback.widget.ListRow;
 import android.support.v17.leanback.widget.ListRowPresenter;
 import android.support.v17.leanback.widget.OnActionClickedListener;
-import android.support.v17.leanback.widget.PTVDetailsOverviewRowPresenter;
 import android.support.v17.leanback.widget.PresenterSelector;
 
 import com.squareup.picasso.Picasso;
@@ -108,15 +110,15 @@ public abstract class TVBaseDetailsFragment extends DetailsFragment
 
 	private void setupDetailsOverviewRowPresenter() {
 		// Set detail background and style.
-		PTVDetailsOverviewRowPresenter headerPresenter = new PTVDetailsOverviewRowPresenter(getDetailPresenter());
+		FullWidthDetailsOverviewRowPresenter headerPresenter = new FullWidthDetailsOverviewRowPresenter(getDetailPresenter(),
+				new DetailsOverviewLogoPresenter());
         headerPresenter.setBackgroundColor(mItem.color);
-		headerPresenter.setStyleLarge(true);
 		headerPresenter.setOnActionClickedListener(this);
 
-		// Hook up transition element.
-		headerPresenter.setSharedElementEnterTransition(
-			getActivity(),
-			TVMediaDetailActivity.SHARED_ELEMENT_NAME);
+        FullWidthDetailsOverviewSharedElementHelper helper = new FullWidthDetailsOverviewSharedElementHelper();
+        helper.setSharedElementEnterTransition(getActivity(), TVMediaDetailActivity.SHARED_ELEMENT_NAME);
+		headerPresenter.setListener(helper);
+		headerPresenter.setParticipatingEntranceTransition(false);
 
 		mPresenterSelector.addClassPresenter(DetailsOverviewRow.class, headerPresenter);
 		mPresenterSelector.addClassPresenter(ListRow.class, new ListRowPresenter());
