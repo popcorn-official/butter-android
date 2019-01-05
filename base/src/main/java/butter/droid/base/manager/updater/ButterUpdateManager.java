@@ -273,6 +273,12 @@ public class ButterUpdateManager extends Observable {
                 mAbi = Build.SUPPORTED_ABIS[0].toLowerCase(Locale.US);
             }
 
+            if (mAbi.contains("arm")) {
+                mAbi = "arm";
+            } else if (mAbi.contains("x86")) {
+                mAbi = "x86";
+            }
+
             if (mPackageName.contains("tv")) {
                 mVariantStr = "tv";
             } else {
