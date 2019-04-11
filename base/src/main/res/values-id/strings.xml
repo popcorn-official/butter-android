@@ -210,7 +210,7 @@
   <string name="starting_buffering">Mulai menyangga</string>
   <string name="streaming_started">Streaming dimulai</string>
   <string name="waiting_for_subtitles">Menunggu teks terjemahan</string>
-  <string name="seeds">seeds</string>
+  <string name="seeds">%1$d seeds</string>
   <string name="start_external">Jalankan dengan pemutar external</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Percepat</string>

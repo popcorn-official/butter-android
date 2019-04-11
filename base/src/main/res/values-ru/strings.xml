@@ -211,7 +211,7 @@
   <string name="starting_buffering">Буферизация началась</string>
   <string name="streaming_started">Потоковая передача началась</string>
   <string name="waiting_for_subtitles">Ожидание субтитров</string>
-  <string name="seeds">сиды</string>
+  <string name="seeds">%1$d сиды</string>
   <string name="start_external">Запускать во внешним проигрывателе</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Перемотка вперед</string>

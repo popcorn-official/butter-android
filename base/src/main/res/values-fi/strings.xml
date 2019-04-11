@@ -206,7 +206,7 @@
   <string name="starting_buffering">Aloitetaan puskurointi</string>
   <string name="streaming_started">Suoratoisto aloitettu</string>
   <string name="waiting_for_subtitles">Odotetaan tekstityksiä</string>
-  <string name="seeds">jakajat</string>
+  <string name="seeds">%1$d jakajat</string>
   <string name="start_external">Käynnistä ulkoinen toistin</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Kelaa eteen</string>

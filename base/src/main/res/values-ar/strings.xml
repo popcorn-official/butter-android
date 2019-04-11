@@ -199,7 +199,7 @@
   <string name="starting_buffering">بدأ التخزين المؤقت</string>
   <string name="streaming_started">بدأ العرض</string>
   <string name="waiting_for_subtitles">في إنتظار الترجمة</string>
-  <string name="seeds">موزع</string>
+  <string name="seeds">%1$d موزع</string>
   <string name="start_external">إبدأ بمشغل وسائط خارجي</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">تقديم سريع</string>

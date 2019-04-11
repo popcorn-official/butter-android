@@ -209,7 +209,7 @@
   <string name="starting_buffering">Pufferung wird gestartet</string>
   <string name="streaming_started">Streaming gestartet</string>
   <string name="waiting_for_subtitles">Auf Untertitel wird gewartet</string>
-  <string name="seeds">Seeds</string>
+  <string name="seeds">%1$d Seeds</string>
   <string name="start_external">Externen Abspieler starten</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Schnellvorlauf</string>

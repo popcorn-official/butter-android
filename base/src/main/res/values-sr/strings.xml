@@ -210,7 +210,7 @@
   <string name="starting_buffering">Почетак баферовања</string>
   <string name="streaming_started">Пренос је почео</string>
   <string name="waiting_for_subtitles">Чекам титлове</string>
-  <string name="seeds">сејача</string>
+  <string name="seeds">%1$d сејача</string>
   <string name="start_external">Покрени спољни плејер</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Брзо напред</string>

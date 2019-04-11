@@ -210,7 +210,7 @@
   <string name="starting_buffering">Önbelleğe alma başlatılıyor</string>
   <string name="streaming_started">Yayın başladı</string>
   <string name="waiting_for_subtitles">Altyazı bekleniyor</string>
-  <string name="seeds">Göndericiler</string>
+  <string name="seeds">%1$d Göndericiler</string>
   <string name="start_external">Harici oynatıcıyı başlat</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Hızlı ileri</string>

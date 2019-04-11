@@ -210,7 +210,7 @@
   <string name="starting_buffering">Spouštění načítání</string>
   <string name="streaming_started">Vysílání započato</string>
   <string name="waiting_for_subtitles">Čekání na titulky</string>
-  <string name="seeds">seedů:</string>
+  <string name="seeds">%1$d seedů:</string>
   <string name="start_external">Zapnout externí přehrávač</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Posunout dopředu</string>

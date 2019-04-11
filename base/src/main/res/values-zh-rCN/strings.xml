@@ -210,7 +210,7 @@
   <string name="starting_buffering">开始缓冲</string>
   <string name="streaming_started">传输已开始</string>
   <string name="waiting_for_subtitles">等待字幕</string>
-  <string name="seeds">种子</string>
+  <string name="seeds">%1$d 种子</string>
   <string name="start_external">启用外部播放器</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">快进</string>

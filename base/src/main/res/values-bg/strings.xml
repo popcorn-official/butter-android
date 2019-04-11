@@ -210,7 +210,7 @@
   <string name="starting_buffering">Започване на буферирането </string>
   <string name="streaming_started">Стриймването започна</string>
   <string name="waiting_for_subtitles">Изчакване за субтитри</string>
-  <string name="seeds">сийдъри</string>
+  <string name="seeds">%1$d сийдъри</string>
   <string name="start_external">Стартирай външният плейър</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Превърти напред</string>

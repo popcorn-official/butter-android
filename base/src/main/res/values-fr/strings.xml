@@ -210,7 +210,7 @@
   <string name="starting_buffering">Mise en mémoire tampon</string>
   <string name="streaming_started">La lecture a commencé</string>
   <string name="waiting_for_subtitles">En attente des sous-titres…</string>
-  <string name="seeds">Sources</string>
+  <string name="seeds">%1$d Sources</string>
   <string name="start_external">Lancer le lecteur externe</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Avance rapide</string>

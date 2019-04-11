@@ -210,7 +210,7 @@
   <string name="starting_buffering">Začína sa ukladanie do vyrovnávacej pamäte</string>
   <string name="streaming_started">Streamovanie začalo</string>
   <string name="waiting_for_subtitles">Čakám na titulky</string>
-  <string name="seeds">seeds</string>
+  <string name="seeds">%1$d seeds</string>
   <string name="start_external">Štart externého prehrávača</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Rýchle prevíjanie vpred</string>

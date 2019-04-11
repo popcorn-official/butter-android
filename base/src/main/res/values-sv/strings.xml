@@ -210,7 +210,7 @@
   <string name="starting_buffering">Startar buffring</string>
   <string name="streaming_started">Streaming startad</string>
   <string name="waiting_for_subtitles">Väntar på undertexter</string>
-  <string name="seeds">seeds</string>
+  <string name="seeds">%1$d seeds</string>
   <string name="start_external">Starta extern spelare</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Snabbspola</string>

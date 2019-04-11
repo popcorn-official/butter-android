@@ -210,7 +210,7 @@
   <string name="starting_buffering">বাফারিং শুরু হচ্ছে</string>
   <string name="streaming_started">স্ট্রিমিং শুরু হয়েছে</string>
   <string name="waiting_for_subtitles">সাবটাইটেলের জন্য অপেক্ষারত</string>
-  <string name="seeds">সিড</string>
+  <string name="seeds">%1$d সিড</string>
   <string name="start_external">বহিঃস্থ প্লেয়ার শুরু করুন</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">দ্রুত সামনে</string>
