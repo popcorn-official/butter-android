@@ -20,13 +20,17 @@ package butter.droid.activities;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentManager;
@@ -45,6 +49,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 
+import butter.droid.utils.ConnectivityCheckUtil;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
@@ -93,6 +98,7 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
     TabLayout mTabs;
 
     private NavigationDrawerFragment mNavigationDrawerFragment;
+    private BroadcastReceiver broadRec;
 
     @SuppressLint("MissingSuperCall")
     @Override
@@ -156,7 +162,38 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
     protected void onStart() {
         super.onStart();
         mVPNManager = VPNManager.start(this);
+
+        broadRec = new BroadcastReceiver(){
+
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if(!isNetworkAvailable())
+                {
+
+                    final Snackbar snackbar = Snackbar.make(findViewById(R.id.drawer_layout),
+                            R.string.connectivity_error, Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction(R.string.accept, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackbar.dismiss();
+                        }
+                    });
+
+                    snackbar.show();
+
+                }
+            }
+        };
+
+        registerReceiver(broadRec, new IntentFilter("android.net.conn.CONNECTIVITY_CHANGE"));
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadRec);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -395,6 +432,11 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
                 }
             }
         }
+    }
+
+    private boolean isNetworkAvailable()
+    {
+        return ConnectivityCheckUtil.isNetworkAvailable(this);
     }
 
 }

@@ -37,6 +37,8 @@
 	<string name="error_files">Error: Couldn\'t write files</string>
     <string name="overview_not_available">Sorry! There is no overview available.</string>
     <string name="unknown_error">Something went wrong</string>
+    <string name="connectivity_error">Not connected. Data will be updated when connection available</string>
+    <string name="list_movies_offline">Not connected. More movies will be loaded when connection available</string>
     <string name="torrent_failed">Failed to retrieve torrent</string>
     <string name="running">Running in background</string>
     <string name="tap_to_close">Tap to close</string>

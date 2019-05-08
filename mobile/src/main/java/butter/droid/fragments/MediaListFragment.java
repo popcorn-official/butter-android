@@ -20,6 +20,7 @@ package butter.droid.fragments;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
@@ -54,6 +55,7 @@ import butter.droid.base.utils.NetworkUtils;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.base.utils.ThreadUtils;
 import butter.droid.fragments.dialog.LoadingDetailDialogFragment;
+import butter.droid.utils.ConnectivityCheckUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import hugo.weaving.DebugLog;
@@ -167,6 +169,25 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
                     mLoadingTreshold)) {
 
                 mFilters.setPage(mPage);
+
+
+                if(!ConnectivityCheckUtil.isNetworkAvailable(getActivity()))
+                {
+                    final Snackbar snackbar = Snackbar.make(getActivity().findViewById(R.id.drawer_layout),
+                            R.string.list_movies_offline, Snackbar.LENGTH_INDEFINITE);
+                    snackbar.setAction(R.string.accept, new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            snackbar.dismiss();
+                        }
+                    });
+
+                    snackbar.show();
+
+                    return;
+                }
+
+
                 providerManager.getCurrentMediaProvider().getList(mItems, new MediaProvider.Filters(mFilters), mCallback);
 
                 mPreviousTotal = mTotalItemCount = mLayoutManager.getItemCount();
@@ -437,4 +458,6 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
     private enum State {
         UNINITIALISED, LOADING, SEARCHING, LOADING_PAGE, LOADED, LOADING_DETAIL
     }
+
+
 }
