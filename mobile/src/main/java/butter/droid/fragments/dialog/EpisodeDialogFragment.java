@@ -131,11 +131,13 @@ public class EpisodeDialogFragment extends DialogFragment {
         View v = LayoutInflater.from(new ContextThemeWrapper(getActivity(), R.style.Theme_Butter)).inflate(R.layout.fragment_dialog_episode, container, false);
         ButterKnife.bind(this, v);
 
-        if (!VersionUtils.isJellyBean()) {
-            mPlayButton.setBackground(PixelUtils.changeDrawableColor(mPlayButton.getContext(), R.drawable.play_button_circle, mShow.color));
-        } else {
-            mPlayButton.setBackground(PixelUtils.changeDrawableColor(mPlayButton.getContext(), R.drawable.play_button_circle, mShow.color));
-        }
+//        if (!VersionUtils.isJellyBean()) {
+//            mPlayButton.setBackground(PixelUtils.changeDrawableColor(mPlayButton.getContext(), R.drawable.play_button_circle, mShow.color));
+//        } else {
+//            mPlayButton.setBackground(PixelUtils.changeDrawableColor(mPlayButton.getContext(), R.drawable.play_button_circle, mShow.color));
+//        }
+
+        mPlayButton.setBackground(PixelUtils.changeDrawableColor(mPlayButton.getContext(), R.drawable.play_button_circle, mShow.color));
 
         LinearLayout.LayoutParams layoutParams = (LinearLayout.LayoutParams) mPlaceholder.getLayoutParams();
         layoutParams.height = PixelUtils.getScreenHeight(mActivity);

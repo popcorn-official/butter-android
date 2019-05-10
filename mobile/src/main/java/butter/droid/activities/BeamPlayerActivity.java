@@ -51,10 +51,6 @@ public class BeamPlayerActivity extends ButterBaseActivity implements VideoPlaye
     public static Intent startActivity(Context context, @NonNull StreamInfo info, long resumePosition) {
         Intent i = new Intent(context, BeamPlayerActivity.class);
 
-        if (info == null){
-            throw new IllegalArgumentException("StreamInfo must not be null");
-        }
-
         i.putExtra(INFO, info);
         i.putExtra(RESUME_POSITION, resumePosition);
         context.startActivity(i);

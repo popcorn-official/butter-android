@@ -540,7 +540,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
 
     @Override
     public void onStreamProgress(Torrent torrent, StreamStatus status) {
-        mDownloadProgress = mTotalTimeDuration / 100 * status.progress;
+        mDownloadProgress = mTotalTimeDuration / 100f * status.progress;
         mButterSeekBar.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
         mButterSeekBar.setSecondaryProgress(mDownloadProgress.intValue());
     }

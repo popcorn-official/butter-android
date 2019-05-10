@@ -27,11 +27,13 @@ import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import butter.droid.MobileButterApplication;
 import butter.droid.R;
 import butter.droid.activities.base.ButterBaseActivity;
 import butter.droid.base.torrent.StreamInfo;
+import butter.droid.base.utils.NetworkUtils;
 import butter.droid.fragments.StreamLoadingFragment;
 
 public class StreamLoadingActivity extends ButterBaseActivity implements StreamLoadingFragment.FragmentListener {
@@ -42,6 +44,10 @@ public class StreamLoadingActivity extends ButterBaseActivity implements StreamL
     private StreamLoadingFragment mFragment;
 
     public static Intent startActivity(Activity activity, StreamInfo info) {
+        if (!NetworkUtils.isNetworkConnected(activity)) {
+            Toast.makeText(activity, "You need an internet connection", Toast.LENGTH_SHORT).show();
+            return null;
+        }
         Intent i = new Intent(activity, StreamLoadingActivity.class);
         i.putExtra(EXTRA_INFO, info);
         activity.startActivity(i);
@@ -49,6 +55,10 @@ public class StreamLoadingActivity extends ButterBaseActivity implements StreamL
     }
 
     public static Intent startActivity(Activity activity, StreamInfo info, Pair<View, String>... elements) {
+        if (!NetworkUtils.isNetworkConnected(activity)) {
+            Toast.makeText(activity, "You need an internet connection", Toast.LENGTH_SHORT).show();
+            return null;
+        }
         Intent i = new Intent(activity, StreamLoadingActivity.class);
         i.putExtra(EXTRA_INFO, info);
 

@@ -309,6 +309,9 @@ public class MediaListFragment extends Fragment implements LoadingDetailDialogFr
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if (!NetworkUtils.isNetworkConnected(getActivity())) {
+            mEmptyView.setText("No internet connection found");
+        }
         if (mMode == Mode.SEARCH) {
             mEmptyView.setText(getString(R.string.no_search_results));
         } else if (mAdapter.getItemCount() == 0) { //don't load initial data in search mode
