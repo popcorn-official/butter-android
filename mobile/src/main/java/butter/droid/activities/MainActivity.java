@@ -148,6 +148,7 @@ public class MainActivity extends ButterBaseActivity implements ProviderManager.
         }
 
         @ProviderManager.ProviderType int provider = PrefUtils.get(this, Prefs.DEFAULT_PROVIDER, ProviderManager.PROVIDER_TYPE_MOVIE);
+        providerManager.setCurrentProviderType(provider);
         mNavigationDrawerFragment.selectItem(provider);
         showProvider(provider);
     }
