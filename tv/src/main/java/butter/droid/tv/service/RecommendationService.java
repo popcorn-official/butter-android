@@ -46,8 +46,8 @@ import timber.log.Timber;
 
 public class RecommendationService extends IntentService {
 
-    private static final int MAX_MOVIE_RECOMMENDATIONS = 3;
-    private static final int MAX_SHOW_RECOMMENDATIONS = 3;
+    private static final int MAX_MOVIE_RECOMMENDATIONS = 10;
+    private static final int MAX_SHOW_RECOMMENDATIONS = 10;
     @Inject
     ProviderManager providerManager;
     private ArrayList<Media> mMovies = new ArrayList<>();
