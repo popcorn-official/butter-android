@@ -82,7 +82,7 @@ public class RecommendationService extends IntentService {
 
         MediaProvider.Filters movieFilter = new MediaProvider.Filters();
         movieFilter.setOrder(MediaProvider.Filters.Order.DESC);
-        movieFilter.setSort(MediaProvider.Filters.Sort.POPULARITY);
+        movieFilter.setSort(MediaProvider.Filters.Sort.TRENDING);
 
         /*
         Disabled, since no shows provider
