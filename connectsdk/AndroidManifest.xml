@@ -3,9 +3,5 @@
     android:versionCode="11"
     android:versionName="1.5.0" >
 
-    <uses-sdk
-        android:minSdkVersion="10"
-        android:targetSdkVersion="22" />
-
     <application />
 </manifest>

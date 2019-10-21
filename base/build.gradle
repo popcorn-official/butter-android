@@ -48,44 +48,44 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.support:multidex:1.0.1'
+    api fileTree(dir: 'libs', include: ['*.jar'])
+    api 'com.android.support:multidex:1.0.3'
 
-    compile "com.android.support:support-v4:${rootProject.ext.appCompatVersion}"
-    compile "com.android.support:palette-v7:${rootProject.ext.appCompatVersion}"
-    compile "com.android.support:appcompat-v7:${rootProject.ext.appCompatVersion}"
-    compile "com.android.support:design:${rootProject.ext.appCompatVersion}"
+    api "com.android.support:support-v4:${rootProject.ext.appCompatVersion}"
+    api "com.android.support:palette-v7:${rootProject.ext.appCompatVersion}"
+    api "com.android.support:appcompat-v7:${rootProject.ext.appCompatVersion}"
+    api "com.android.support:design:${rootProject.ext.appCompatVersion}"
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'
 
-    compile 'com.jakewharton.timber:timber:4.1.2'
-    compile "com.squareup.okhttp3:okhttp:${rootProject.ext.okHttpVersion}"
-    compile "com.squareup.picasso:picasso:${rootProject.ext.picassoVersion}"
-    compile 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
-    compile "com.jakewharton:butterknife:${rootProject.ext.butterknifeVersion}"
+    api 'com.jakewharton.timber:timber:4.1.2'
+    api "com.squareup.okhttp3:okhttp:${rootProject.ext.okHttpVersion}"
+    api "com.squareup.picasso:picasso:${rootProject.ext.picassoVersion}"
+    api 'com.jakewharton.picasso:picasso2-okhttp3-downloader:1.1.0'
+    api "com.jakewharton:butterknife:${rootProject.ext.butterknifeVersion}"
 
-    compile "com.github.TorrentStream:TorrentStreamServer-Android:${rootProject.ext.torrentstreamServerVersion}"
+    api "com.github.TorrentStream:TorrentStreamServer-Android:${rootProject.ext.torrentstreamServerVersion}"
 
-    compile 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
+    api 'com.github.gabrielemariotti.changeloglib:changelog:2.1.0'
 
-    compile 'com.koushikdutta.async:androidasync:2.1.9'
+    api 'com.koushikdutta.async:androidasync:2.1.9'
 
-    compile 'de.timroes:aXMLRPC:1.8.1'
+    api 'de.timroes:aXMLRPC:1.8.1'
 
-    compile "com.google.dagger:dagger:${rootProject.ext.daggerVersion}"
+    api "com.google.dagger:dagger:${rootProject.ext.daggerVersion}"
 
-    compile 'com.fasterxml.jackson.core:jackson-core:2.7.2'
-    compile 'com.fasterxml.jackson.core:jackson-annotations:2.7.2'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.2'
+    api 'com.fasterxml.jackson.core:jackson-core:2.9.5'
+    api 'com.fasterxml.jackson.core:jackson-annotations:2.7.2'
+    api 'com.fasterxml.jackson.core:jackson-databind:2.7.2'
 
     annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.ext.daggerVersion}"
     annotationProcessor "com.jakewharton:butterknife-compiler:${rootProject.ext.butterknifeVersion}"
 
     provided "javax.annotation:javax.annotation-api:${rootProject.ext.javaxAnnotationVersion}"
 
-    compile project(':vlc')
-    compile project(':connectsdk')
+    api project(':vlc')
+    api project(':connectsdk')
 
 
 }

@@ -3,11 +3,12 @@
 buildscript {
     repositories {
         //temporary to solve hugo error
-        mavenCentral()
+        google()
         jcenter()
+        mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:3.5.1'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'com.github.dcendents:android-maven-plugin:1.2'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
@@ -17,12 +18,12 @@ buildscript {
 }
 
 ext {
-    appCompatVersion = "25.4.0"
-    buildToolsVersion = "25.0.3"
-    targetSdk = 25
-    compileSdk = 25
+    appCompatVersion = "28.0.0"
+    buildToolsVersion = "28.0.3"
+    targetSdk = 29
+    compileSdk = 29
     minSdk = 15
-    butterknifeVersion = "8.4.0"
+    butterknifeVersion = "10.1.0"
     okHttpVersion = "3.4.2"
     picassoVersion = "2.5.2"
     torrentstreamServerVersion = "ab4439a90e49bf4e9682d4b4754922b6c506069c"
@@ -32,7 +33,7 @@ ext {
 
 allprojects {
     repositories {
-        maven { url 'https://maven.google.com' }
+        google()
         jcenter()
         mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
@@ -77,7 +78,7 @@ def renameOutputFiles(Project project, variant) {
     variant.outputs.each { output ->
         output.versionCodeOverride = project.ext.versionCodes.get(variant.productFlavors[0].name, 0) * 10000000 + output.versionCode
 
-        def outputFileName = output.outputFile.name
+        def outputFileName = output.outputFileName
 
         // Customise APK filenames
         if (outputFileName.contains("debug")) {
@@ -87,6 +88,6 @@ def renameOutputFiles(Project project, variant) {
         }
 
         // normal APK (already aligned)
-        output.outputFile = new File(output.outputFile.parent, outputFileName)
+        output.outputFileName = outputFileName
     }
 }
