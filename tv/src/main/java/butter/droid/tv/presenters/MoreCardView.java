@@ -18,7 +18,7 @@
 package butter.droid.tv.presenters;
 
 import android.content.Context;
-import android.support.v17.leanback.widget.BaseCardView;
+import androidx.leanback.widget.BaseCardView;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;

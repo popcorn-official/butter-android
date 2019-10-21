@@ -18,8 +18,8 @@
 package butter.droid.base.providers.media;
 
 import android.accounts.NetworkErrorException;
-import android.support.annotation.DrawableRes;
-import android.support.annotation.Nullable;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

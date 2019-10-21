@@ -17,7 +17,7 @@
 
 package butter.droid.base.adapters.models;
 
-import android.support.annotation.NonNull;
+import androidx.annotation.NonNull;
 
 import butter.droid.base.utils.LocaleUtils;
 

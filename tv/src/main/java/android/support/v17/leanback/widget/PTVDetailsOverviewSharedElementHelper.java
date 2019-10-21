@@ -14,17 +14,17 @@
  * You should have received a copy of the GNU General Public License
  * along with Butter. If not, see <http://www.gnu.org/licenses/>.
  */
-package android.support.v17.leanback.widget;
+package androidx.leanback.widget;
 
 import android.app.Activity;
 import android.graphics.Matrix;
 import android.os.Handler;
-import android.support.v17.leanback.transition.TransitionHelper;
-import android.support.v17.leanback.transition.TransitionListener;
-import android.support.v17.leanback.widget.PTVDetailsOverviewRowPresenter.ViewHolder;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.SharedElementCallback;
-import android.support.v4.view.ViewCompat;
+import androidx.leanback.transition.TransitionHelper;
+import androidx.leanback.transition.TransitionListener;
+import androidx.leanback.widget.PTVDetailsOverviewRowPresenter.ViewHolder;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.SharedElementCallback;
+import androidx.core.view.ViewCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;

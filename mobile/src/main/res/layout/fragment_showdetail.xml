@@ -49,7 +49,7 @@
         android:alpha="0.08"
         />
 
-    <android.support.design.widget.TabLayout
+    <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabs"
         style="@style/Theme.Butter.TabLayout"
         android:layout_width="match_parent"

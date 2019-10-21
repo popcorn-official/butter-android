@@ -17,8 +17,8 @@
 
 package butter.droid.base.utils;
 
-import android.support.annotation.DrawableRes;
-import android.support.annotation.StringRes;
+import androidx.annotation.DrawableRes;
+import androidx.annotation.StringRes;
 
 import butter.droid.base.R;
 import butter.droid.base.manager.provider.ProviderManager;

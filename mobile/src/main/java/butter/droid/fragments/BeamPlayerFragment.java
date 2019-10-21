@@ -25,10 +25,14 @@ import android.graphics.drawable.LayerDrawable;
 import android.graphics.drawable.StateListDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.design.widget.Snackbar;
-import android.support.v4.app.Fragment;
-import android.support.v7.widget.Toolbar;
+
+import androidx.annotation.Nullable;
+
+import com.google.android.material.snackbar.Snackbar;
+
+import androidx.fragment.app.Fragment;
+import androidx.appcompat.widget.Toolbar;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,7 +47,6 @@ import com.connectsdk.service.capability.listeners.ResponseListener;
 import com.connectsdk.service.command.ServiceCommandError;
 import com.github.se_bastiaan.torrentstream.StreamStatus;
 import com.github.se_bastiaan.torrentstream.Torrent;
-import com.github.se_bastiaan.torrentstream.listeners.TorrentListener;
 import com.github.se_bastiaan.torrentstreamserver.TorrentServerListener;
 import com.sothree.slidinguppanel.SlidingUpPanelLayout;
 import com.squareup.picasso.Callback;
@@ -161,7 +164,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
             progressDrawable = (LayerDrawable) getResources().getDrawable(R.drawable.progress_horizontal_material);
         }
 
-        if(volumeDrawable == null) {
+        if (volumeDrawable == null) {
             volumeDrawable = (LayerDrawable) progressDrawable.mutate();
         }
 
@@ -187,16 +190,16 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
 
         if (mStreamInfo.getImageUrl() != null && !mStreamInfo.getImageUrl().equals("")) {
             Picasso.with(mCoverImage.getContext()).load(mStreamInfo.getImageUrl())
-                .into(mCoverImage, new Callback() {
-                    @Override
-                    public void onSuccess() {
-                        AnimUtils.fadeIn(mCoverImage);
-                    }
+                    .into(mCoverImage, new Callback() {
+                        @Override
+                        public void onSuccess() {
+                            AnimUtils.fadeIn(mCoverImage);
+                        }
 
-                    @Override
-                    public void onError() {
-                    }
-                });
+                        @Override
+                        public void onError() {
+                        }
+                    });
         }
 
         mActivity.getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -224,7 +227,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
             getActivity().finish();
         }
 
-        Intent intent = new Intent( getActivity(), BeamPlayerNotificationService.class );
+        Intent intent = new Intent(getActivity(), BeamPlayerNotificationService.class);
         intent.setAction(mIsPlaying ? BeamPlayerNotificationService.ACTION_PLAY : BeamPlayerNotificationService.ACTION_PAUSE);
         getActivity().startService(intent);
     }
@@ -249,7 +252,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
     public void onDestroy() {
         super.onDestroy();
 
-        Intent intent = new Intent( getActivity(), BeamPlayerNotificationService.class );
+        Intent intent = new Intent(getActivity(), BeamPlayerNotificationService.class);
         getActivity().stopService(intent);
     }
 
@@ -273,7 +276,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
                     mMediaControl.getDuration(mDurationListener);
                 }
 
-                if(mResumePosition > 0) {
+                if (mResumePosition > 0) {
                     mMediaControl.seek(mResumePosition, null);
                 }
             }
@@ -309,7 +312,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
 
     @OnClick(R.id.play_button)
     public void playPauseClick(View v) {
-        if(mMediaControl == null) return;
+        if (mMediaControl == null) return;
 
         ResponseListener<Object> responseListener = new ResponseListener<Object>() {
             @Override
@@ -375,7 +378,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
     private MediaControl.PlayStateListener mPlayStateListener = new MediaControl.PlayStateListener() {
         @Override
         public void onSuccess(MediaControl.PlayStateStatus state) {
-            if(FragmentUtil.isNotAdded(BeamPlayerFragment.this)) {
+            if (FragmentUtil.isNotAdded(BeamPlayerFragment.this)) {
                 return;
             }
 
@@ -394,7 +397,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
 
         @Override
         public void onError(ServiceCommandError error) {
-            if(FragmentUtil.isNotAdded(BeamPlayerFragment.this)) {
+            if (FragmentUtil.isNotAdded(BeamPlayerFragment.this)) {
                 return;
             }
 
@@ -423,7 +426,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
 
         @Override
         public void onSuccess(Long duration) {
-            if(mTotalTimeDuration != duration) {
+            if (mTotalTimeDuration != duration) {
                 mTotalTimeDuration = duration;
                 mButterSeekBar.setMax(duration.intValue());
             }
@@ -470,7 +473,7 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
     private ButterSeekBar.OnSeekBarChangeListener mSeekBarChangeListener = new ButterSeekBar.OnSeekBarChangeListener() {
         @Override
         public void onProgressChanged(android.widget.SeekBar seekBar, int progress, boolean fromUser) {
-            if(fromUser && !mProcessingSeeking && mIsUserSeeking) {
+            if (fromUser && !mProcessingSeeking && mIsUserSeeking) {
                 if (progress <= mDownloadProgress) {
                     mButterSeekBar.setProgress(progress);
                     mButterSeekBar.setSecondaryProgress(0); // hack to make the secondary progress appear on Android 5.0
@@ -527,16 +530,24 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
     };
 
     @Override
-    public void onStreamStarted(Torrent torrent) { }
-    @Override
-    public void onStreamPrepared(Torrent torrent) { }
-    @Override
-    public void onStreamError(Torrent torrent, Exception e) { }
-    @Override
-    public void onStreamReady(Torrent torrent) { }
+    public void onStreamStarted(Torrent torrent) {
+    }
 
     @Override
-    public void onServerReady(String url) { }
+    public void onStreamPrepared(Torrent torrent) {
+    }
+
+    @Override
+    public void onStreamError(Torrent torrent, Exception e) {
+    }
+
+    @Override
+    public void onStreamReady(Torrent torrent) {
+    }
+
+    @Override
+    public void onServerReady(String url) {
+    }
 
     @Override
     public void onStreamProgress(Torrent torrent, StreamStatus status) {
@@ -546,7 +557,8 @@ public class BeamPlayerFragment extends Fragment implements TorrentServerListene
     }
 
     @Override
-    public void onStreamStopped() {}
+    public void onStreamStopped() {
+    }
 
     BeamDeviceListener mDeviceListener = new BeamDeviceListener() {
 

@@ -33,7 +33,7 @@
         lb:layout_viewType="main"
         tools:src="@drawable/filter_trending" />
 
-    <android.support.v17.leanback.widget.NonOverlappingRelativeLayout
+    <androidx.leanback.widget.NonOverlappingRelativeLayout
         android:id="@+id/info_field"
         android:layout_width="match_parent"
         android:layout_height="@dimen/lb_basic_card_info_height"
@@ -56,5 +56,5 @@
             android:textColor="@color/lb_basic_card_title_text_color"
             android:textSize="@dimen/lb_basic_card_title_text_size"
             tools:text="Trending" />
-    </android.support.v17.leanback.widget.NonOverlappingRelativeLayout>
+    </androidx.leanback.widget.NonOverlappingRelativeLayout>
 </merge>

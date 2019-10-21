@@ -17,9 +17,9 @@
 
 package butter.droid.tv.utils;
 
-import android.support.v17.leanback.widget.HeaderItem;
-import android.support.v17.leanback.widget.ListRow;
-import android.support.v17.leanback.widget.ObjectAdapter;
+import androidx.leanback.widget.HeaderItem;
+import androidx.leanback.widget.ListRow;
+import androidx.leanback.widget.ObjectAdapter;
 
 public class MediaListRow extends ListRow
 {

@@ -18,14 +18,13 @@
 package butter.droid.tv.fragments;
 
 import android.app.Fragment;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v17.leanback.widget.AbstractDetailsDescriptionPresenter;
-import android.support.v17.leanback.widget.Action;
-import android.support.v17.leanback.widget.ClassPresenterSelector;
-import android.support.v17.leanback.widget.OnActionClickedListener;
+import androidx.leanback.widget.AbstractDetailsDescriptionPresenter;
+import androidx.leanback.widget.Action;
+import androidx.leanback.widget.ClassPresenterSelector;
+import androidx.leanback.widget.OnActionClickedListener;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -46,7 +45,6 @@ import butter.droid.base.utils.PrefUtils;
 import butter.droid.tv.R;
 import butter.droid.tv.TVButterApplication;
 import butter.droid.tv.activities.TVStreamLoadingActivity;
-import butter.droid.tv.activities.TVTrailerPlayerActivity;
 import butter.droid.tv.activities.TVVideoPlayerActivity;
 import butter.droid.tv.presenters.MovieDetailsDescriptionPresenter;
 
@@ -156,7 +154,7 @@ public class TVMovieDetailsFragment extends TVBaseDetailsFragment implements Med
         }
 	}
 
-	public static class WatchAction extends android.support.v17.leanback.widget.Action {
+	public static class WatchAction extends androidx.leanback.widget.Action {
 
 		private Media.Torrent mTorrent;
 
@@ -174,7 +172,7 @@ public class TVMovieDetailsFragment extends TVBaseDetailsFragment implements Med
 		}
 	}
 
-    public static class TrailerAction extends android.support.v17.leanback.widget.Action {
+    public static class TrailerAction extends androidx.leanback.widget.Action {
 
         public TrailerAction(long id, CharSequence label1, CharSequence label2) {
             super(id, label1, label2);

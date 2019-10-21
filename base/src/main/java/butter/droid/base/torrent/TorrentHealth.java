@@ -21,7 +21,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.support.v4.content.ContextCompat;
+import androidx.core.content.ContextCompat;
 
 import butter.droid.base.R;
 import butter.droid.base.utils.VersionUtils;

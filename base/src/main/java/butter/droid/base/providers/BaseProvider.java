@@ -17,7 +17,7 @@
 
 package butter.droid.base.providers;
 
-import android.support.annotation.CallSuper;
+import androidx.annotation.CallSuper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

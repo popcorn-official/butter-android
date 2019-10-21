@@ -17,7 +17,7 @@
 
 package butter.droid.base.providers.media;
 
-import android.support.annotation.Nullable;
+import androidx.annotation.Nullable;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 

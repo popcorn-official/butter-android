@@ -14,7 +14,7 @@
  * You should have received a copy of the GNU General Public License
  * along with Butter. If not, see <http://www.gnu.org/licenses/>.
  */
-package android.support.v17.leanback.widget;
+package androidx.leanback.widget;
 
 import android.app.Activity;
 import android.content.Context;
@@ -22,9 +22,9 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
-import android.support.annotation.ColorInt;
-import android.support.v17.leanback.R;
-import android.support.v7.widget.RecyclerView;
+import androidx.annotation.ColorInt;
+import androidx.leanback.R;
+import androidx.recyclerview.widget.RecyclerView;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
@@ -37,7 +37,7 @@ import android.widget.ImageView;
 /**
  * Renders a {@link DetailsOverviewRow} to display an overview of an item.
  * Typically this row will be the first row in a fragment
- * such as the {@link android.support.v17.leanback.app.DetailsFragment
+ * such as the {@link androidx.leanback.app.DetailsFragment
  * DetailsFragment}.  The View created by the PTVDetailsOverviewRowPresenter is made in three parts:
  * ImageView on the left, action list view on the bottom and a customizable detailed
  * description view on the right.

@@ -22,7 +22,7 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
 
-	<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+	<androidx.appcompat.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
 		android:id="@+id/toolbar"
 		android:layout_height="?attr/actionBarSize"
 		android:layout_width="match_parent"
@@ -31,12 +31,12 @@
 		android:fitsSystemWindows="true"
 		android:background="?attr/colorPrimary">
 
-		<android.support.v7.widget.SearchView
+		<androidx.appcompat.widget.SearchView
 			android:id="@+id/searchview"
 			app:queryHint="@string/search_hint"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent" />
-	</android.support.v7.widget.Toolbar>
+	</androidx.appcompat.widget.Toolbar>
 
 	<FrameLayout
 		android:id="@+id/fragment"

@@ -15,7 +15,7 @@
   ~ along with Butter. If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<android.support.v7.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.recyclerview.widget.RecyclerView xmlns:android="http://schemas.android.com/apk/res/android"
 	android:id="@+id/recyclerview"
 	android:background="@color/nav_drawer_color"
 	android:scrollbars="vertical"

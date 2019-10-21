@@ -49,12 +49,12 @@ android {
 
 dependencies {
     api fileTree(dir: 'libs', include: ['*.jar'])
-    api 'com.android.support:multidex:1.0.3'
+    api 'androidx.multidex:multidex:2.0.1'
 
-    api "com.android.support:support-v4:${rootProject.ext.appCompatVersion}"
-    api "com.android.support:palette-v7:${rootProject.ext.appCompatVersion}"
-    api "com.android.support:appcompat-v7:${rootProject.ext.appCompatVersion}"
-    api "com.android.support:design:${rootProject.ext.appCompatVersion}"
+    api 'androidx.legacy:legacy-support-v4:1.0.0'
+    api 'androidx.palette:palette:1.0.0'
+    api 'androidx.appcompat:appcompat:1.1.0'
+    api 'com.google.android.material:material:1.0.0'
 
     debugCompile 'com.squareup.leakcanary:leakcanary-android:1.5'
     releaseCompile 'com.squareup.leakcanary:leakcanary-android-no-op:1.5'

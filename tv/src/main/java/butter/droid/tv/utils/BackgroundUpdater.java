@@ -20,8 +20,8 @@ package butter.droid.tv.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.DrawableRes;
-import android.support.v17.leanback.app.BackgroundManager;
+import androidx.annotation.DrawableRes;
+import androidx.leanback.app.BackgroundManager;
 
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;

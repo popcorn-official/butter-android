@@ -16,7 +16,7 @@
   -->
 
 <!-- A DrawerLayout is intended to be used as the top-level content view using match_parent for both width and height to consume the full space available. -->
-<android.support.v4.widget.DrawerLayout
+<androidx.drawerlayout.widget.DrawerLayout
 	android:id="@+id/drawer_layout"
 	xmlns:app="http://schemas.android.com/apk/res-auto"
 	xmlns:android="http://schemas.android.com/apk/res/android"
@@ -29,28 +29,28 @@
 		 space available using match_parent in both dimensions. -->
 
 
-	<android.support.design.widget.CoordinatorLayout
+	<androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-		<android.support.design.widget.AppBarLayout
+		<com.google.android.material.appbar.AppBarLayout
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content">
 			<include layout="@layout/toolbar"/>
 
-            <android.support.design.widget.TabLayout
+            <com.google.android.material.tabs.TabLayout
                 android:id="@+id/tabs"
                 style="@style/Theme.Butter.TabLayout"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary" />
-		</android.support.design.widget.AppBarLayout>
+		</com.google.android.material.appbar.AppBarLayout>
 
 		<FrameLayout
 			android:id="@+id/container"
 			android:layout_width="match_parent"
 			android:layout_height="match_parent"
 			app:layout_behavior="@string/appbar_scrolling_view_behavior"/>
-	</android.support.design.widget.CoordinatorLayout>
+	</androidx.coordinatorlayout.widget.CoordinatorLayout>
 
 	<butter.droid.widget.ScrimInsetsFrameLayout
 		android:id="@+id/navigation_drawer_container"
@@ -68,4 +68,4 @@
 			android:layout_height="match_parent" />
 	</butter.droid.widget.ScrimInsetsFrameLayout>
 
-</android.support.v4.widget.DrawerLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

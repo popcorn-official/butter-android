@@ -19,16 +19,16 @@ package butter.droid.tv.fragments;
 
 import android.os.Bundle;
 import android.os.Handler;
-import android.support.v17.leanback.widget.ArrayObjectAdapter;
-import android.support.v17.leanback.widget.HeaderItem;
-import android.support.v17.leanback.widget.ListRow;
-import android.support.v17.leanback.widget.ListRowPresenter;
-import android.support.v17.leanback.widget.ObjectAdapter;
-import android.support.v17.leanback.widget.OnItemViewClickedListener;
-import android.support.v17.leanback.widget.OnItemViewSelectedListener;
-import android.support.v17.leanback.widget.Presenter;
-import android.support.v17.leanback.widget.Row;
-import android.support.v17.leanback.widget.RowPresenter;
+import androidx.leanback.widget.ArrayObjectAdapter;
+import androidx.leanback.widget.HeaderItem;
+import androidx.leanback.widget.ListRow;
+import androidx.leanback.widget.ListRowPresenter;
+import androidx.leanback.widget.ObjectAdapter;
+import androidx.leanback.widget.OnItemViewClickedListener;
+import androidx.leanback.widget.OnItemViewSelectedListener;
+import androidx.leanback.widget.Presenter;
+import androidx.leanback.widget.Row;
+import androidx.leanback.widget.RowPresenter;
 import android.text.TextUtils;
 
 import java.util.ArrayList;
@@ -46,8 +46,8 @@ import butter.droid.tv.presenters.MediaCardPresenter;
 import butter.droid.tv.utils.BackgroundUpdater;
 import hugo.weaving.DebugLog;
 
-public class TVSearchFragment extends android.support.v17.leanback.app.SearchFragment
-		implements android.support.v17.leanback.app.SearchFragment.SearchResultProvider {
+public class TVSearchFragment extends androidx.leanback.app.SearchFragment
+		implements androidx.leanback.app.SearchFragment.SearchResultProvider {
 	private static final int SEARCH_DELAY_MS = 300;
 
 	@Inject
