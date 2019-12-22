@@ -82,7 +82,7 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.ext.daggerVersion}"
     annotationProcessor "com.jakewharton:butterknife-compiler:${rootProject.ext.butterknifeVersion}"
 
-    provided "javax.annotation:javax.annotation-api:${rootProject.ext.javaxAnnotationVersion}"
+    compileOnly "javax.annotation:javax.annotation-api:${rootProject.ext.javaxAnnotationVersion}"
 
     compile project(':vlc')
     compile project(':connectsdk')

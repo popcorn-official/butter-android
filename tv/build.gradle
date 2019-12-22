@@ -3,6 +3,7 @@ apply plugin: 'hugo'
 apply plugin: 'com.github.ben-manes.versions'
 
 android {
+    flavorDimensions "default"
     compileSdkVersion rootProject.ext.compileSdk
     buildToolsVersion rootProject.ext.buildToolsVersion
     def buildNumber = (System.getenv("BUILD_NUMBER") ?: 1) as int
@@ -70,7 +71,7 @@ dependencies {
 
     annotationProcessor "com.google.dagger:dagger-compiler:${rootProject.ext.daggerVersion}"
     annotationProcessor "com.jakewharton:butterknife-compiler:${rootProject.ext.butterknifeVersion}"
-    provided "javax.annotation:javax.annotation-api:${rootProject.ext.javaxAnnotationVersion}"
+    compileOnly "javax.annotation:javax.annotation-api:${rootProject.ext.javaxAnnotationVersion}"
 
     compile project(':base')
 }

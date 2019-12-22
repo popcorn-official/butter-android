@@ -5,9 +5,10 @@ buildscript {
         //temporary to solve hugo error
         mavenCentral()
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:2.3.0'
+        classpath 'com.android.tools.build:gradle:3.5.3'
         classpath 'com.jakewharton.hugo:hugo-plugin:1.2.1'
         classpath 'com.github.dcendents:android-maven-plugin:1.2'
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
@@ -18,7 +19,7 @@ buildscript {
 
 ext {
     appCompatVersion = "25.4.0"
-    buildToolsVersion = "25.0.3"
+    buildToolsVersion = "28.0.3"
     targetSdk = 25
     compileSdk = 25
     minSdk = 15
@@ -74,19 +75,18 @@ allprojects {
 }
 
 def renameOutputFiles(Project project, variant) {
-    variant.outputs.each { output ->
-        output.versionCodeOverride = project.ext.versionCodes.get(variant.productFlavors[0].name, 0) * 10000000 + output.versionCode
+    variant.outputs.all {
+        versionCodeOverride = project.ext.versionCodes.get(variant.productFlavors[0].name, 0) * 10000000 + versionCode
 
-        def outputFileName = output.outputFile.name
+        def outputFileNameLocal = outputFileName
 
         // Customise APK filenames
-        if (outputFileName.contains("debug")) {
-            outputFileName = outputFileName.replace("debug", "development").replace(".apk", "-" + (System.getenv("BUILD_NUMBER") ?: "local") + ".apk")
+        if (outputFileNameLocal.contains("debug")) {
+            outputFileNameLocal = outputFileNameLocal.replace("debug", "development").replace(".apk", "-" + (System.getenv("BUILD_NUMBER") ?: "local") + ".apk")
         } else {
-            outputFileName = outputFileName.replace(".apk", "-" + variant.versionName + ".apk")
+            outputFileNameLocal = outputFileNameLocal.replace(".apk", "-" + variant.versionName + ".apk")
         }
-
         // normal APK (already aligned)
-        output.outputFile = new File(output.outputFile.parent, outputFileName)
+        outputFileName = outputFileNameLocal
     }
 }
