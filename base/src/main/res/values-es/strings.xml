@@ -21,6 +21,8 @@
   <string name="tap_to_close">Toque para cerrar</string>
   <string name="tap_to_resume">Toque para reanudar</string>
   <string name="stop">Detener</string>
+  <string name="connectivity_error">Sin conexión, los datos se actualizarán una vez vuelva la conexión</string>
+  <string name="list_movies_offline">Sin conexión, se cargarán más películas cuando vuelva la conexión</string>
   <!--Overview strings-->
   <string name="search_hint">Titulo, año, actores</string>
   <string name="genres">Géneros</string>
