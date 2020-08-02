@@ -1,6 +1,6 @@
 ---
 name: Add a new movie
-about: Describe this issue template's purpose here.
+about: Do not open an issue
 title: Do not open an issue
 labels: wontfix
 assignees: ''
