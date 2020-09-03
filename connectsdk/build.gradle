@@ -4,7 +4,7 @@ buildscript {
         google()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.6.3'
+        classpath 'com.android.tools.build:gradle:4.0.1'
 //        classpath 'org.robolectric:robolectric-gradle-plugin:1.1.0'
     }
 }
@@ -30,18 +30,18 @@ task jacocoTestReport(type:JacocoReport, dependsOn: "check") {
 
     description = "Generate Jacoco coverage reports"
 
-    classDirectories = fileTree(
+    classDirectories.setFrom(fileTree(
             dir: 'build/intermediates/classes/debug',
             excludes: ['**/R.class',
                        '**/R$*.class',
                        '**/*$ViewInjector*.*',
                        '**/BuildConfig.*',
                        '**/Manifest*.*']
-    )
+    ))
 
-    additionalSourceDirs = files(android.sourceSets.main.java.srcDirs)
-    sourceDirectories = files(android.sourceSets.main.java.srcDirs)
-    executionData = files('build/jacoco/testDebug.exec')
+    additionalSourceDirs.setFrom(files(android.sourceSets.main.java.srcDirs))
+    sourceDirectories.setFrom(files(android.sourceSets.main.java.srcDirs))
+    executionData.setFrom(files('build/jacoco/testDebug.exec'))
 
     reports {
         xml.enabled = true
