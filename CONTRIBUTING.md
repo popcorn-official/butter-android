@@ -30,6 +30,19 @@ has already reported your problem or requested your idea.
 
 * Please **do not** derail or troll issues. Keep the discussion on topic and respect the opinions of others.
 
+* Please follow below pattern when raising an issue.
+
+    * Version:
+    * Download date:
+    * Android version:
+    * Expected Behaviour
+      ...
+    * Actual Behaviour
+      ...
+    * Steps to repoduce the behaviour
+      ...
+      ...
+
 <a name="bugs"></a>
 ### Bug Reports
 
