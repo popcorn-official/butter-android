@@ -374,6 +374,11 @@ By using \'Popcorn Time\' or accessing this site you affirm that you are either 
     <!-- PTVSettingsFragment -->
     <string name="version_pref">Version</string>
 
+    <!-- Download vs Stream dialog fragment -->
+    <string name="download_or_stream_title">Watch or download</string>
+    <string name="download_or_stream_description">Watch now by streaming or Download to watch later</string>
+    <string name="stream">Watch now</string>
+    <string name="download">Download for later</string>
 
     <!-- VPN dialog -->
     <string name="vpn_not_installed">VPN.ht app not installed</string>

@@ -216,6 +216,9 @@ public class TVShowDetailsFragment extends TVBaseDetailsFragment
                 subtitleLanguage,
                 torrent.getKey());
 
-        TVStreamLoadingActivity.startActivity(getActivity(), info, show);
+        getActivity().getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment, new TVWatchOrDownloadGuidedStepFragment(info))
+                .commit();
+        getActivity().getSupportFragmentManager().executePendingTransactions();
     }
 }

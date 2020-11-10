@@ -45,7 +45,6 @@ import butter.droid.base.utils.NetworkUtils;
 import butter.droid.base.utils.PrefUtils;
 import butter.droid.tv.R;
 import butter.droid.tv.TVButterApplication;
-import butter.droid.tv.activities.TVStreamLoadingActivity;
 import butter.droid.tv.activities.TVVideoPlayerActivity;
 import butter.droid.tv.presenters.MovieDetailsDescriptionPresenter;
 
@@ -141,7 +140,10 @@ public class TVMovieDetailsFragment extends TVBaseDetailsFragment implements Med
 						subtitleLanguage,
                         action.getLabel2().toString());
 
-                TVStreamLoadingActivity.startActivity(getActivity(), info);
+                getActivity().getSupportFragmentManager().beginTransaction()
+						.replace(R.id.fragment, new TVWatchOrDownloadGuidedStepFragment(info))
+						.commit();
+				getActivity().getSupportFragmentManager().executePendingTransactions();
             }
         } else if(a instanceof TrailerAction) {
             Movie movie = getMovieItem();
