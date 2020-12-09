@@ -210,7 +210,7 @@
   <string name="starting_buffering">バッファリングを開始</string>
   <string name="streaming_started">ストリーミングの開始中</string>
   <string name="waiting_for_subtitles">字幕の待機中です</string>
-  <string name="seeds">シード</string>
+  <string name="seeds">%1$d シード</string>
   <string name="start_external">外部プレイヤーを開始</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">早送り</string>

@@ -211,7 +211,7 @@
   <string name="starting_buffering">Starter buffering</string>
   <string name="streaming_started">Strømming startet</string>
   <string name="waiting_for_subtitles">Venter på undertekster</string>
-  <string name="seeds">Delere</string>
+  <string name="seeds">%1$d Delere</string>
   <string name="start_external">Start ekstern avspiller</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Spol fremover</string>

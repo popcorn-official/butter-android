@@ -210,7 +210,7 @@
   <string name="starting_buffering">Pokretanje međuspremanja</string>
   <string name="streaming_started">Streamanje pokrenuto</string>
   <string name="waiting_for_subtitles">Čekanje podnaslova</string>
-  <string name="seeds">djelitelja</string>
+  <string name="seeds">%1$d djelitelja</string>
   <string name="start_external">Pokreni vanjski reproduktor</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Premotavanje unaprijed</string>

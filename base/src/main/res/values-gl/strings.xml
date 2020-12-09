@@ -210,7 +210,7 @@
   <string name="starting_buffering">Comezando coa carga</string>
   <string name="streaming_started">Reprodución iniciada</string>
   <string name="waiting_for_subtitles">Agardando polos subtítulos</string>
-  <string name="seeds">sementes</string>
+  <string name="seeds">%1$d sementes</string>
   <string name="start_external">Iniciar o reprodutor externo</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Avance rápido</string>

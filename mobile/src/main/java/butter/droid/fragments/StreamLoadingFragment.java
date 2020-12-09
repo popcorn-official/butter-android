@@ -50,6 +50,7 @@ import butter.droid.base.fragments.dialog.StringArraySelectorDialogFragment;
 import butter.droid.base.torrent.StreamInfo;
 import butter.droid.base.utils.FragmentUtil;
 import butter.droid.base.utils.PixelUtils;
+import butter.droid.base.utils.StorageUtils;
 import butter.droid.base.utils.ThreadUtils;
 import butter.droid.base.utils.VersionUtils;
 import butterknife.BindView;
@@ -156,26 +157,21 @@ public class StreamLoadingFragment extends BaseStreamLoadingFragment {
     private void updateStatus(final StreamStatus status) {
         if (FragmentUtil.isNotAdded(this)) return;
 
-        final DecimalFormat df = new DecimalFormat("#############0.00");
         ThreadUtils.runOnUiThread(new Runnable() {
             @Override
             public void run() {
                 mProgressIndicator.setIndeterminate(false);
                 if(!mPlayingExternal) {
                     mProgressIndicator.setProgress(status.bufferProgress);
-                    mPrimaryTextView.setText(status.bufferProgress + "%");
+                    mPrimaryTextView.setText(getString(R.string.buffer_progress_percent, status.bufferProgress));
                 } else {
                     int progress = ((Float) status.progress).intValue();
                     mProgressIndicator.setProgress(progress);
-                    mPrimaryTextView.setText(progress + "%");
+                    mPrimaryTextView.setText(getString(R.string.buffer_progress_percent, progress));
                 }
 
-                if (status.downloadSpeed / 1024 < 1000) {
-                    mSecondaryTextView.setText(df.format(status.downloadSpeed / 1024) + " KB/s");
-                } else {
-                    mSecondaryTextView.setText(df.format(status.downloadSpeed / 1048576) + " MB/s");
-                }
-                mTertiaryTextView.setText(status.seeds + " " + getString(R.string.seeds));
+                mSecondaryTextView.setText(StorageUtils.formatRate((int)status.downloadSpeed));
+                mTertiaryTextView.setText(getString(R.string.seeds, status.seeds));
             }
         });
     }

@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Scanner;
 
@@ -223,15 +224,15 @@ public class StorageUtils extends Compatibility {
      * Format size in string form
      *
      * @param size Size in bytes
-     * @return Size in stinrg format with suffix
+     * @return Size in string format with suffix
      */
     public static String formatSize(int size) {
         String suffix = null;
 
-        if (size >= 1024) {
-            suffix = "KB";
-            size /= 1024;
-            if (size >= 1024) {
+        if (size >= 1000) {
+            suffix = "kB";
+            size /= 1000;
+            if (size >= 1000) {
                 suffix = "MB";
                 size /= 1024;
             }
@@ -245,7 +246,34 @@ public class StorageUtils extends Compatibility {
             commaOffset -= 3;
         }
 
-        if (suffix != null) resultBuffer.append(suffix);
+        if (suffix != null) resultBuffer.append(" ").append(suffix);
         return resultBuffer.toString();
+    }
+
+    /**
+     * Formats information rate as a string with appropriate units
+     * @param rate Information rate in bytes per second
+     * @return Byte rate with units as a string
+     */
+    public static String formatRate(int rate) {
+        float speed = (float)rate;
+        if (speed < 1000) {
+            return String.format(Locale.getDefault(), "%.0f B/s", speed);
+        }
+
+        speed /= 1000;
+        if (speed < 100) {
+            return String.format(Locale.getDefault(), "%.1f kB/s", speed);
+        }
+        if (speed < 1000) {
+            return String.format(Locale.getDefault(), "%.0f kB/s", speed);
+        }
+
+        speed /= 1000;
+        if (speed < 100) {
+            return String.format(Locale.getDefault(), "%.1f MB/s", speed);
+        } else {
+            return String.format(Locale.getDefault(), "%.0f MB/s", speed);
+        }
     }
 }

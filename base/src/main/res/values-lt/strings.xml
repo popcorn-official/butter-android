@@ -210,7 +210,7 @@
   <string name="starting_buffering">Pradedama buferizacija</string>
   <string name="streaming_started">Srauto perdavimas pradėtas</string>
   <string name="waiting_for_subtitles">Laukiama subtitrų</string>
-  <string name="seeds">skleidėjai</string>
+  <string name="seeds">%1$d skleidėjai</string>
   <string name="start_external">Paleisti išorinį grotuvą</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Prasukti pirmyn</string>

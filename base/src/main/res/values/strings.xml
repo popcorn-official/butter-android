@@ -270,10 +270,8 @@ By using \'Popcorn Time\' or accessing this site you affirm that you are either 
     <string name="starting_buffering">Starting buffering</string>
     <string name="streaming_started">Streaming started</string>
     <string name="waiting_for_subtitles">Waiting for subtitles</string>
-    <string name="seeds">seeds</string>
-    <string name="buffer_progress_percent">%1$d %%</string>
-    <string name="download_speed_kb">%1$s KB/s</string>
-    <string name="download_speed_mb">%1$s MB/s</string>
+    <string name="seeds">%1$d seeds</string>
+    <string name="buffer_progress_percent">%1$d%%</string>
 
     <string name="start_external">Start external player</string>
 

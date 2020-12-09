@@ -51,6 +51,7 @@ import java.text.DecimalFormat;
 import butter.droid.base.fragments.BaseStreamLoadingFragment;
 import butter.droid.base.providers.media.models.Show;
 import butter.droid.base.torrent.StreamInfo;
+import butter.droid.base.utils.StorageUtils;
 import butter.droid.base.utils.ThreadUtils;
 import butter.droid.tv.R;
 import butter.droid.tv.TVButterApplication;
@@ -100,7 +101,6 @@ public class TVStreamLoadingFragment extends BaseStreamLoadingFragment {
 	}
 
 	private void updateStatus(final StreamStatus status) {
-		final DecimalFormat df = new DecimalFormat("#############0.00");
 		ThreadUtils.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -108,12 +108,8 @@ public class TVStreamLoadingFragment extends BaseStreamLoadingFragment {
 				progressIndicator.setProgress(status.bufferProgress);
                 mPrimaryTextView.setText(getString(R.string.buffer_progress_percent, status.bufferProgress));
 
-				if (status.downloadSpeed / 1024 < 1000) {
-                    mSecondaryTextView.setText(getString(R.string.download_speed_kb, df.format(status.downloadSpeed / 1024)));
-                } else {
-                    mSecondaryTextView.setText(getString(R.string.download_speed_mb, df.format(status.downloadSpeed / 1048576)));
-                }
-                mTertiaryTextView.setText(status.seeds + " " + getString(R.string.seeds));
+				mSecondaryTextView.setText(StorageUtils.formatRate((int)status.downloadSpeed));
+                mTertiaryTextView.setText(getString(R.string.seeds, status.seeds));
 			}
 		});
 	}

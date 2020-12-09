@@ -210,7 +210,7 @@
   <string name="starting_buffering">Začetek prednalaganja</string>
   <string name="streaming_started">Začetek prenosa</string>
   <string name="waiting_for_subtitles">Čakam na podnapise</string>
-  <string name="seeds">sejalci</string>
+  <string name="seeds">%1$d sejalci</string>
   <string name="start_external">Zaženi zunanji predvajalnik</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Previj naprej</string>

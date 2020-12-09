@@ -198,7 +198,7 @@
   <string name="starting_buffering">Buferreratzea abiatzen</string>
   <string name="streaming_started">Jarioa hasita</string>
   <string name="waiting_for_subtitles">Azpidatziak itxaroten</string>
-  <string name="seeds">emaleak</string>
+  <string name="seeds">%1$d emaleak</string>
   <string name="start_external">Abiarazi kanpoko irakurgailua</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Azkar aurrera</string>

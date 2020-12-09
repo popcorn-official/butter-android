@@ -210,7 +210,7 @@
   <string name="starting_buffering">Εκκίνηση φόρτωσης</string>
   <string name="streaming_started">Άρχισε η ροή δεδομένων</string>
   <string name="waiting_for_subtitles">Αναμονή για υπότιτλους</string>
-  <string name="seeds">τροφοδότες</string>
+  <string name="seeds">%1$d τροφοδότες</string>
   <string name="start_external">Εκκίνηση εξωτερικού προγράμματος αναπαραγωγής πολυμέσων</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Μπροστά</string>

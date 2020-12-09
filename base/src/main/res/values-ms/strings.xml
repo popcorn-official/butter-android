@@ -210,7 +210,7 @@
   <string name="starting_buffering">Memulakan penimbalan</string>
   <string name="streaming_started">Penstriman bermula</string>
   <string name="waiting_for_subtitles">Menunggu sarikata</string>
-  <string name="seeds">semaian</string>
+  <string name="seeds">%1$d semaian</string>
   <string name="start_external">Mulakan pemain luar</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Mundar maju</string>

@@ -210,7 +210,7 @@
   <string name="starting_buffering">S\'està iniciant la precàrrega</string>
   <string name="streaming_started">S\'ha iniciat la transmissió</string>
   <string name="waiting_for_subtitles">S\'estan esperant els subtítols</string>
-  <string name="seeds">llavors</string>
+  <string name="seeds">%1$d llavors</string>
   <string name="start_external">Inicia un reproductor extern</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Avança</string>

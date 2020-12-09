@@ -210,7 +210,7 @@
   <string name="starting_buffering">Pufferelés kezdése</string>
   <string name="streaming_started">Adatfolyam elkezdődött</string>
   <string name="waiting_for_subtitles">Várakozás feliratra</string>
-  <string name="seeds">seedek</string>
+  <string name="seeds">%1$d seedek</string>
   <string name="start_external">Külső lejátszó indítása</string>
   <!--VideoPlayerActivity strings-->
   <string name="fastforward">Gyors előretekerés</string>
