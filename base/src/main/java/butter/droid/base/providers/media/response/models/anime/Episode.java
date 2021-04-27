@@ -1,12 +1,13 @@
 package butter.droid.base.providers.media.response.models.anime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import butter.droid.base.providers.media.response.models.common.Torrents;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-
+@JsonIgnoreProperties(ignoreUnknown=true)
 public class Episode {
 
     @JsonProperty("tvdb_id")
