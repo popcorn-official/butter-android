@@ -18,6 +18,7 @@
 package butter.droid.base.torrent;
 
 import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -94,6 +95,22 @@ public class TorrentService extends Service implements TorrentServerListener {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (Build.VERSION.SDK_INT >= 26) {
+            String CHANNEL_ID = "TorrentService";
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID,
+                    "TorrentService runned",
+                    NotificationManager.IMPORTANCE_NONE);
+
+            ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE)).createNotificationChannel(channel);
+
+            Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID)
+                    .setContentTitle("")
+                    .setContentText("").build();
+
+            startForeground(1, notification);
+        }
+
         sThis = this;
         Foreground.get().addListener(mForegroundListener);
         mTorrentStreamServer = TorrentStreamServer.getInstance();
