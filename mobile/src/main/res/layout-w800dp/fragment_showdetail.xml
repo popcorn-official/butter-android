@@ -100,7 +100,7 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="@dimen/detail_vertical_offset"
                 >
-                <com.devspark.robototextview.widget.RobotoButton
+                <Button
                     style="@style/Theme.Butter.DetailButton"
                     android:id="@+id/read_more"
                     android:layout_marginRight="@dimen/detail_button_margin"

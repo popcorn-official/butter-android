@@ -146,14 +146,14 @@
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="@dimen/detail_vertical_offset"
                 >
-                <com.devspark.robototextview.widget.RobotoButton
+                <Button
                     style="@style/Theme.Butter.DetailButton"
                     android:id="@+id/read_more"
                     android:layout_marginRight="@dimen/detail_button_margin"
                     android:layout_marginEnd="@dimen/detail_button_margin"
                     android:text="@string/read_more"      />
 
-                <com.devspark.robototextview.widget.RobotoButton
+                <Button
                     style="@style/Theme.Butter.DetailButton"
                     android:id="@+id/watch_trailer"
                     android:text="@string/watch_trailer"      />
